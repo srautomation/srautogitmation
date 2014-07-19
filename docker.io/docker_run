@@ -1,0 +1,2 @@
+#!/bin/sh 
+sudo docker.io run -net=bridge -P -t -i --name=sunriver -privileged -v /dev/bus/usb:/dev/bus/usb -v `pwd`/..:/automation:ro sunriver /bin/bash
