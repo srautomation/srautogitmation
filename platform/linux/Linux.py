@@ -9,21 +9,33 @@ class Linux(object):
         self._ip   = ip
         self._subprocess = self._rpyc.modules.subprocess
         self._ldtp = None
-        self._enable_accessibility()
+        self._processes = []
+        self._env = {"DISPLAY": ":0", "GTK_MODULES": "gail:atk-bridge"}
         self._run_ldtpd()
         #self._ui = UI()
 
+    def _export_dbus_session_address(self):
+        self._dbus_address = self.cmd(r"cat /proc/$(pidof nautilus)/environ | tr '\0' '\n' | grep DBUS_SESSION_BUS_ADDRESS | cut -d '=' -f2-").stdout.read().strip()
+        self._dbus_address = self._dbus_address.split(";")[0]
+        self._env.update({"DBUS_SESSION_BUS_ADDRESS": self._dbus_address})
+        print self._dbus_address
+
     def _enable_accessibility(self):
         self.cmd("gsettings set org.gnome.desktop.interface toolkit-accessibility")
+        self.cmd("/usr/lib/at-spi2-core/at-spi-bus-launcher", env = self._env)
+        time.sleep(3)
+        self.cmd("/usr/lib/at-spi2-core/at-spi2-registryd", env = self._env).stdout.read()
+        time.sleep(3)
 
     def _install_ldtp(self):
         self.cmd("apt-get install -y python-ldtp")
 
     def _run_ldtpd(self):
+        self._export_dbus_session_address()
+        self._enable_accessibility()
         self._server = self.cmd('python -c "import ldtpd; ldtpd.main()"')
-        print ("%s:4118" % self._ip)
+        time.sleep(4)
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
-        self._ldtp.connect()
         return self._ldtp
     
     @property
@@ -34,8 +46,8 @@ class Linux(object):
     def ldtp(self):
         return self._ldtp
 
-    def cmd(self, cmdline):
-        return self._subprocess.Popen(cmdline, shell = True, stdout = PIPE, stderr = PIPE)
+    def cmd(self, cmdline, env = None):
+        return self._subprocess.Popen(cmdline, shell = True, stdout = PIPE, stderr = PIPE, env = None)
 
     def enable_remote_dbus(self, port):
         subprocess = self._rpyc.modules.subprocess
