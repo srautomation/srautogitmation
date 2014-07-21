@@ -49,7 +49,7 @@ class Device(object):
             self._chroot_run("rpyc_classic.py")
         ip = self.android.interfaces[Device.DEFAULT_RPYC_INTERFACE].ip
         print ip
-        time.sleep(2)
+        time.sleep(4)
         rpyc_connection = rpyc.classic.connect(ip)
         return (ip, rpyc_connection)
     #---------------------------------------------------------------------------------------
@@ -64,7 +64,9 @@ class Device(object):
 
     def start(self):
         self._android = Android.Android(self._device_id)
+        time.sleep(2)
         self._android.adb.cmd("root")
+        time.sleep(2)
         self.desktop_start()
         if self._rpyc_connection is None:
             self._ip, self._rpyc_connection = self._start_connect_rpyc()
