@@ -8,9 +8,10 @@ import time
 class Device(object):
     DEFAULT_RPYC_INTERFACE = "wlan0"
 
-    def __init__(self, device_id, rpyc_connection = None):
+    def __init__(self, device_id, linux_ip = None):
         self._device_id = device_id
-        self._rpyc_connection = rpyc_connection
+        self._linux_ip = linux_ip
+        self._rpyc_connection = None
 
     #---------------------------------------------------------------------------------------
     # Setup chrooted Linux on real device
@@ -64,13 +65,14 @@ class Device(object):
 
     def start(self):
         self._android = Android.Android(self._device_id)
-        time.sleep(2)
         self._android.adb.cmd("root")
-        time.sleep(2)
         self.desktop_start()
-        if self._rpyc_connection is None:
-            self._ip, self._rpyc_connection = self._start_connect_rpyc()
-        self._linux = Linux.Linux(self._ip, self._rpyc_connection)
+        if self._linux_ip is None:
+            self._linux_ip, self._rpyc_connection = self._start_connect_rpyc()
+        else:
+            self._rpyc_connection = rpyc.classic.connect(self._linux_ip)
+        print self._linux_ip
+        self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection)
 
     def stop(self):
         self.desktop_stop()

@@ -31,8 +31,8 @@ class Linux(object):
         self.cmd("apt-get install -y python-ldtp")
 
     def _run_ldtpd(self):
-        self._export_dbus_session_address()
-        self._enable_accessibility()
+        #self._export_dbus_session_address()
+        #self._enable_accessibility()
         self._server = self.cmd('python -c "import ldtpd; ldtpd.main()"')
         time.sleep(4)
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
