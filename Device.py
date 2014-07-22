@@ -7,6 +7,9 @@ import rpyc
 import time
 class Device(object):
     DEFAULT_RPYC_INTERFACE = "wlan0"
+    APP_TITLE        = "Intel's Desktop In Your Pocket"
+    APP_START_BUTTON = "Start Desktop OS"
+    APP_STOP_BUTTON  = "Kill Desktop OS"
 
     def __init__(self, device_id, linux_ip = None):
         self._device_id = device_id
@@ -56,11 +59,25 @@ class Device(object):
     #---------------------------------------------------------------------------------------
 
     def desktop_start(self):
+        self.android.ui.wakeup()
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
+        self.android.ui(text = Device.APP_TITLE).wait.exists()
+        time.sleep(0.5)
+        self.android.ui.press.menu()
+        self.android.ui(text = Device.APP_START_BUTTON).wait.exists()
+        self.android.ui(text = Device.APP_START_BUTTON).click()
+        self.android.ui.press.home()
 
     def desktop_stop(self):
         #self.android.cmd("shell /data/data/com.intel.desktopinyourpocket/files/stopDesktop.tablet.bash")
+        self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
+        self.android.ui(text = Device.APP_TITLE).wait.exists()
+        time.sleep(0.5)
+        self.android.ui.press.menu()
+        self.android.ui(text = Device.APP_STOP_BUTTON).wait.exists()
+        self.android.ui(text = Device.APP_STOP_BUTTON).click()
+        self.android.ui.press.home()
         self.android.cmd("shell am force-stop com.intel.desktopinyourpocket")
 
     def start(self):
