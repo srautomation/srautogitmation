@@ -5,6 +5,10 @@ from platform.linux   import Linux
 from collections      import namedtuple
 import rpyc
 import time
+
+from logbook import Logger
+log = Logger("Device")
+
 class Device(object):
     DEFAULT_RPYC_INTERFACE = "wlan0"
     APP_TITLE        = "Intel's Desktop In Your Pocket"
@@ -49,9 +53,11 @@ class Device(object):
 
     def _start_connect_rpyc(self):
         if (len(self._chroot_run("ps -a | grep rpyc_classic.py").stdout.read()) == 0):
+            log.debug("RPyC start")
             self._rpyc_process = self._chroot_run("rpyc_classic.py", shell = False)
         ip = self.android.interfaces[Device.DEFAULT_RPYC_INTERFACE].ip
         time.sleep(1)
+        log.debug("RPyC connect")
         rpyc_connection = rpyc.classic.connect(ip)
         return (ip, rpyc_connection)
     #---------------------------------------------------------------------------------------
@@ -85,7 +91,7 @@ class Device(object):
             self._linux_ip, self._rpyc_connection = self._start_connect_rpyc()
         else:
             self._rpyc_connection = rpyc.classic.connect(self._linux_ip)
-        print self._linux_ip
+        log.debug("Linux IP = %s" % (self._linux_ip,))
         self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection)
         self._linux.start()
 
@@ -117,6 +123,7 @@ if __name__ == "__main__":
             #device.linux.ui.run("/usr/bin/leafpad")
             print 'sleeping again'
             time.sleep(30)
+            print device.linux.ldtp.waittillguiexist("*baaaa*")
             #print device.linux.ldtp.appundertest("leafpad")
             #print device.linux.ldtp.wait(5)
             #print device.linux.ldtp.getwindowlist()

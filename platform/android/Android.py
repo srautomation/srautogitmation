@@ -4,6 +4,9 @@ from Processes import Processes
 from NetInterfaces import NetInterfaces
 import uiautomator
 
+from logbook import Logger
+log = Logger("Android")
+
 class Android(object):
     def __init__(self, device_id):
         self._device_id = device_id

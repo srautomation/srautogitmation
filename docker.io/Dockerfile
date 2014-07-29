@@ -11,7 +11,7 @@ RUN apt-get install -y git build-essential make gcc python python-pip python-dev
 
 # Install python libraries
 RUN apt-get install -y python-ldtp python-dbus 
-RUN pip install gevent gevent_subprocess rpyc uiautomator uiautomatorplug
+RUN pip install gevent gevent_subprocess rpyc uiautomator uiautomatorplug logbook
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
