@@ -9,6 +9,8 @@ class Android(object):
         self._device_id = device_id
         self._ui = uiautomator.Device(serial = self._device_id)
         self._adb = self._ui.server.adb
+        self.adb.cmd("root").wait()
+        self.adb.cmd("wait-for-device").wait()
         self._battery = Battery(self._adb)
         self._processes = Processes(self._adb)
         self._activities = Activities(self._adb)

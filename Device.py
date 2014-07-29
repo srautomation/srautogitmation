@@ -14,6 +14,7 @@ class Device(object):
     def __init__(self, device_id, linux_ip = None):
         self._device_id = device_id
         self._linux_ip = linux_ip
+        self._rpyc_process = None
         self._rpyc_connection = None
 
     #---------------------------------------------------------------------------------------
@@ -35,25 +36,22 @@ class Device(object):
             type    = ["", "-t %s" % mount.get("type", "")]["type" in mount]
             options = ["", "-o %s" % mount.get("options")]["options" in mount]
             self.android.adb.cmd("shell mount %s %s %s %s" % (type, options, mount["dev"], mount["path"]))
-            time.sleep(1)
 
-    def _chroot_run(self, cmdline):
+    def _chroot_run(self, cmdline, shell = True):
         self._try_setup_mounts()
         chroot_path = ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "bin"]
-        chroot_cmdline = 'DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s su - -c "%s"' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], cmdline)
+        if shell is True:
+            command = 'su - -c "%s"' % (cmdline)
+        else:
+            command = cmdline
+        chroot_cmdline = 'DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
         return self.android.adb.cmd("shell " + chroot_cmdline)
 
-    def _try_install_rpyc(self):
-        self._chroot_run("apt-get install -y python-pip")
-        self._chroot_run("pip install rpyc")
-    
     def _start_connect_rpyc(self):
         if (len(self._chroot_run("ps -a | grep rpyc_classic.py").stdout.read()) == 0):
-            self._try_install_rpyc()
-            self._chroot_run("rpyc_classic.py")
+            self._rpyc_process = self._chroot_run("rpyc_classic.py", shell = False)
         ip = self.android.interfaces[Device.DEFAULT_RPYC_INTERFACE].ip
-        print ip
-        time.sleep(4)
+        time.sleep(1)
         rpyc_connection = rpyc.classic.connect(ip)
         return (ip, rpyc_connection)
     #---------------------------------------------------------------------------------------
@@ -82,7 +80,6 @@ class Device(object):
 
     def start(self):
         self._android = Android.Android(self._device_id)
-        self._android.adb.cmd("root")
         self.desktop_start()
         if self._linux_ip is None:
             self._linux_ip, self._rpyc_connection = self._start_connect_rpyc()
@@ -90,6 +87,7 @@ class Device(object):
             self._rpyc_connection = rpyc.classic.connect(self._linux_ip)
         print self._linux_ip
         self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection)
+        self._linux.start()
 
     def stop(self):
         self.desktop_stop()
@@ -112,11 +110,16 @@ class Device(object):
 if __name__ == "__main__":
     device_serial = "MedfieldB60440E1"
     with Device(device_serial) as device:
-        with Timeout(10) as timeout:
+        with Timeout(120) as timeout:
             print device.linux.cmd("uname -a").stdout.read()
-            print device.linux.ldtp.launchapp("libreoffice")
-            time.sleep(40)
-            print device.linux.ldtp.getwindowlist()
-            raw_input()
+            #time.sleep(40)
+            print device.linux.ldtp.launchapp("leafpad")
+            #device.linux.ui.run("/usr/bin/leafpad")
+            print 'sleeping again'
+            time.sleep(30)
+            #print device.linux.ldtp.appundertest("leafpad")
+            #print device.linux.ldtp.wait(5)
+            #print device.linux.ldtp.getwindowlist()
+            #raw_input()
 
 
