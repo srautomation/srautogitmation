@@ -27,7 +27,7 @@ class Device(object):
     _MOUNTS = [
             {"type": "ext4",    "dev": "/dev/block/mmcblk1p1", "path": "/data/debian"},
             {"type": "proc",    "dev": "proc",                 "path": "/data/debian/proc"},
-            {"type": "sysfs",   "dev": "sysfs",                "path": "/data/debian/sysfs"},
+            {"type": "sysfs",   "dev": "sysfs",                "path": "/data/debian/sys"},
             {"options": "bind", "dev": "/dev",                 "path": "/data/debian/dev"},
             {"type": "devpts",  "dev": "devpts",               "path": "/data/debian/devpts"},
             ]
