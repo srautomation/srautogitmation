@@ -1,8 +1,7 @@
-from gevent import monkey; monkey.patch_all()
-from gevent import Timeout
 from platform.android import Android
 from platform.linux   import Linux
 from collections      import namedtuple
+import socket
 import rpyc
 import time
 
@@ -51,13 +50,23 @@ class Device(object):
         chroot_cmdline = 'DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
         return self.android.adb.cmd("shell " + chroot_cmdline)
 
+    def _wait_rpyc_port(self, address):
+        while True:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((address, 18812))
+                s.close()
+                break
+            except socket.error, e:
+                continue
+
     def _start_connect_rpyc(self):
         if (len(self._chroot_run("ps -a | grep rpyc_classic.py").stdout.read()) == 0):
-            log.debug("RPyC start")
+            log.info("RPyC start")
             self._rpyc_process = self._chroot_run("rpyc_classic.py", shell = False)
         ip = self.android.interfaces[Device.DEFAULT_RPYC_INTERFACE].ip
-        time.sleep(1)
-        log.debug("RPyC connect")
+        self._wait_rpyc_port(ip) 
+        log.info("RPyC connect")
         rpyc_connection = rpyc.classic.connect(ip)
         return (ip, rpyc_connection)
     #---------------------------------------------------------------------------------------
@@ -67,7 +76,7 @@ class Device(object):
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
         self.android.ui(text = Device.APP_TITLE).wait.exists()
-        time.sleep(0.5)
+        time.sleep(1.5)
         self.android.ui.press.menu()
         self.android.ui(text = Device.APP_START_BUTTON).wait.exists()
         self.android.ui(text = Device.APP_START_BUTTON).click()
@@ -77,7 +86,7 @@ class Device(object):
         #self.android.cmd("shell /data/data/com.intel.desktopinyourpocket/files/stopDesktop.tablet.bash")
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         self.android.ui(text = Device.APP_TITLE).wait.exists()
-        time.sleep(0.5)
+        time.sleep(1.5)
         self.android.ui.press.menu()
         self.android.ui(text = Device.APP_STOP_BUTTON).wait.exists()
         self.android.ui(text = Device.APP_STOP_BUTTON).click()
@@ -91,7 +100,7 @@ class Device(object):
             self._linux_ip, self._rpyc_connection = self._start_connect_rpyc()
         else:
             self._rpyc_connection = rpyc.classic.connect(self._linux_ip)
-        log.debug("Linux IP = %s" % (self._linux_ip,))
+        log.info("Linux IP = %s" % (self._linux_ip,))
         self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection)
         self._linux.start()
 
@@ -116,14 +125,15 @@ class Device(object):
 if __name__ == "__main__":
     device_serial = "MedfieldB60440E1"
     with Device(device_serial) as device:
-        with Timeout(120) as timeout:
+        with Timeout(15) as timeout:
             print device.linux.cmd("uname -a").stdout.read()
             #time.sleep(40)
-            print device.linux.ldtp.launchapp("leafpad")
-            #device.linux.ui.run("/usr/bin/leafpad")
-            print 'sleeping again'
+            #print device.linux.ldtp.launchapp("leafpad")
+            device.linux.ui.run("/usr/bin/leafpad")
+            print device.linux.ui.child(text = "leafpad")
+            print 'waiting'
+            print device.linux.ldtp.waittillguiexist("*baaaa*", 120)
             time.sleep(30)
-            print device.linux.ldtp.waittillguiexist("*baaaa*")
             #print device.linux.ldtp.appundertest("leafpad")
             #print device.linux.ldtp.wait(5)
             #print device.linux.ldtp.getwindowlist()

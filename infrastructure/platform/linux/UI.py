@@ -4,8 +4,8 @@ class UI(object):
         self._dogtail = dogtail
         self._node = node
         self._root = root
-        #if self._root is None:
-        #    self._root = dogtail.tree.root
+        if self._root is None:
+            self._root = dogtail.tree.root
 
     def run(self, name):
         self._dogtail.utils.run(name)

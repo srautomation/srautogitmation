@@ -1,9 +1,7 @@
-from gevent import monkey; monkey.patch_all()
 from UI import UI
 from subprocess import PIPE
 import xmlrpclib
 import time
-import gevent
 
 from logbook import Logger
 log = Logger("Linux")
@@ -37,9 +35,9 @@ class Linux(object):
         return (0 == self.cmd('ps -fe | grep -v grep | grep "%s"' % (pattern,)).wait())
 
     def wait_until_running(self, pattern, timeout = None):
-        log.debug("Waiting: %s" % pattern)
+        log.info("Waiting: %s" % pattern)
         while not self.is_running(pattern): 
-            gevent.sleep(Linux.POLL_DELAY_WAIT_UNTIL_RUNNING)
+            time.sleep(Linux.POLL_DELAY_WAIT_UNTIL_RUNNING)
 
     def enable_accessibility(self):
         self.wait_until_running("Xorg")
@@ -73,16 +71,16 @@ class Linux(object):
             self.wait_until_running("/usr/bin/ldtp")
         self.wait_until_running("at-spi2-registryd")
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
+        log.info("Connected to ldtp with xmlrpc")
 
     def _ldtp_stop(self):
         self._ldtp_process.kill()
 
     def _dogtail_start(self):
-        self._dogtail = None
-        return
         # fix dogtail bug
-        self._os.getlogin = lambda: self._rpyc.modules.pwd.getpwuid(self._os.getuid())[0]
+        self._os.getlogin = lambda: "root"
         self._dogtail = self._rpyc.modules.dogtail
+        log.info("Got Dogtail module from RPyC")
 
     def _dogtail_stop(self):
         pass
