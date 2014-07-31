@@ -88,7 +88,3 @@ class Linux(object):
     @property
     def ui(self):
         return self._ui
-
-    @property
-    def ldtp(self):
-        return self._ldtp

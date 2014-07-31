@@ -7,6 +7,8 @@ class BaseTest(slash.Test):
         self.tester = Tester()
         self.device = self.tester.device("MedfieldB60440E1")
         self.device.start()
+        self.linux = self.device.linux
+        self.android = self.device.android
 
     def after(self):
         self.device.stop()

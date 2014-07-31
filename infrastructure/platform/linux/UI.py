@@ -7,6 +7,14 @@ class UI(object):
         if self._root is None:
             self._root = dogtail.tree.root
 
+    @property
+    def ldtp(self):
+        return self._ldtp
+
+    @property
+    def dogtail(self):
+        return self._dogtail
+
     def run(self, name):
         self._dogtail.utils.run(name)
     
