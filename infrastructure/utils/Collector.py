@@ -18,6 +18,9 @@ class CollectorHandler(Handler):
     def collect(self, input):
         self._collected.append((time.time(), input))
 
+    def clear(self):
+        self._collected = []
+
     @property
     def collected(self):
         return self._collected
