@@ -61,7 +61,7 @@ class Device(object):
                 continue
 
     def _start_connect_rpyc(self):
-        if (len(self._chroot_run("ps -a | grep rpyc_classic.py").stdout.read()) == 0):
+        if (len(self._chroot_run("ps -a | grep -v grep | grep rpyc_classic.py").stdout.read()) == 0):
             log.info("RPyC start")
             self._rpyc_process = self._chroot_run("rpyc_classic.py", shell = False)
         ip = self.android.interfaces[Device.DEFAULT_RPYC_INTERFACE].ip
