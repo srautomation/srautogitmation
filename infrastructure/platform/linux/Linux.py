@@ -17,8 +17,9 @@ class Linux(object):
         self._processes = {}
         #self._psutil = self._rpyc.modules.psutil
         self._env = {}
-        self._env["DISPLAY"]         = ":0.0"
-        self._env["GTK_MODULES"]     = "gail:atk-bridge" 
+        self._env["PATH"] = "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin"
+        self._env["DISPLAY"] = ":0.0"
+        self._env["GTK_MODULES"] = "gail:atk-bridge"
         self._env["XDG_RUNTIME_DIR"] = "/tmp/"
         self._ldtp_process = None
         self._ldtp = None
