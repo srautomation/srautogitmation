@@ -47,7 +47,7 @@ class Device(object):
             command = 'su - -c "%s"' % (cmdline)
         else:
             command = cmdline
-        chroot_cmdline = 'DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
+        chroot_cmdline = 'USER=root DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
         return self.android.adb.cmd("shell " + chroot_cmdline)
 
     def _wait_rpyc_port(self, address):

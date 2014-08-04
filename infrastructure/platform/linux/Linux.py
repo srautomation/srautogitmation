@@ -18,6 +18,7 @@ class Linux(object):
         #self._psutil = self._rpyc.modules.psutil
         self._env = {}
         self._env["PATH"] = "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin"
+        self._env["USER"] = "root"
         self._env["DISPLAY"] = ":0.0"
         self._env["GTK_MODULES"] = "gail:atk-bridge"
         self._env["XDG_RUNTIME_DIR"] = "/tmp/"
@@ -82,7 +83,8 @@ class Linux(object):
 
     def _dogtail_start(self):
         # fix dogtail bug
-        self._os.getlogin = lambda: "root"
+        self._rpyc.modules.os.getlogin = lambda: "root"
+        self._rpyc.modules.os.environ["USER"] = "root"
         self._dogtail = self._rpyc.modules.dogtail
         log.info("Got Dogtail module from RPyC")
 
