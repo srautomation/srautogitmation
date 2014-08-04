@@ -1,0 +1,3 @@
+#!/bin/sh
+slash run -o log.console_level=1 tests/Example1.py
+
