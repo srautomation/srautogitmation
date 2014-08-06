@@ -4,19 +4,19 @@ from functools import partial
 import time
 
 from logbook import Logger
-log = Logger("Vitals")
+log = Logger("Resources")
 
 ATTRIBUTES = ["cpu", "battery", "mem", "disk"]
-class Vitals(object):
-    VitalCollection = namedtuple("VitalCollection", ATTRIBUTES)
+class Resources(object):
+    ResourcesCollection = namedtuple("ResourcesCollection", ATTRIBUTES)
 
     def __init__(self, cmd):
         self._shell_cmd = cmd
-        self._vitals_handler = CollectorHandler()
+        self._resources_handler = CollectorHandler()
 
     def _input(self, pattern = None):
         lines = self._shell_cmd("statgrab").stdout.readlines()
-        return Vitals.VitalCollection(cpu = 0.5, battery = 0.5, mem = 1350, disk = 400)
+        return Resources.ResourcesCollection(cpu = 0.5, battery = 0.5, mem = 1350, disk = 400)
 
     def measure(self, pattern = None):
         input_method = partial(self._input, pattern)
@@ -25,7 +25,7 @@ class Vitals(object):
                 current_time = time.time()
                 log.info("measure started at: %s" % (time.ctime(current_time)))
                 _self.collector = Collector(input_method)
-                _self.collector.add(self._vitals_handler)
+                _self.collector.add(self._resources_handler)
                 _self.collector.start()
                 
             def __exit__(_self, type, value, tb):
@@ -42,16 +42,16 @@ class Vitals(object):
 
             @property
             def all(_self):
-                return self._vitals_handler.collected
+                return self._resources_handler.collected
 
             def __getitem__(_self, index):
-                return self._vitals_handler.collected[index]
+                return self._resources_handler.collected[index]
            
             def __getattr__(_self, name):
                 if (_self.action is None) and (name in ATTRIBUTES):
                     return _Measured(action = name)
                 elif (_self.action is not None) and (name in ["all", "min", "max", "avg"]):
-                    collected = [getattr(x, _self.action) for (t, x) in self._vitals_handler.collected]
+                    collected = [getattr(x, _self.action) for (t, x) in self._resources_handler.collected]
                     if name == "all":
                         return collected
                     elif name == "max":

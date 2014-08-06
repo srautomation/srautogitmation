@@ -1,5 +1,5 @@
 from UI import UI
-from Vitals import Vitals
+from Resources import Resources
 from subprocess import PIPE
 import xmlrpclib
 import time
@@ -26,7 +26,7 @@ class Linux(object):
         self._ldtp = None
         self._dogtail = None
         self._ui = None
-        self._vitals = None
+        self._resources = None
         
     def cmd(self, cmdline, shell = True, env = None):
         _temp_env = self._os.environ.copy()
@@ -55,7 +55,7 @@ class Linux(object):
     def start(self):
         self.enable_accessibility()
         self._ui_start()
-        self._vitals = Vitals(self.cmd)
+        self._resources = Resources(self.cmd)
 
     def stop(self):
         self._ui_stop()
@@ -96,5 +96,5 @@ class Linux(object):
         return self._ui
 
     @property
-    def vitals(self):
-        return self._vitals
+    def resources(self):
+        return self._resources

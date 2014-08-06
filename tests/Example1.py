@@ -5,7 +5,7 @@ import time
 class Example1(BaseTest):
     def test_limit_linux_cpu(self):
         with self.tester.timeout(120):
-            with self.linux.vitals.measure():
+            with self.linux.resources.measure():
 
                 #---------------------------
                 # Run Leafpad, measure time
@@ -45,4 +45,4 @@ class Example1(BaseTest):
                 time.sleep(4)
 
             # Make sure CPU usage was under 60% during test
-            slash.should.be(self.linux.vitals.measured.cpu.max < 0.6, True)
+            slash.should.be(self.linux.resources.measured.cpu.max < 0.6, True)
