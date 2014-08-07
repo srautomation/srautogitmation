@@ -7,11 +7,12 @@ from logbook import Logger
 log = Logger("Resources")
 
 class Resources(object):
+    SAMPLES_TO_COLLECT = 10
 
     def __init__(self, cmd):
         self._shell_cmd = cmd
         self._resources_handler = CollectorHandler()
-        self._previous = None
+        self._samples = []
 
     def _input(self, pattern = None):
         sample = Bunch(
@@ -19,20 +20,20 @@ class Resources(object):
                 cpu = Bunch(idle = 0, iowait = 0, kernel = 0, user = 0, total = 0, percent = 0),
                 bat = Bunch(percent = 0)
                 )
-        command_line = "statgrab -u mem.free mem.used cpu.idle cpu.iowait cpu.total;" +\
-                "cat /sys/class/power_supply/*bat*/capacity;"
+        command_line = "statgrab -u mem.free mem.used cpu.idle cpu.iowait cpu.total; cat /sys/class/power_supply/*bat*/capacity;"
         lines = self._shell_cmd(command_line).stdout.read().split("\n")[:-1]
         values = [int(line) for line in lines]
 
         sample.mem.free, sample.mem.used, sample.cpu.idle, sample.cpu.iowait, sample.cpu.total, sample.bat.percent = values
 
-        if self._previous is not None:
+        if (len(self._samples) >= Resources.SAMPLES_TO_COLLECT):
+            oldest = self._samples.pop(0)
             # calculate CPU percent:
             idle      = sample.cpu.idle + sample.cpu.iowait
-            prev_idle = self._previous.cpu.idle + self._previous.cpu.iowait
-            sample.cpu.percent = (1.0 * (sample.cpu.total - self._previous.cpu.total) - (idle - prev_idle)) / (sample.cpu.total - self._previous.cpu.total)
+            prev_idle = oldest.cpu.idle + oldest.cpu.iowait
+            sample.cpu.percent = (1.0 * (sample.cpu.total - oldest.cpu.total) - (idle - prev_idle)) / (sample.cpu.total - oldest.cpu.total)
 
-        self._previous = sample
+        self._samples.append(sample)
         return sample
 
     def measure(self, pattern = None):
