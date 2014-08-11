@@ -1,4 +1,4 @@
-from utils.Waiter import Waiter, Handler
+from infrastructure.utils.Waiter import Waiter, Handler
 
 import glib
 import dbus
@@ -69,7 +69,7 @@ class DBUSWaiter(Waiter):
         return None
 
     def add(self, handler):
-        self._bus.add_match_string_non_blocking("eavesdrop=baaa, interface='%s', member='%s'" % (handler.interface, handler.member))
+        self._bus.add_match_string_non_blocking("eavesdrop=true, interface='%s', member='%s'" % (handler.interface, handler.member))
         return super(DBUSWaiter, self).add(handler)
 
     def remove(self, handler):
