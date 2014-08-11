@@ -55,7 +55,7 @@ class Linux(object):
     def start(self):
         self.enable_accessibility()
         self._ui_start()
-        self._resources = Resources(self.cmd)
+        self._resources = Resources(self._rpyc, self.cmd)
 
     def stop(self):
         self._ui_stop()

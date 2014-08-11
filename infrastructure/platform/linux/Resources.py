@@ -9,7 +9,8 @@ log = Logger("Resources")
 class Resources(object):
     SAMPLES_TO_COLLECT = 10
 
-    def __init__(self, cmd):
+    def __init__(self, rpyc, cmd):
+        self._rpyc = rpyc
         self._shell_cmd = cmd
         self._resources_handler = CollectorHandler()
         self._samples = []
@@ -20,11 +21,12 @@ class Resources(object):
                 cpu = Bunch(idle = 0, iowait = 0, kernel = 0, user = 0, total = 0, percent = 0),
                 bat = Bunch(percent = 0)
                 )
-        command_line = "statgrab -u mem.free mem.used cpu.idle cpu.iowait cpu.total; cat /sys/class/power_supply/*bat*/capacity;"
-        lines = self._shell_cmd(command_line).stdout.read().split("\n")[:-1]
-        values = [int(line) for line in lines]
 
-        sample.mem.free, sample.mem.used, sample.cpu.idle, sample.cpu.iowait, sample.cpu.total, sample.bat.percent = values
+        statgrab_text = self._shell_cmd("statgrab -u mem.free mem.used cpu.idle cpu.iowait cpu.total").stdout.read()
+        sample.mem.free, sample.mem.used, sample.cpu.idle, sample.cpu.iowait, sample.cpu.total = map(float, statgrab_text.split("\n")[:-1])
+
+        battery_path = [x for x in self._rpyc.modules.os.listdir("/sys/class/power_supply") if 'bat' in x][0]
+        sample.bat.percent = int(self._rpyc.builtin.file("/sys/class/power_supply/%s/capacity" % battery_path, "r").read())
 
         if (len(self._samples) >= Resources.SAMPLES_TO_COLLECT):
             oldest = self._samples.pop(0)

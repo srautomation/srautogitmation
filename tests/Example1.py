@@ -44,13 +44,5 @@ class Example1(BaseTest):
                 textbox.text = "Bye Bye!" ; time.sleep(7)
                 time.sleep(4)
 
-                print 'here'
-
-
             # Make sure CPU usage was under 60% during test
-            print "========================================="
-            p = self.linux.resources.measured.cpu.max 
-            print p
-            print "========================================="
-            slash.should.be(p < 0.6, True)
-            time.sleep(20)
+            slash.should.be(self.linux.resources.measured.cpu.max < 0.6, True)
