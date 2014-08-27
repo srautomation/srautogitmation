@@ -1,5 +1,7 @@
 from UI import UI
 from Resources import Resources
+from Applications.Browser import Browser
+from Applications.Thunderbird import Thunderbird
 from subprocess import PIPE
 import xmlrpclib
 import time
@@ -27,6 +29,8 @@ class Linux(object):
         self._dogtail = None
         self._ui = None
         self._resources = None
+        self._browser = None
+        self._thunderbird = None
         
     def cmd(self, cmdline, shell = True, env = None):
         _temp_env = self._os.environ.copy()
@@ -56,6 +60,8 @@ class Linux(object):
         self.enable_accessibility()
         self._ui_start()
         self._resources = Resources(self._rpyc, self.cmd)
+        self._browser = Browser(self._rpyc)
+        self._thunderbird = Thunderbird(self._rpyc, self.ui)
 
     def stop(self):
         self._ui_stop()
@@ -98,3 +104,11 @@ class Linux(object):
     @property
     def resources(self):
         return self._resources
+
+    @property
+    def browser(self):
+        return self._browser
+
+    @property
+    def thunderbird(self):
+        return self._thunderbird
