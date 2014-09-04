@@ -24,6 +24,7 @@ class Device(object):
         self._linux_ip = linux_ip
         self._rpyc_process = None
         self._rpyc_connection = None
+        self._android = None
 
     #---------------------------------------------------------------------------------------
     # Setup chrooted Linux on real device
@@ -46,6 +47,8 @@ class Device(object):
             self.android.adb.cmd("shell mount %s %s %s %s" % (type, options, mount["dev"], mount["path"]))
 
     def _chroot_run(self, cmdline, shell = True):
+        if self._android is None:
+            self._android = Android.Android(self._device_id)
         self._try_setup_mounts()
         chroot_path = ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "bin"]
         if shell is True:
@@ -99,7 +102,8 @@ class Device(object):
         self.android.cmd("shell am force-stop com.intel.desktopinyourpocket")
 
     def start(self):
-        self._android = Android.Android(self._device_id)
+        if self._android is None:
+            self._android = Android.Android(self._device_id)
         self.desktop_start()
         if self._linux_ip is None:
             self._linux_ip, self._rpyc_connection = self._start_connect_rpyc()
@@ -126,22 +130,3 @@ class Device(object):
     @property
     def linux(self):
         return self._linux
-
-if __name__ == "__main__":
-    device_serial = "MedfieldB60440E1"
-    with Device(device_serial) as device:
-        with Timeout(15) as timeout:
-            print device.linux.cmd("uname -a").stdout.read()
-            #time.sleep(40)
-            #print device.linux.ldtp.launchapp("leafpad")
-            device.linux.ui.run("/usr/bin/leafpad")
-            print device.linux.ui.child(text = "leafpad")
-            print 'waiting'
-            print device.linux.ldtp.waittillguiexist("*baaaa*", 120)
-            time.sleep(30)
-            #print device.linux.ldtp.appundertest("leafpad")
-            #print device.linux.ldtp.wait(5)
-            #print device.linux.ldtp.getwindowlist()
-            #raw_input()
-
-
