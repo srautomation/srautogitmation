@@ -14,7 +14,7 @@ class Tester(object):
     def timeit(self):
         return self._timeit
     
-    def device(self, device_id, linux_ip = None):
+    def device(self, device_id = None, linux_ip = None):
         return Device(device_id, linux_ip)
 
     def timeout(self, timeout):

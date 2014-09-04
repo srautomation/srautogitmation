@@ -4,6 +4,7 @@ from collections      import namedtuple
 import socket
 import rpyc
 import time
+import subprocess
 
 from logbook import Logger
 log = Logger("Device")
@@ -14,7 +15,11 @@ class Device(object):
     APP_START_BUTTON = "Start Desktop OS"
     APP_STOP_BUTTON  = "Kill Desktop OS"
 
-    def __init__(self, device_id, linux_ip = None):
+    def __init__(self, device_id = None, linux_ip = None):
+        if device_id is None:
+            device_id = subprocess.Popen("adb devices | sed 1d | awk {'print $1'}", shell = True, stdout = subprocess.PIPE).stdout.read().strip()
+            log.info("DEVICE ID = %s" % device_id)
+
         self._device_id = device_id
         self._linux_ip = linux_ip
         self._rpyc_process = None
