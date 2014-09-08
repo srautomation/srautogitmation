@@ -77,10 +77,10 @@ class Linux(object):
 
     def _ldtp_start(self):
         LDTP_PATH = "/usr/bin/ldtp"
-        if not self.is_running("/usr/bin/ldtp"):
-            self._ldtp_process = self.cmd("/usr/bin/ldtp", shell = False)
-            self.wait_until_running("/usr/bin/ldtp")
-        self.wait_until_running("at-spi2-registryd")
+        if not self.is_running(LDTP_PATH):
+            self._ldtp_process = self.cmd(LDTP_PATH, shell = False)
+            self.wait_until_running(LDTP_PATH)
+        self.wait_until_running("/usr/lib/at-spi2-core/at-spi2-registryd")
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
         log.info("Connected to ldtp with xmlrpc")
 
