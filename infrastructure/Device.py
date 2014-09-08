@@ -34,7 +34,7 @@ class Device(object):
             {"type": "proc",    "dev": "proc",                 "path": "/data/debian/proc"},
             {"type": "sysfs",   "dev": "sysfs",                "path": "/data/debian/sys"},
             {"options": "bind", "dev": "/dev",                 "path": "/data/debian/dev"},
-            {"type": "devpts",  "dev": "devpts",               "path": "/data/debian/devpts"},
+            {"type": "devpts",  "dev": "devpts",               "path": "/data/debian/dev/pts"},
             ]
     def _try_setup_mounts(self):
         mounted = [l.split(" ")[1] for l in self.android.adb.cmd("shell cat /proc/mounts").stdout.readlines()]
