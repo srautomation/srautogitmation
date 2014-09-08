@@ -34,6 +34,8 @@ class Resources(object):
             idle      = sample.cpu.idle + sample.cpu.iowait
             prev_idle = oldest.cpu.idle + oldest.cpu.iowait
             sample.cpu.percent = (1.0 * (sample.cpu.total - oldest.cpu.total) - (idle - prev_idle)) / (sample.cpu.total - oldest.cpu.total)
+            if sample.cpu.percent < 0:
+                sample.cpu.percent = 0
 
         self._samples.append(sample)
         return sample
@@ -59,10 +61,6 @@ class Resources(object):
         class _Measured(object):
             def __init__(_self, action = None):
                _self.action = action
-
-            @property
-            def all(_self):
-                return self._resources_handler.collected
 
             def __getitem__(_self, index):
                 return self._resources_handler.collected[index]
