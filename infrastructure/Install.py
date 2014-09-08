@@ -5,20 +5,23 @@ pip install rpyc slash uiautomator gevent gevent-subprocess bunch
 """
 
 DUT_commands = """
-apt-get -y install at-spi2-core git gconftool-2 python-gtk2 qdbus python-pip python-pil statgrab libatk-bridge2 libatk-adaptor; #gir1.2-atk-1.0 gir1.2-gtk-3.0 
-pip install rpyc psutil selenium
+apt-get -y install at-spi2-core git ldtp gconf2 python-gtk2 python-gtk2-dev qdbus python-pip python-pil python-dev python-pyatspi2 python-gobject python-gobject-2 statgrab libatk-bridge2.0-0 libatk-adaptor;
+pip install rpyc psutil selenium twisted
 git clone https://github.com/lorquas/dogtail; cd dogtail; python setup.py install; cd .. ;
-git clone https://github.com/ldtp/ldtp2;      cd ldtp2;   python setup.py install; cd .. ;
-ln -s /usr/lib/i386-linux-gnu/gtk2.0/ /usr/lib/gtk-2.0;
+ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0;
 """
 
 
 def install_dut():
     from Device import Device
-    #device_serial = "MedfieldB60440E1"
-    device = Device() #device_serial)
+    device = Device()
     print 'Installing device (this may take a few minutes...)'
     process = device._chroot_run(DUT_commands)
+    while True:
+        line = process.stdout.readline()
+        if not line:
+            break
+        print line,
     process.wait()
 
 def install_tester():
