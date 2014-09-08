@@ -85,7 +85,7 @@ class Linux(object):
         log.info("Connected to ldtp with xmlrpc")
 
     def _ldtp_stop(self):
-        self._ldtp_process.kill()
+        pass
 
     def _dogtail_start(self):
         # fix dogtail bug
