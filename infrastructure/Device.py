@@ -115,6 +115,7 @@ class Device(object):
 
     def stop(self):
         self.desktop_stop()
+        self._linux.stop()
 
     def __enter__(self):
         self.start()
