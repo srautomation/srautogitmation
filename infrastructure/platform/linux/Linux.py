@@ -58,16 +58,21 @@ class Linux(object):
         self.wait_until_running("at-spi-bus-launcher")
         self.cmd("/usr/lib/at-spi2-core/at-spi2-registryd", shell = False)
         self.wait_until_running("/usr/lib/at-spi2-core/at-spi2-registryd")
+
+    def _fix_dev_shm(self):
+        self.cmd("ln -s /run/shm /dev/shm")
             
     def start(self):
         self.enable_accessibility()
+        self._fix_dev_shm()
         self._ui_start()
         self._resources = Resources(self._rpyc, self.cmd)
-        self._browser = Browser(self._rpyc)
+        self._browser = Browser(self.cmd, self._ip)
         self._thunderbird = Thunderbird(self._rpyc, self.ui)
 
     def stop(self):
         self._ui_stop()
+        self._browser.stop()
 
     def _ui_start(self):
         self._ldtp_start()
