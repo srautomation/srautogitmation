@@ -6,7 +6,7 @@ import slash.log
 import time
 import IPython #TODO: use IPython insted of code
 import code
-import Applications
+import infrastructure.platform.linux.Applications as apps
 
 class BasicTests(BaseTest):
     def generic_test(self, test, *test_params):
@@ -26,15 +26,17 @@ class BasicTests(BaseTest):
         return self.linux.resources.measured     
 
     def chromium_open_nytimes(self):
-        self.chromium = Applications.Chromium(self.linux.cmd, self.linux.ui)
+        self.chromium = apps.Chromium.Chromium(self.linux.cmd, self.linux.ui)
         self.chromium.start('nytimes.com')
 
+    '''
     def writer_open_doc(self):
-        writer = Applications.LibreOfficeWriter(self.linux.cmd, self.linux.ui)
+        writer = LibreOfficeWriter(self.linux.cmd, self.linux.ui)
         writer.start()
+    '''
 
     def leafpad_open_file(self):
-        self.leafpad = Applications.Leafpad(self.linux.cmd, self.linux.ui)
+        self.leafpad = apps.Leafpad.Leafpad(self.linux.cmd, self.linux.ui)
         self.leafpad.start()
         self.leafpad.write_text('lets open a text file')
         time.sleep(2)
@@ -43,7 +45,7 @@ class BasicTests(BaseTest):
         self.leafpad.stop()
     
     def evince_open_pdf_save_as(self):
-        self.evince = Applications.Evince(self.linux.cmd, self.linux.ui)
+        self.evince = apps.Evince.Evince(self.linux.cmd, self.linux.ui)
         self.evince.start()
         time.sleep(2)
         self.evince.open('example_pdf.pdf')
@@ -53,7 +55,7 @@ class BasicTests(BaseTest):
         self.evince.stop()
 
     def firefox_open_cnn_then_world(self):
-        self.firefox = Applications.Firefox(self.linux.cmd, self.linux.ui)
+        self.firefox = apps.Firefox.Firefox(self.linux.cmd, self.linux.ui)
         self.firefox.start()
         time.sleep(5)
         self.firefox.open('cnn.com')
