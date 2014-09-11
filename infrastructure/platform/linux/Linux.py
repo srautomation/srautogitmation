@@ -54,7 +54,10 @@ class Linux(object):
 
         # IMPORTANT: following line also loads at-spi-bus-launcher:
         assert "true" == self.cmd("qdbus org.a11y.Bus /org/a11y/bus org.a11y.Status.IsEnabled").stdout.read().strip()
+        #self.cmd("/usr/lib/at-spi2-core/at-spi-bus-launcher")
         self.wait_until_running("at-spi-bus-launcher")
+        self.cmd("/usr/lib/at-spi2-core/at-spi2-registryd", shell = False)
+        self.wait_until_running("/usr/lib/at-spi2-core/at-spi2-registryd")
             
     def start(self):
         self.enable_accessibility()
@@ -80,7 +83,6 @@ class Linux(object):
         if not self.is_running(LDTP_PATH):
             self._ldtp_process = self.cmd(LDTP_PATH, shell = False)
             self.wait_until_running(LDTP_PATH)
-        self.wait_until_running("/usr/lib/at-spi2-core/at-spi2-registryd")
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
         log.info("Connected to ldtp with xmlrpc")
 
