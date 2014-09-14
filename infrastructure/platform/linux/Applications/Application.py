@@ -26,4 +26,4 @@ class _Application(object):
 class _Editor(_Application):
     def start(self, doc = ''):
         self._app_cmd = self._app_cmd + ' ' + doc
-        super(_Editor, self).start(self)
+        super(_Editor, self).start()

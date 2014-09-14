@@ -3,7 +3,7 @@ import time
 
 class Evince(Application._Editor):
     def __init__(self, cmd, ui):
-        super(Evince, self).__init__(self, cmd, ui, 'evince', 'evince')
+        super(Evince, self).__init__(cmd, ui, 'evince', 'evince')
     
     def open(self, file):
         '''file has to be in /root '''
