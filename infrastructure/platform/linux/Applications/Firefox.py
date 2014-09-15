@@ -23,10 +23,14 @@ class Firefox(Application._Application):
 
     def press_visible_link(self, link, retries = 10):
         app = self._dogtail.tree.root.application('Firefox')
-        childs = app.findChildren(self._dogtail.predicate.GenericPredicate(name = 'Search or enter address', roleName = 'entry'))
-        if len(childs) > 1: txt_box = 1
-        else: txt_box = 0
-        #childs[txt_box].grabFocus()
+        try:
+            childs = app.findChildren(self._dogtail.predicate.GenericPredicate(name = 'Search or enter address', 
+                                                                                roleName = 'entry'))
+            if len(childs) > 1: txt_box = 1
+            else: txt_box = 0
+            #childs[txt_box].grabFocus()
+        except TypeError:
+            pass
         time.sleep(2)
         counter = 0
         while not app.isChild(link) and counter < retries:
