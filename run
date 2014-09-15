@@ -1,3 +1,9 @@
-#!/bin/sh
-slash run -o log.console_level=1 tests/Example1.py
-
+#!/bin/bash
+echo "Changing adb to wifi mode..."
+adb tcpip 5555
+if adb devices | grep Medfield &> /dev/null; then
+	echo "Please disconnect phone from usb... <CR>"
+	read
+fi
+adb connect 192.168.1.62
+slash run -o log.console_level=1 tests/BasicTests.py
