@@ -14,20 +14,21 @@ class BasicTests(BaseTest):
         with self.tester.timeout(1800000):
             with self.linux.resources.measure():
                     test(*test_params)
-                    code.interact(local = locals())
+#                    code.interact(local = locals())
+                    time.sleep(5)
+            
+            mes = self.linux.resources.measured
             slash.logger.notice("Finished generic test for %s" % test.func_name) 
             slash.logger.notice("============================================")
             slash.logger.notice("Resources measurements results:")
-            for mes in ("cpu", "mem", "bat"):
-                slash.logger.notice("%s: AVG=%d, MAX=%d, MIN=%d" % (mes,
-                                    self.linux.resources.measured.__getattr__(mes).avg,
-                                    self.linux.resources.measured.__getattr__(mes).max,
-                                    self.linux.resources.measured.__getattr__(mes).min))
-        return self.linux.resources.measured     
+            slash.logger.notice("cpu: AVG=%f, MAX=%f, MIN=%f" % (mes.cpu.avg, mes.cpu.max, mes.cpu.min))        
+            slash.logger.notice("memory: AVG=%d, MAX=%d, MIN=%d" % (mes.mem.avg, mes.mem.max, mes.mem.min))
+            slash.logger.notice("battery: AVG=%d, MAX=%d, MIN=%d" % (mes.bat.avg, mes.bat.max, mes.bat.min))
 
     def chromium_open_nytimes(self):
         self.chromium = Chromium.Chromium(self.linux.cmd, self.linux.ui)
         self.chromium.start('nytimes.com')
+        time.sleep(7)
 
     '''
     def writer_open_doc(self):
@@ -39,7 +40,7 @@ class BasicTests(BaseTest):
         self.leafpad = Leafpad.Leafpad(self.linux.cmd, self.linux.ui)
         self.leafpad.start()
         self.leafpad.write_text('lets open a text file')
-        time.sleep(2)
+        time.sleep(4)
         self.leafpad.open('example.txt')
         time.sleep(5)
         self.leafpad.stop()
@@ -57,9 +58,9 @@ class BasicTests(BaseTest):
     def firefox_open_cnn_then_world(self):
         self.firefox = Firefox.Firefox(self.linux.cmd, self.linux.ui)
         self.firefox.start()
-        time.sleep(5)
+        time.sleep(10)
         self.firefox.open('cnn.com')
-        time.sleep(5)
+        time.sleep(12)
         self.firefox.press_visible_link('World Sport')
         time.sleep(20)
         self.firefox.stop()
@@ -77,7 +78,7 @@ class BasicTests(BaseTest):
         
         tests = {   self.leafpad_open_file : [],
                     self.evince_open_pdf_save_as : [],
-                    self.firefox_open_cnn_then_world : [],
+                    #self.firefox_open_cnn_then_world : [],
                     self.chromium_open_nytimes : [] }
         
         for test in tests:
