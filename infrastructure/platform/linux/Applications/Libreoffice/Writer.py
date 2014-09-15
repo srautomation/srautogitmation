@@ -1,9 +1,9 @@
-from Application import _Editor
+from infrastructure.platform.linux.Applications.Application import _Editor
 import time
 
 class Writer(_Editor):
     def __init__(self, cmd, ui):
-        super(LibreOffice, self).__init__(cmd, ui, 'libreoffice --writer --norestore', 'killall oosplash')
+        super(Writer, self).__init__(cmd, ui, 'libreoffice --writer --norestore', 'killall oosplash')
 
     def open(self, doc):
         app = self._dogtail.tree.root.application('soffice')

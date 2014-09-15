@@ -6,7 +6,7 @@ class Firefox(Application._Application):
         super(Firefox, self).__init__(cmd, ui, 'firefox', '*Firefox')
             
     def start(self, url = ''):
-        self._app_cmd = self._app_cmd + ' ' + url
+        self._start_cmd = self._start_cmd + ' ' + url
         super(Firefox, self).start()
         is_window_visible = self._ldtp.waittillguiexist(self._app_title)
 
