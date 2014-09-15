@@ -3,12 +3,12 @@ import time
 
 class Firefox(Application._Application):
     def __init__(self, cmd, ui):
-        super(Firefox, self).__init__(cmd, ui, 'firefox', '*Firefox')
+        super(Firefox, self).__init__(cmd, ui, 'firefox', 'killall firefox')
             
     def start(self, url = ''):
         self._start_cmd = self._start_cmd + ' ' + url
         super(Firefox, self).start()
-        is_window_visible = self._ldtp.waittillguiexist(self._app_title)
+        is_window_visible = self._ldtp.waittillguiexist('Firefox')
 
     def open(self, url):
         app = self._dogtail.tree.root.application('Firefox')
