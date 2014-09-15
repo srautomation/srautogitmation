@@ -17,13 +17,15 @@ class Resources(object):
 
     def _input(self, pattern = None):
         sample = Bunch(
-                mem = Bunch(free = 0, used = 0, total = 0),
+                mem = Bunch(free = 0, used = 0, cache = 0),
                 cpu = Bunch(idle = 0, iowait = 0, kernel = 0, user = 0, total = 0, percent = 0),
                 bat = Bunch(percent = 0)
                 )
 
-        statgrab_text = self._shell_cmd("statgrab -u mem.free mem.used cpu.idle cpu.iowait cpu.total").stdout.read()
-        sample.mem.free, sample.mem.used, sample.cpu.idle, sample.cpu.iowait, sample.cpu.total = map(float, statgrab_text.split("\n")[:-1])
+        statgrab_text = self._shell_cmd("statgrab -u mem.free mem.used mem.cache cpu.idle cpu.iowait cpu.total").stdout.read()
+        sample.mem.free, sample.mem.used, sample.mem.cache, sample.cpu.idle, sample.cpu.iowait, sample.cpu.total = map(float, statgrab_text.split("\n")[:-1])
+        sample.mem.used += sample.mem.cache
+        sample.mem.free -= sample.mem.cache
 
         battery_path = [x for x in self._rpyc.modules.os.listdir("/sys/class/power_supply") if 'bat' in x][0]
         sample.bat.percent = int(self._rpyc.builtin.file("/sys/class/power_supply/%s/capacity" % battery_path, "r").read())
