@@ -2,7 +2,7 @@
 
 from infrastructure.BaseTest import BaseTest
 from infrastructure.platform.linux.Applications import Chromium, Leafpad, Evince, Firefox, Browser
-from infrastructure.platform.linux.Applications.Libreoffice import Writer
+from infrastructure.platform.linux.Applications.Libreoffice import Writer, Calc
 import slash
 import slash.log
 import time
@@ -40,8 +40,14 @@ class BasicTests(BaseTest):
         writer.set_bold()
         time.sleep(2)
         writer.set_italic()
-        code.interact(local = locals()) #TODO: Erase
         writer.stop()
+
+    def calc_open_spreadsheet(self):
+        calc = Calc.Calc(self.linux.cmd, self.linux.ui)
+        calc.start('/root/DoctorWho.xlsx')
+        time.sleep(9)
+        calc.capitalize()
+        calc.stop()
 
     def leafpad_open_file(self):
         self.leafpad = Leafpad.Leafpad(self.linux.cmd, self.linux.ui)
@@ -72,9 +78,6 @@ class BasicTests(BaseTest):
         time.sleep(20)
         self.firefox.stop()
 
-    def firefox_open_youtube_and_search(self):
-         pass 
-
     def selenium(self):
         self.linux.browser.start()
         self.linux.browser.go('cnn.com')
@@ -90,7 +93,7 @@ class BasicTests(BaseTest):
                     self.writer_open_doc : [] 
                 }
         '''
-        tests = {   self.writer_open_doc : [] }
+        tests = { self.calc_open_spreadsheet : [] }
         
         for test in tests:
             slash.logger.notice('Starting test: %s ....' % test.__name__)
