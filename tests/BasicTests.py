@@ -1,6 +1,7 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 from infrastructure.BaseTest import BaseTest
+from infrastructure.PerformanceBaseTest import PerformanceBaseTest
 from infrastructure.platform.linux.Applications import Chromium, Leafpad, Evince, Firefox, Browser
 from infrastructure.platform.linux.Applications.Libreoffice import Writer, Calc, Impress
 import slash
@@ -9,10 +10,10 @@ import time
 import IPython #TODO: use IPython insted of code
 import code
 
-class BasicTests(BaseTest):
+class BasicTests(PerformanceBaseTest):
     def generic_test(self, test, *test_params):
         ''' runs a test and prints measurements '''
-        with self.tester.measure():
+        with self.tester.timeit.measure():
             with self.linux.resources.measure():
                     test(*test_params)
 #                    code.interact(local = locals())
@@ -92,9 +93,11 @@ class BasicTests(BaseTest):
     def selenium(self):
         self.linux.browser.start()
         self.linux.browser.go('cnn.com')
-        #self.linux.browser
 
     def test(self):
+        with self.measure(self.calc_open_spreadsheet):
+            self.calc_open_spreadsheet()
+        return
         slash.log.set_log_color('my_logger', slash.logbook.NOTICE, "purple")
         '''
         tests = {   
