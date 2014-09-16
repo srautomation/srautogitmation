@@ -22,7 +22,7 @@ class _Application(object):
                 if (0 != self._cmd('ls /proc/' + str(self._process.pid)).wait()): # if not killed
                     self._process.kill()
 
-    def find_children(self, app, name = None, roleName = None):
+    def _find_children(self, app, name = None, roleName = None):
         children = app.findChildren(self._dogtail.predicate.GenericPredicate(name, roleName))
         return [(i.name, i.roleName) for i in children]
 
