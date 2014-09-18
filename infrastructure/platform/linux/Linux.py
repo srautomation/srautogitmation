@@ -3,6 +3,7 @@ from Resources import Resources
 from Applications.Browser import Browser
 from Applications.Thunderbird import Thunderbird
 from subprocess import PIPE
+from bunch import Bunch
 import xmlrpclib
 import time
 
@@ -11,6 +12,15 @@ log = Logger("Linux")
 
 class Linux(object):
     POLL_DELAY_WAIT_UNTIL_RUNNING = 0.2
+    OWN_PROCESSES = {
+            "RPYC":   "rpyc_classic",
+            "QDBUS":  "qdbus",
+            "AT_SPI_BUS_LAUNCHER": "at-spi-bus-launcher",
+            "AT_SPI2_REGISTRYD": "/usr/lib/at-spi2-core/at-spi2-registryd",
+            "LDTP": "/usr/bin/ldtp",
+            "ADB": "/sbin/adbd",
+            }
+
     def __init__(self, ip, rpyc_connection):
         self._rpyc = rpyc_connection
         self._ip   = ip
@@ -55,9 +65,9 @@ class Linux(object):
         # IMPORTANT: following line also loads at-spi-bus-launcher:
         assert "true" == self.cmd("qdbus org.a11y.Bus /org/a11y/bus org.a11y.Status.IsEnabled").stdout.read().strip()
         #self.cmd("/usr/lib/at-spi2-core/at-spi-bus-launcher")
-        self.wait_until_running("at-spi-bus-launcher")
-        self.cmd("/usr/lib/at-spi2-core/at-spi2-registryd", shell = False)
-        self.wait_until_running("/usr/lib/at-spi2-core/at-spi2-registryd")
+        self.wait_until_running(Linux.OWN_PROCESSES["AT_SPI_BUS_LAUNCHER"])
+        self.cmd(Linux.OWN_PROCESSES["AT_SPI2_REGISTRYD"], shell = False)
+        self.wait_until_running(Linux.OWN_PROCESSES["AT_SPI2_REGISTRYD"])
 
     def _fix_dev_shm(self):
         self.cmd("ln -s /run/shm /dev/shm")
@@ -66,7 +76,7 @@ class Linux(object):
         self.enable_accessibility()
         self._fix_dev_shm()
         self._ui_start()
-        self._resources = Resources(self._rpyc, self.cmd)
+        self._resources = Resources(self._rpyc, self.cmd, own_processes = Linux.OWN_PROCESSES.values())
         self._browser = Browser(self.cmd, self._ip)
         self._thunderbird = Thunderbird(self._rpyc, self.ui)
 
@@ -84,10 +94,9 @@ class Linux(object):
         self._dogtail_stop()
 
     def _ldtp_start(self):
-        LDTP_PATH = "/usr/bin/ldtp"
-        if not self.is_running(LDTP_PATH):
-            self._ldtp_process = self.cmd(LDTP_PATH, shell = False)
-            self.wait_until_running(LDTP_PATH)
+        if not self.is_running(Linux.OWN_PROCESSES["LDTP"]):
+            self._ldtp_process = self.cmd("ldtp", shell = False)
+            self.wait_until_running(Linux.OWN_PROCESSES["LDTP"])
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
         log.info("Connected to ldtp with xmlrpc")
 
