@@ -41,15 +41,14 @@ class Resources(object):
                 continue
             old_process = old.processes[pid]
             _temp = Bunch(cpu = Bunch(user = process.cpu.user - old_process.cpu.user, system = process.cpu.system - old_process.cpu.system))
-            process.cpu.percent = (_temp.cpu.user + _temp.cpu.system) / current.cpu.active
+            process.cpu.percent = 1.0 * (_temp.cpu.user + _temp.cpu.system) / current.delta.cpu.active
             delta_processes[pid] = _temp
         current.delta.processes = delta_processes
         return current
 
     def _factor_out_own_processes(self, sample):
-        self._own_pids = self._own_pids.intersection(sample.processes.keys())
-        own_cpu = sum([process.cpu.percent for (pid, process) in sample.processes.items() if pid in self._own_pids])
-        sample.cpu.percent -= own_cpu
+        sample.cpu.own = sum([process.cpu.percent for (pid, process) in sample.processes.items() if pid in self._own_pids])
+        sample.cpu.percent -= sample.cpu.own
         return sample
 
     def _input(self, pattern = None):
@@ -60,7 +59,7 @@ class Resources(object):
             return None
         sample_oldest = self._samples.pop(0)
         sample = self._factor_out_own_processes(self._diff(sample, sample_oldest))
-        log.warn("CPU Percent = %f" % sample.cpu.percent)
+        log.warn("CPU Percent = %f, own = %f" % (sample.cpu.percent, sample.cpu.own))
         return sample
 
     def measure(self, pattern = None):
