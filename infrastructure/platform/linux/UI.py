@@ -1,11 +1,21 @@
+import xmlrpclib
+
+from logbook import Logger
+log = Logger("Linux.UI")
+
 class UI(object):
-    def __init__(self, ldtp, dogtail, root = None, node = None):
-        self._ldtp = ldtp
-        self._dogtail = dogtail
-        self._node = node
-        self._root = root
-        if self._root is None:
-            self._root = dogtail.tree.root
+    def __init__(self, rpyc, shell, ip, ldtp = None, dogtail = None, root = None, node = None):
+        self._rpyc   = rpyc
+        self._shell = shell
+        self._ip     = ip
+
+    def start(self):
+        self._dogtail = self._rpyc.modules.dogtail
+        self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
+        log.info("Connected to ldtp with xmlrpc")
+
+    def stop(self):
+        pass
 
     @property
     def ldtp(self):
@@ -21,7 +31,7 @@ class UI(object):
     def child(self, text = None, textContains = None, roleName = None):
        if text is not None:
            node = self._node.child(name = text)
-           return UI(self._ldtp, self._dogtail, root = self._root, node = node)
+           return UI(self._rpyc, self._shell, self._ip, ldtp = self._ldtp, dogtail = self._dogtail, root = self._root, node = node)
        else:
            raise NotImplemented
 

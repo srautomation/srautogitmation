@@ -1,21 +1,19 @@
 from infrastructure.utils.Collector import Collector, CollectorHandler
-from bunch import Bunch
 from functools import partial
-import re
+from bunch import Bunch
 import time
 
 from logbook import Logger
 log = Logger("Resources")
 
 class Resources(object):
-    COMMAND = 'head -1 /proc/stat; head -2 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null'
+    COMMAND = '"head -1 /proc/stat; head -2 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null"'
     SAMPLES_DELTA = 15
-    def __init__(self, rpyc, shell):
-        self._rpyc = rpyc
-        self._shell = shell
+    def __init__(self, adb):
+        self._adb = adb
         self._resources_handler = CollectorHandler()
         self._samples = []
-
+    
     def _parse(self, lines):
         cpu = Bunch(zip(["user", "nice", "system", "idle", "iowait", "irq", "softirq", "steal", "guest", "guest_nice"], map(int, lines[0].split(' ')[2:])))
         cpu.total  = cpu.user + cpu.nice + cpu.system + cpu.idle + cpu.iowait + cpu.irq + cpu.softirq + cpu.steal + cpu.guest + cpu.guest_nice
@@ -45,21 +43,13 @@ class Resources(object):
         return current
 
     def _input(self, pattern = None):
-        sample = self._parse(self._shell.shell(Resources.COMMAND).stdout.readlines())
+        sample = self._parse(self._adb.cmd('shell', Resources.COMMAND).stdout.readlines())
         sample.time = time.time()
         self._samples.append(sample)
         if len(self._samples) < Resources.SAMPLES_DELTA:
             return None
         sample_oldest = self._samples.pop(0)
         sample = self._diff(sample, sample_oldest)
-
-        # factor out own infrastructure CPU
-#        own_pids = self._shell.own_processes.keys()
-#        log.warn("PIDS = %r" % own_pids)
-#        own_cpu  = sum([process.cpu.percent for (pid, process) in sample.processes.items() if pid in own_pids])
-#        sample.cpu.own = own_cpu
-#        sample.cpu.percent = sample.cpu.percent - sample.cpu.own_cpu
-
         log.warn("CPU Percent = %f" % sample.cpu.percent)
         return sample
 
@@ -111,3 +101,4 @@ class Resources(object):
                 else:
                     return getattr(_self, name)
         return _Measured()
+

@@ -2,6 +2,7 @@ from Battery import Battery
 from Activities import Activities
 from Processes import Processes
 from NetInterfaces import NetInterfaces
+from Resources import Resources
 import uiautomator
 
 from logbook import Logger
@@ -18,6 +19,12 @@ class Android(object):
         self._processes = Processes(self._adb)
         self._activities = Activities(self._adb)
         self._interfaces = NetInterfaces(self._adb)
+
+    def start(self):
+        self._resources = Resources(self._adb)
+
+    def stop(self):
+        pass
 
     @property
     def adb(self):
@@ -42,6 +49,10 @@ class Android(object):
     @property
     def interfaces(self):
         return self._interfaces
+
+    @property
+    def resources(self):
+        return self._resources
 
     def cmd(self, cmdline):
         return self.adb.cmd(cmdline)

@@ -104,6 +104,7 @@ class Device(object):
     def start(self):
         if self._android is None:
             self._android = Android.Android(self._device_id)
+        self._android.start()
         self.desktop_start()
         if self._linux_ip is None:
             self._linux_ip, self._rpyc_connection = self._start_connect_rpyc()
@@ -116,6 +117,7 @@ class Device(object):
     def stop(self):
         self.desktop_stop()
         self._linux.stop()
+        self._android.stop()
 
     def __enter__(self):
         self.start()
