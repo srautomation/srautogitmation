@@ -1,3 +1,4 @@
+from Resources import Resources
 from platform.android import Android
 from platform.linux   import Linux
 from collections      import namedtuple
@@ -25,6 +26,7 @@ class Device(object):
         self._rpyc_process = None
         self._rpyc_connection = None
         self._android = None
+        self._resources = None
 
     #---------------------------------------------------------------------------------------
     # Setup chrooted Linux on real device
@@ -43,8 +45,9 @@ class Device(object):
                 continue
 
             type    = ["", "-t %s" % mount.get("type", "")]["type" in mount]
-            options = ["", "-o %s" % mount.get("options")]["options" in mount]
+            options = ["", "-o %s" % mount.get("options")]["opions" in mount]
             self.android.adb.cmd("shell mount %s %s %s %s" % (type, options, mount["dev"], mount["path"]))
+
 
     def _chroot_run(self, cmdline, shell = True):
         if self._android is None:
@@ -113,6 +116,7 @@ class Device(object):
         log.info("Linux IP = %s" % (self._linux_ip,))
         self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection)
         self._linux.start()
+        self._resources = Resources(self.android.adb)
 
     def stop(self):
         self.desktop_stop()
@@ -133,3 +137,7 @@ class Device(object):
     @property
     def linux(self):
         return self._linux
+
+    @property
+    def resources(self):
+        return self._resources

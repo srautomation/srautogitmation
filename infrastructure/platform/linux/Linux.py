@@ -1,6 +1,5 @@
 from Shell import Shell
 from UI import UI
-from Resources import Resources
 from Accessibility import Accessibility
 from Apps import Apps
 
@@ -15,7 +14,6 @@ class Linux(object):
         self._shell         = None
         self._accessibility = None
         self._ui            = None
-        self._resources     = None
         self._browser       = None
         self._apps          = None
 
@@ -24,7 +22,6 @@ class Linux(object):
         self._shell.shell("ln -s /run/shm /dev/shm", infrastructure = True)
         self._accessibility = Accessibility(self._rpyc, self._shell)
         self._ui = UI(self._rpyc, self._shell, self._ip)
-        self._resources = Resources(self._rpyc, self._shell)
         self._apps = Apps(self._rpyc, self._shell, self._ui, self._ip)
 
         self._shell.start()
@@ -49,10 +46,6 @@ class Linux(object):
     @property
     def ui(self):
         return self._ui
-
-    @property
-    def resources(self):
-        return self._resources
 
     @property
     def apps(self):

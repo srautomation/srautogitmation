@@ -13,6 +13,10 @@ class Resources(object):
         self._adb = adb
         self._resources_handler = CollectorHandler()
         self._samples = []
+        self._own_pids = set()
+
+    def set_own_pids(self, pids = []):
+        self._own_pids = set(pids)
     
     def _parse(self, lines):
         cpu = Bunch(zip(["user", "nice", "system", "idle", "iowait", "irq", "softirq", "steal", "guest", "guest_nice"], map(int, lines[0].split(' ')[2:])))
@@ -42,6 +46,12 @@ class Resources(object):
         current.delta.processes = delta_processes
         return current
 
+    def _factor_out_own_processes(self, sample):
+        self._own_pids = self._own_pids.intersection(sample.processes.keys())
+        own_cpu = sum([process.cpu.percent for (pid, process) in sample.processes.items() if pid in self._own_pids])
+        sample.cpu.percent -= own_cpu
+        return sample
+
     def _input(self, pattern = None):
         sample = self._parse(self._adb.cmd('shell', Resources.COMMAND).stdout.readlines())
         sample.time = time.time()
@@ -49,7 +59,7 @@ class Resources(object):
         if len(self._samples) < Resources.SAMPLES_DELTA:
             return None
         sample_oldest = self._samples.pop(0)
-        sample = self._diff(sample, sample_oldest)
+        sample = self._factor_out_own_processes(self._diff(sample, sample_oldest))
         log.warn("CPU Percent = %f" % sample.cpu.percent)
         return sample
 
