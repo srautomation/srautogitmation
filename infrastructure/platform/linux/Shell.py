@@ -41,7 +41,6 @@ class Shell(object):
     def is_running(self, name):
         process_list = [process for process in self._psutil.get_process_list() if process.is_running() == True]
         processes_names = [process.name() for process in process_list]
-        print processes_names
         if name in processes_names:
             return True
         return False
@@ -52,6 +51,14 @@ class Shell(object):
                 return True
             time.sleep(Shell.WAIT_DELAY)
 
+    def is_running_by_short_name(self, short_name):
+        return (0 == self.shell(cmdline = "cat /proc/*/stat | grep %s" % short_name, infrastructure = True).wait())
+
+    def wait_process_by_short_name(self, short_name):
+        while not self.is_running_by_short_name(short_name):
+            time.sleep(Shell.WAIT_DEALY)
+        return True
+    
     @property
     def processes(self):
         self._processes = {pid:process for (pid, process) in self._processes.items() if process.is_running()}

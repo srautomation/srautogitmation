@@ -58,22 +58,22 @@ class Device(object):
         chroot_cmdline = 'USER=root DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
         return self.android.adb.cmd("shell " + chroot_cmdline)
 
-    def _wait_rpyc_port(self, address):
-        while True:
-            try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.connect((address, 18812))
-                s.close()
-                break
-            except socket.error, e:
-                continue
+    def _is_rpyc_running(self):
+        return (0 < len(self.android.adb.cmd('shell "cat /proc/*/stat 2>/dev/null | grep rpyc_classic.py"').stdout.read()))
+
+    def _is_rpyc_listening(self):
+        return (0 < len(self.android.adb.cmd('shell "netstat | grep 0.0.0.0:18812 | grep LISTEN"').stdout.read()))
 
     def _start_connect_rpyc(self):
-        if (len(self._chroot_run("ps -a | grep -v grep | grep rpyc_classic.py").stdout.read()) == 0):
+        if (not self._is_rpyc_running()):
             log.info("RPyC start")
             self._rpyc_process = self._chroot_run("rpyc_classic.py", shell = False)
+        while (not self._is_rpyc_running()):
+            time.sleep(0.01)
+        while (not self._is_rpyc_listening()):
+            time.sleep(0.01)
+        time.sleep(0.5)
         ip = self.android.interfaces[Device.DEFAULT_RPYC_INTERFACE].ip
-        self._wait_rpyc_port(ip) 
         log.info("RPyC connect")
         rpyc_connection = rpyc.classic.connect(ip)
         return (ip, rpyc_connection)
