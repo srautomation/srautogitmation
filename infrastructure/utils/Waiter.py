@@ -1,5 +1,4 @@
 import threading
-from gevent import Timeout
 
 class Handler(object):
     def __init__(self):

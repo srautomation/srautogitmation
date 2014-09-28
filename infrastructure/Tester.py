@@ -1,6 +1,5 @@
 from utils import TimeIt
 from Device import Device
-from gevent import Timeout, with_timeout
 import time
 
 from logbook import Logger
@@ -19,7 +18,12 @@ class Tester(object):
 
     def timeout(self, timeout):
         log.info("Timeout started at: %s for %f seconds" % (time.ctime(), timeout))
-        return Timeout(timeout, False)
+        class wrapper(object):
+            def __enter__(_self):
+                pass
+            def __exit__(_self, type, value, tb):
+                pass
+        return wrapper()
 
 if __name__ == "__main__":
     device_serial = "MedfieldB60440E1"

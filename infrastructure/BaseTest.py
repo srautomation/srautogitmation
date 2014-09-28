@@ -1,4 +1,3 @@
-from gevent import monkey; monkey.patch_all(aggressive = False)
 from Tester import Tester
 import slash
 
