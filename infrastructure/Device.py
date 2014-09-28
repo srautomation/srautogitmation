@@ -114,9 +114,9 @@ class Device(object):
         else:
             self._rpyc_connection = rpyc.classic.connect(self._linux_ip)
         log.info("Linux IP = %s" % (self._linux_ip,))
-        self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection)
-        self._linux.start()
         self._resources = Resources(self.android.adb)
+        self._linux = Linux.Linux(self._linux_ip, self._rpyc_connection, self)
+        self._linux.start()
 
     def stop(self):
         self.desktop_stop()

@@ -10,11 +10,12 @@ class Shell(object):
             "GTK_MODULES":     "gail:atk-bridge",
             "XDG_RUNTIME_DIR": "/tmp/"}
 
-    def __init__(self, rpyc):
+    def __init__(self, rpyc, resources):
         self._rpyc     = rpyc
         self._psutil   = self._rpyc.modules.psutil
         self._os       = self._rpyc.modules.os
         self._rpyc_process = self._psutil.Process()
+        self._resources = resources
         self._processes     = {self._rpyc_process.pid: self._rpyc_process}
         self._own_processes = {self._rpyc_process.pid: self._rpyc_process}
 
@@ -33,6 +34,7 @@ class Shell(object):
         self._processes[process.pid] = process
         if infrastructure is True:
             self._own_processes[process.pid] = process
+            self._resources.set_own_pids(self._own_processes.keys())
         return process
 
     def shell(self, cmdline, env = None, infrastructure = False):
@@ -56,7 +58,7 @@ class Shell(object):
 
     def wait_process_by_short_name(self, short_name):
         while not self.is_running_by_short_name(short_name):
-            time.sleep(Shell.WAIT_DEALY)
+            time.sleep(Shell.WAIT_DELAY)
         return True
     
     @property

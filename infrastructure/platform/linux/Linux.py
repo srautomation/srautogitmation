@@ -7,9 +7,10 @@ from logbook import Logger
 log = Logger("Linux")
 
 class Linux(object):
-    def __init__(self, ip, rpyc):
+    def __init__(self, ip, rpyc, device):
         self._ip   = ip
         self._rpyc = rpyc
+        self._device = device
 
         self._shell         = None
         self._accessibility = None
@@ -18,7 +19,7 @@ class Linux(object):
         self._apps          = None
 
     def start(self):
-        self._shell = Shell(self._rpyc)
+        self._shell = Shell(self._rpyc, self._device.resources)
         self._shell.shell("ln -s /run/shm /dev/shm", infrastructure = True)
         self._accessibility = Accessibility(self._rpyc, self._shell)
         self._ui = UI(self._rpyc, self._shell, self._ip)
