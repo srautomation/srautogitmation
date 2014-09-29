@@ -102,6 +102,8 @@ class BasicTests(PerformanceBaseTest):
         self.totem.open('movie.avi')
         time.sleep(10)
         self.totem.toggle_play_pause()
+        time.sleep(5)
+        self.totem.stop()
 
     def dummy(self):
         pass
