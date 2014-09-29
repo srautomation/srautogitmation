@@ -2,7 +2,8 @@
 
 from infrastructure.BaseTest import BaseTest
 from infrastructure.PerformanceBaseTest import PerformanceBaseTest
-from infrastructure.platform.linux.Applications import Chromium, Leafpad, Evince, Firefox, Browser
+from infrastructure.platform.linux.Applications import Chromium, Leafpad, Evince, Firefox,\
+ Browser, Totem, Lxmusic
 from infrastructure.platform.linux.Applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -16,7 +17,7 @@ class BasicTests(PerformanceBaseTest):
         with self.tester.timeit.measure():
             with self.linux.resources.measure():
                     test(*test_params)
-#                    code.interact(local = locals())
+                    code.interact(local = locals())
                     time.sleep(5)
             
         mes = self.linux.resources.measured
@@ -94,10 +95,18 @@ class BasicTests(PerformanceBaseTest):
         self.linux.browser.start()
         self.linux.browser.go('cnn.com')
 
+    def totem_play_movie(self):
+        self.totem = Totem.Totem(self.linux.cmd, self.linux.ui)
+        self.totem.start()
+        time.sleep(9)
+        self.totem.open('movie.avi')
+        time.sleep(10)
+        self.totem.toggle_play_pause()
+
+    def dummy(self):
+        pass
+
     def test(self):
-        with self.measure(self.calc_open_spreadsheet):
-            self.calc_open_spreadsheet()
-        return
         slash.log.set_log_color('my_logger', slash.logbook.NOTICE, "purple")
         '''
         tests = {   
@@ -107,10 +116,11 @@ class BasicTests(PerformanceBaseTest):
                     self.chromium_open_nytimes : [],
                     self.writer_open_doc : [],
                     self.calc_open_spreadsheet : [],
-                    self.impress_start_presentation : []
+                    self.impress_start_presentation : [],
+                    self.totem_play_movie : []
                 }
         '''
-        tests = { self.impress_start_presentation : [] }
+        tests = { self.totem_play_movie : [] }
         
         for test in tests:
             slash.logger.notice('Starting test: %s ....' % test.__name__)
