@@ -3,7 +3,7 @@
 from infrastructure.BaseTest import BaseTest
 from infrastructure.PerformanceBaseTest import PerformanceBaseTest
 from infrastructure.platform.linux.Applications import Chromium, Leafpad, Evince, Firefox,\
- Browser, Totem, Lxmusic
+ Browser, Totem
 from infrastructure.platform.linux.Applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -15,12 +15,12 @@ class BasicTests(PerformanceBaseTest):
     def generic_test(self, test, *test_params):
         ''' runs a test and prints measurements '''
         with self.tester.timeit.measure():
-            with self.linux.resources.measure():
+            with self.device.resources.measure():
                     test(*test_params)
                     code.interact(local = locals())
                     time.sleep(5)
             
-        mes = self.linux.resources.measured
+        mes = self.device.resources.measured
         slash.logger.notice("Finished generic test for %s" % test.func_name) 
         slash.logger.notice("============================================")
         slash.logger.notice("Test took: %f seconds to complete" % self.tester.timeit.measured)
