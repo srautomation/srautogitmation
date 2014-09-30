@@ -15,7 +15,6 @@ class Linux(object):
         self._shell         = None
         self._accessibility = None
         self._ui            = None
-        self._browser       = None
         self._apps          = None
 
     def start(self):

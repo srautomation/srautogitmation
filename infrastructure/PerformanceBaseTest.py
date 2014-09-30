@@ -15,12 +15,12 @@ class PerformanceBaseTest(BaseTest):
                 log.notice("Starting Measurement of action: %s" % function_to_measure.func_name)
                 _self.timer = self.tester.timeit.measure()
                 _self.timer.__enter__()
-                _self.meter = self.linux.resources.measure()
+                _self.meter = self.device.resources.measure()
                 _self.meter.__enter__()
             def __exit__(_self, type, value, tb):
                 _self.timer.__exit__(None, None, None)
                 _self.meter.__exit__(None, None, None)
-                mes = self.linux.resources.measured
+                mes = self.device.resources.measured
                 log.notice("Finished Measurement")
                 log.notice("action took: %f seconds to complete" % self.tester.timeit.measured)
                 slash.logger.notice("Resources measurements results:")
