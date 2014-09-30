@@ -2,8 +2,8 @@ import Application
 import time
 
 class Evince(Application._Editor):
-    def __init__(self, cmd, ui):
-        super(Evince, self).__init__(cmd, ui, 'evince', 'evince')
+    def __init__(self, linux):
+        super(Evince, self).__init__(linux, 'evince', 'evince')
     
     def open(self, file):
         '''file has to be in /root '''

@@ -1,11 +1,8 @@
 import datetime
 
-class Thunderbird(object):
-    def __init__(self, rpyc, ui):
-        self._rpyc = rpyc
-        self._mailbox = self._rpyc.modules.mailbox
-        self._ui = ui
-        self._predicate = ui.dogtail.predicate.GenericPredicate
+class Thunderbird(_Application):
+    def __init__(self, linux):
+        super(Thunderbird, self).__init__(linux, "thunderbird")
         self._application = None
         self._main_frame  = None
         self._compose_frame = None
@@ -42,9 +39,9 @@ class Thunderbird(object):
     #-------------------------------------------
     # GUI automation
     def start(self):
-        self._application = self._ui.dogtail.tree.root.application("Thunderbird")
+        super(Thunderbird, self).start()
+        self._application = self._dogtail.tree.root.application("Thunderbird")
         self._main_frame = [x for x in self._application.findChildren(self._predicate(roleName = "frame")) if x.name.endswith("Mozilla Thunderbird")][0]
-
 
     def inbox(self):
         self._item = [x for x in self._main_frame.findChildren(self._predicate(roleName = "list item")) if x.name.startswith("Inbox")][0]

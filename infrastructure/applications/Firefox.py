@@ -1,9 +1,9 @@
-import Application
+from Application import _Application
 import time
 
-class Firefox(Application._Application):
-    def __init__(self, cmd, ui):
-        super(Firefox, self).__init__(cmd, ui, 'firefox', 'killall firefox')
+class Firefox(_Application):
+    def __init__(self, linux):
+        super(Firefox, self).__init__(linux, 'firefox', 'killall firefox')
             
     def start(self, url = ''):
         self._start_cmd = self._start_cmd + ' ' + url

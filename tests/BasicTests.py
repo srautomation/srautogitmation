@@ -2,9 +2,8 @@
 
 from infrastructure.BaseTest import BaseTest
 from infrastructure.PerformanceBaseTest import PerformanceBaseTest
-from infrastructure.platform.linux.Applications import Chromium, Leafpad, Evince, Firefox,\
- Browser, Totem
-from infrastructure.platform.linux.Applications.Libreoffice import Writer, Calc, Impress
+from infrastructure.applications.Applications import Chromium, Leafpad, Evince, Firefox, Browser, Totem
+from infrastructure.applications.Applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
 import time
@@ -30,12 +29,12 @@ class BasicTests(PerformanceBaseTest):
         slash.logger.notice("battery: AVG=%d, MAX=%d, MIN=%d" % (mes.bat.avg, mes.bat.max, mes.bat.min))
 
     def chromium_open_nytimes(self):
-        self.chromium = Chromium.Chromium(self.linux.cmd, self.linux.ui)
+        self.chromium = Chromium.Chromium(self.linux)
         self.chromium.start('nytimes.com')
         time.sleep(7)
 
     def writer_open_doc(self):
-        writer = Writer.Writer(self.linux.cmd, self.linux.ui)
+        writer = Writer.Writer(self.linux)
         writer.start()
         time.sleep(9)
         writer.open('Alice.odt')
@@ -46,14 +45,14 @@ class BasicTests(PerformanceBaseTest):
         writer.stop()
 
     def calc_open_spreadsheet(self):
-        calc = Calc.Calc(self.linux.cmd, self.linux.ui)
+        calc = Calc.Calc(self.linux)
         calc.start('/root/DoctorWho.xlsx')
         time.sleep(9)
         calc.capitalize()
         calc.stop()
 
     def impress_start_presentation(self):
-        impress = Impress.Impress(self.linux.cmd, self.linux.ui)
+        impress = Impress.Impress(self.linux)
         impress.start()
         time.sleep(7)
         impress.open('humor-business.ppt')
@@ -63,7 +62,7 @@ class BasicTests(PerformanceBaseTest):
         impress.stop()
 
     def leafpad_open_file(self):
-        self.leafpad = Leafpad.Leafpad(self.linux.cmd, self.linux.ui)
+        self.leafpad = Leafpad.Leafpad(self.linux)
         self.leafpad.start()
         self.leafpad.write_text('lets open a text file')
         time.sleep(4)
@@ -72,7 +71,7 @@ class BasicTests(PerformanceBaseTest):
         self.leafpad.stop()
     
     def evince_open_pdf_save_as(self):
-        self.evince = Evince.Evince(self.linux.cmd, self.linux.ui)
+        self.evince = Evince.Evince(self.linux)
         self.evince.start()
         time.sleep(2)
         self.evince.open('example_pdf.pdf')
@@ -82,7 +81,7 @@ class BasicTests(PerformanceBaseTest):
         self.evince.stop()
 
     def firefox_open_cnn_then_world(self):
-        self.firefox = Firefox.Firefox(self.linux.cmd, self.linux.ui)
+        self.firefox = Firefox.Firefox(self.linux)
         self.firefox.start()
         time.sleep(10)
         self.firefox.open('cnn.com')
@@ -96,7 +95,7 @@ class BasicTests(PerformanceBaseTest):
         self.linux.browser.go('cnn.com')
 
     def totem_play_movie(self):
-        self.totem = Totem.Totem(self.linux.cmd, self.linux.ui)
+        self.totem = Totem.Totem(self.linux)
         self.totem.start()
         time.sleep(9)
         self.totem.open('movie.avi')

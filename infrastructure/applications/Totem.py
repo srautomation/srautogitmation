@@ -2,8 +2,8 @@ import time
 from Application import _Application
 
 class Totem(_Application):
-    def __init__(self, cmd, ui):
-        super(Totem, self).__init__(cmd, ui, "totem")
+    def __init__(self, linux):
+        super(Totem, self).__init__(linux, "totem")
 
     def open(self, movie):
         app = self._dogtail.tree.root.application('totem')

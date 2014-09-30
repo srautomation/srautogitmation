@@ -53,6 +53,9 @@ class Shell(object):
                 return True
             time.sleep(Shell.WAIT_DELAY)
 
+    def is_pid_running(self, pid):
+        return str(pid) in self._os.listdir("/proc")
+
     def is_running_by_short_name(self, short_name):
         return (0 == self.shell(cmdline = "cat /proc/*/stat | grep %s" % short_name, infrastructure = True).wait())
 

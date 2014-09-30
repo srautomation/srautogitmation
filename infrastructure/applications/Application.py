@@ -1,25 +1,25 @@
 import time
 
 class _Application(object):
-    def __init__(self, cmd, ui, start_cmd, stop_cmd = None):
-        self._cmd = cmd
-        self._ldtp = ui.ldtp
-        self._dogtail = ui.dogtail
+    def __init__(self, linux, start_cmd, stop_cmd = None):
+        self._linux = linux
+        self._ldtp = self._linux.ui.ldtp
+        self._dogtail = self._linux.ui.dogtail
         self._start_cmd = start_cmd
         self._stop_cmd = stop_cmd
         self._process = None
 
     def start(self):
-        self._process = self._cmd(self._start_cmd)
+        self._process = self._linux.shell.cmd(self._start_cmd)
 
     def stop(self):
         if self._process:
             if self._stop_cmd:
-                self._cmd(self._stop_cmd)
+                self._linux.shell.cmd(self._stop_cmd)
             else:
                 self._process.terminate()
                 time.sleep(2)
-                if (0 != self._cmd('ls /proc/' + str(self._process.pid)).wait()): # if not killed
+                if (self._linux.shell.is_pid_running(self._process.pid)):
                     self._process.kill()
 
     def _find_children(self, app, name = None, roleName = None):

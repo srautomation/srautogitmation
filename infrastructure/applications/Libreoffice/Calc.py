@@ -2,8 +2,8 @@ from infrastructure.platform.linux.Applications.Application import _Editor
 import time
 
 class Calc(_Editor):
-    def __init__(self, cmd, ui):
-        super(Calc, self).__init__(cmd, ui, 'libreoffice --calc --norestore', 'killall oosplash')
+    def __init__(self, linux):
+        super(Calc, self).__init__(linux, 'libreoffice --calc --norestore', 'killall oosplash')
 
     '''
     def open(self, doc):

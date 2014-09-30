@@ -2,8 +2,8 @@ from infrastructure.platform.linux.Applications.Application import _Editor
 import time
 
 class Impress(_Editor):
-    def __init__(self, cmd, ui):
-        super(Impress, self).__init__(cmd, ui, 'libreoffice --impress --norestore', 'killall oosplash')
+    def __init__(self, linux):
+        super(Impress, self).__init__(linux, 'libreoffice --impress --norestore', 'killall oosplash')
 
     def open(self, doc):
         app = self._dogtail.tree.root.application('soffice')
