@@ -1,4 +1,4 @@
-from infrastructure.platform.linux.Applications.Application import _Editor
+from infrastructure.applications.Application import _Editor
 import time
 
 class Impress(_Editor):
