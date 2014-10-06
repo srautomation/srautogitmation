@@ -1,9 +1,9 @@
 #!/bin/bash
 echo "Changing adb to wifi mode..."
-adb tcpip 5555
+adb tcpip 5555 # TODO: 
 if adb devices | grep Medfield &> /dev/null; then
 	echo "Please disconnect phone from usb... <CR>"
 	read
 fi
-adb connect 192.168.1.62
-slash run -o log.console_level=1 tests/BasicTests.py
+adb connect 192.168.1.62 # TODO: change this - no constant IPs
+slash run -o log.console_level=1 tests/basic_suite/BasicTests.py
