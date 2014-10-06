@@ -1,7 +1,6 @@
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
-
-from infrastructure.BaseTest import BaseTest
-from infrastructure.PerformanceBaseTest import PerformanceBaseTest
+from tests.base.BaseTest import BaseTest
+from tests.base.PerformanceBaseTest import PerformanceBaseTest
 from infrastructure.applications.Applications import Chromium, Leafpad, Evince, Firefox, Browser, Totem
 from infrastructure.applications.Applications.Libreoffice import Writer, Calc, Impress
 import slash
