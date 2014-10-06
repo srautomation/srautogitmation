@@ -1,5 +1,5 @@
 from logbook import Logger
-from infrastructure.BaseTest import BaseTest
+from BaseTest import BaseTest
 import slash
 
 log = Logger("PerformanceBaseTest")

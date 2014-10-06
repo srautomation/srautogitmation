@@ -1,4 +1,4 @@
-from Tester import Tester
+from infrastructure.Tester import Tester
 import slash
 
 class BaseTest(slash.Test):
