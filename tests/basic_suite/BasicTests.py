@@ -8,6 +8,7 @@ import slash.log
 import time
 import IPython #TODO: use IPython insted of code
 import code
+import os
 
 class BasicTests(PerformanceBaseTest):
     def generic_test(self, test, *test_params):
@@ -26,6 +27,9 @@ class BasicTests(PerformanceBaseTest):
         slash.logger.notice("cpu: AVG=%f, MAX=%f, MIN=%f" % (mes.cpu.avg, mes.cpu.max, mes.cpu.min))        
         slash.logger.notice("memory: AVG=%d, MAX=%d, MIN=%d" % (mes.mem.avg, mes.mem.max, mes.mem.min))
         slash.logger.notice("battery: AVG=%d, MAX=%d, MIN=%d" % (mes.bat.avg, mes.bat.max, mes.bat.min))
+
+    def resource(self, name):
+        return os.path.join(os.environ["PROJECT_ROOT"], "tests", "basic_suite", "resources", name) # TODO: use __file__
 
     def chromium_open_nytimes(self):
         self.chromium = Chromium.Chromium(self.linux)
