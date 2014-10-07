@@ -1,9 +1,79 @@
 #!/bin/bash
-echo "Changing adb to wifi mode..."
-adb tcpip 5555 # TODO: 
-if adb devices | grep Medfield &> /dev/null; then
-	echo "Please disconnect phone from usb... <CR>"
-	read
+	
+# TODO: fix - check if device is connected via ip first
+
+DUT="Medfield"
+
+mode=$1 	# valid options - wifi, usb
+shift
+
+num_devices=$(adb devices | wc -l)
+is_connected=1
+
+case $mode in 
+	
+	wifi )
+		ip=$1 # second argument is ip
+		shift
+		num_devices=$(adb devices | wc -l)
+		# no devices connected	
+		if [ $num_devices -eq 2 ]
+			then
+			echo "adb: no device connected please connect DUT via usb and try again..."
+		
+		# only 1 device - either wifi or usb
+		elif [ $num_devices -eq 3 ]
+			then
+			if adb devices | grep $ip &> /dev/null
+				then
+				echo "adb: DUT connected via wifi..."
+				is_connected=0
+			elif adb devices | grep $DUT &> /dev/null
+				then
+				echo "adb: DUT not connected via wifi, connecting..."
+				adb tcpip 5555
+				echo "Connection succeeded, Please disconnect phone from usb... <Enter>"
+				read
+				adb connect $ip
+				is_connected=$?
+				if [ $is_connected -eq 0 ]
+					then
+					echo "Connection succeeded..."
+					read
+				else
+					echo "Connection failed, please try again..."
+					exit 1
+				fi
+			fi
+		# DUT connected via usb AND wifi
+		elif [ $num_devices -eq 4 ] && adb devices | grep $ip &> /dev/null && adb devices | grep $DUT &> /dev/null
+			then
+			echo "adb: DUT is connected via usb and wifi"
+			echo "Please disconnect phone from usb... <Enter>"
+			read
+		fi
+		;;
+	
+	usb )
+		
+		if [ $num_devices -eq 2 ]
+             then
+             echo "adb: no device connected please connect DUT via usb and try again..."
+        elif [ $num_devices -eq 3 ] && adb devices | grep $DUT
+			then
+			echo "adb: DUT connected via usb..."
+			is_connected=0
+		else
+			echo "Too many devices connected, disconnect DUT from wifi..."
+			exit 1
+		fi
+		;;
+
+esac
+
+if [ $is_connected -eq 0 ]
+	then
+	slash run -o log.console_level=0 tests/basic_suite/BasicTests.py $@
 fi
-adb connect 192.168.1.62 # TODO: change this - no constant IPs
-slash run -o log.console_level=1 tests/basic_suite/BasicTests.py
+
+exit 0
