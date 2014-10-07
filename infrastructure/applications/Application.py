@@ -10,12 +10,12 @@ class _Application(object):
         self._process = None
 
     def start(self):
-        self._process = self._linux.shell.cmd(self._start_cmd)
+        self._process = self._linux.shell.cmd(self._start_cmd.split(), shell = False)
 
     def stop(self):
         if self._process:
             if self._stop_cmd:
-                self._linux.shell.cmd(self._stop_cmd)
+                self._linux.shell.cmd(self._stop_cmd, shell = True)
             else:
                 self._process.terminate()
                 time.sleep(2)

@@ -1,7 +1,6 @@
-# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 from tests.base.BaseTest import BaseTest
 from tests.base.PerformanceBaseTest import PerformanceBaseTest
-from infrastructure.applications import Chromium, Leafpad, Evince, Firefox, Browser, Totem
+from infrastructure.applications import Chromium, Leafpad, Evince, Firefox, Browser, Totem, Lxmusic, Gpicview, Pcmanfm
 from infrastructure.applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -9,34 +8,61 @@ import time
 import IPython #TODO: use IPython insted of code
 import code
 import os
+import subprocess
+
+###############################################################################
+
+RESULTS_PATH = os.environ['RESULTS_PATH']
+RESOURCES_PATH = os.environ['RESOURCES_PATH']
+
+TEST_PATH = os.path.dirname(os.path.realpath(__file__)) # Path of current file
+RESULTS_PATH_LOCAL = os.path.join(TEST_PATH, 'results') # path of results inside the project
+RESOURCES_PATH_LOCAL = os.path.join(TEST_PATH, 'resources')
+
+RESOURCES_PATH_REMOTE = '/root' # Path of resources on DUT
+
+###############################################################################
+
+#TODO: fix session_start
+'''
+@slash.hooks.after_session_start.register # TODO: fix
+def session_start():
+    subprocess.Popen('adb push %s %s' % RESOURCES_PATH_LOCAL, RESOURCES_PATH_REMOTE,
+            shell = True)
+
+@slash.hooks.session_end.register
+def session_end():
+    for resource in os.listdir(RESOURCES_PATH_LOCAL):
+        subprocess.Popen('adb shell rm %s' % os.path.join(RESOURCES_PATH_REMOTE,
+            resource), shell = True)
+'''
 
 class BasicTests(PerformanceBaseTest):
-    def generic_test(self, test, *test_params):
-        ''' runs a test and prints measurements '''
-        with self.tester.timeit.measure():
-            with self.device.resources.measure():
-                    test(*test_params)
-                    code.interact(local = locals())
-                    time.sleep(5)
-            
-        mes = self.device.resources.measured
-        slash.logger.notice("Finished generic test for %s" % test.func_name) 
-        slash.logger.notice("============================================")
-        slash.logger.notice("Test took: %f seconds to complete" % self.tester.timeit.measured)
-        slash.logger.notice("Resources measurements results:")
-        slash.logger.notice("cpu: AVG=%f, MAX=%f, MIN=%f" % (mes.cpu.avg, mes.cpu.max, mes.cpu.min))        
-        slash.logger.notice("memory: AVG=%d, MAX=%d, MIN=%d" % (mes.mem.avg, mes.mem.max, mes.mem.min))
-        slash.logger.notice("battery: AVG=%d, MAX=%d, MIN=%d" % (mes.bat.avg, mes.bat.max, mes.bat.min))
+    def before(self):
+        super(BasicTests, self).before()
+        # TODO: mv sym link creation to session_start
+        subprocess.Popen('ln -s %s %s'  % (RESULTS_PATH, RESULTS_PATH_LOCAL), 
+            shell = True)
+        subprocess.Popen('ln -s %s %s'  % (RESOURCES_PATH, RESOURCES_PATH_LOCAL),
+            shell = True)
 
+    def after(self):
+        super(BasicTests, self).after()
+        # TODO: mv sym link deletion to session_end
+        subprocess.Popen('rm %s' % RESULTS_PATH_LOCAL, shell = True)
+        subprocess.Popen('rm %s' % RESOURCES_PATH_LOCAL, shell = True)
+   
     def resource(self, name):
-        return os.path.join(os.environ["PROJECT_ROOT"], "tests", "basic_suite", "resources", name) # TODO: use __file__
+        return os.path.join(TEST_PATH, "resources", name)
 
-    def chromium_open_nytimes(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_chromium_browse_text(self):
         self.chromium = Chromium.Chromium(self.linux)
         self.chromium.start('nytimes.com')
         time.sleep(7)
 
-    def writer_open_doc(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_writer_open_doc(self):
         writer = Writer.Writer(self.linux)
         writer.start()
         time.sleep(9)
@@ -47,14 +73,16 @@ class BasicTests(PerformanceBaseTest):
         writer.set_italic()
         writer.stop()
 
-    def calc_open_spreadsheet(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_calc_open_spreadsheet(self):
         calc = Calc.Calc(self.linux)
         calc.start('/root/DoctorWho.xlsx')
         time.sleep(9)
         calc.capitalize()
         calc.stop()
 
-    def impress_start_presentation(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_impress_start_presentation(self):
         impress = Impress.Impress(self.linux)
         impress.start()
         time.sleep(7)
@@ -63,8 +91,9 @@ class BasicTests(PerformanceBaseTest):
         impress.start_slideshow(10)
         time.sleep(4)
         impress.stop()
-
-    def leafpad_open_file(self):
+    
+    @PerformanceBaseTest.measure_entire_function
+    def test_leafpad_open_file(self):
         self.leafpad = Leafpad.Leafpad(self.linux)
         self.leafpad.start()
         self.leafpad.write_text('lets open a text file')
@@ -73,7 +102,8 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(5)
         self.leafpad.stop()
     
-    def evince_open_pdf_save_as(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_evince_open_pdf_save_as(self):
         self.evince = Evince.Evince(self.linux)
         self.evince.start()
         time.sleep(2)
@@ -83,7 +113,9 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(5)
         self.evince.stop()
 
-    def firefox_open_cnn_then_world(self):
+    # TODO: fix
+    @PerformanceBaseTest.measure_entire_function
+    def test_firefox_open_cnn_then_world(self):
         self.firefox = Firefox.Firefox(self.linux)
         self.firefox.start()
         time.sleep(10)
@@ -93,11 +125,8 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(20)
         self.firefox.stop()
 
-    def selenium(self):
-        self.linux.browser.start()
-        self.linux.browser.go('cnn.com')
-
-    def totem_play_movie(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_totem_play_movie(self):
         self.totem = Totem.Totem(self.linux)
         self.totem.start()
         time.sleep(9)
@@ -107,25 +136,71 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(5)
         self.totem.stop()
 
-    def dummy(self):
-        pass
+    @PerformanceBaseTest.measure_entire_function
+    def test_lxmusic_play_music(self):
+        lxmusic = Lxmusic.Lxmusic(self.linux)
+        lxmusic.start()
+        time.sleep(4)
+        lxmusic.play('Silence')
+        time.sleep(10)
+        lxmusic.pause()
+        time.sleep(3)
+        lxmusic.play('vivaldi.mp3')
+        time.sleep(10)
+        lxmusic.pause()
+        time.sleep(3)
+        lxmusic.stop()
 
-    def test(self):
+    @PerformanceBaseTest.measure_entire_function
+    def test_gpicview_browse_photos(self):
+        gpicview = Gpicview.Gpicview(self.linux)
+        gpicview.start()
+        gpicview.open('image.jpg')
+        time.sleep(4)
+        gpicview.next_photo()
+        time.sleep(4)
+        gpicview.zoom_in()
+        time.sleep(4)
+        gpicview.stop()
+
+    @PerformanceBaseTest.measure_entire_function
+    def test_pcmanfm_browse_dirs(self):
+        pcmanfm = Pcmanfm.Pcmanfm(self.linux)			
+        pcmanfm.start()
+        time.sleep(3)
+        pcmanfm.goto('/etc/apt')
+        time.sleep(5)
+        pcmanfm.goto('/home/labuser')
+        time.sleep(5)
+        pcmanfm.stop()
+
+    def thunderbird_compose():
+        raise NotImplementedError
+
+    def thunderbird_read_mail():
+        raise NotImplementedError
+
+    def dummy(self): # TODO: Erase
+        code.interact(local = locals())
+
+'''
+    def _test(self):
         slash.log.set_log_color('my_logger', slash.logbook.NOTICE, "purple")
-        '''
+         
         tests = {   
                     self.leafpad_open_file : [],
                     self.evince_open_pdf_save_as : [],
                     self.firefox_open_cnn_then_world : [],
-                    self.chromium_open_nytimes : [],
+                    self.chromium_browse_text : [],
                     self.writer_open_doc : [],
                     self.calc_open_spreadsheet : [],
                     self.impress_start_presentation : [],
-                    self.totem_play_movie : []
+                    self.totem_play_movie : [],
+                    self.lxmusic_play_music : [],
+                    self.gpicview_browse_photos : []
                 }
-        '''
-        tests = { self.totem_play_movie : [] }
         
         for test in tests:
             slash.logger.notice('Starting test: %s ....' % test.__name__)
-            self.generic_test(test)
+            self.generic_test(test, *tests[test])
+'''

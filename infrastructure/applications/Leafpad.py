@@ -3,7 +3,7 @@ import time
 
 class Leafpad(Application._Editor):
     def __init__(self, linux):
-        super(Leafpad, self).__init__(linux, 'leafpad', 'leafpad')
+        super(Leafpad, self).__init__(linux, 'leafpad')
 
     def write_text(self, text):
         app = self._dogtail.tree.root.application('leafpad')

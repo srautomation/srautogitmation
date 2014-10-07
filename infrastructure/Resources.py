@@ -59,7 +59,7 @@ class Resources(object):
             return None
         sample_oldest = self._samples.pop(0)
         sample = self._factor_out_own_processes(self._diff(sample, sample_oldest))
-        log.warn("CPU Percent = %f, own = %f" % (sample.cpu.percent, sample.cpu.own))
+        #log.warn("CPU Percent = %f, own = %f" % (sample.cpu.percent, sample.cpu.own))
         return sample
 
     def measure(self, pattern = None):
