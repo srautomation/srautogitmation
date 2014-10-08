@@ -1,6 +1,6 @@
 from tests.base.BaseTest import BaseTest
 from tests.base.PerformanceBaseTest import PerformanceBaseTest
-from infrastructure.applications import Chromium, Leafpad, Evince, Firefox, Browser, Totem, Lxmusic, Gpicview, Pcmanfm
+from infrastructure.applications import Leafpad, Evince, Firefox, Browser, Totem, Lxmusic, Gpicview, Pcmanfm
 from infrastructure.applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -53,13 +53,36 @@ class BasicTests(PerformanceBaseTest):
         subprocess.Popen('rm %s' % RESOURCES_PATH_LOCAL, shell = True)
    
     def resource(self, name):
-        return os.path.join(TEST_PATH, "resources", name)
+        return os.path.join(TEST_PATH, 'resources', name)
+
+    def init_chromium(self):
+        browser = Browser.Browser(self.linux)
+        browser.start()
+        return browser.chromium
 
     @PerformanceBaseTest.measure_entire_function
     def test_chromium_browse_text(self):
-        self.chromium = Chromium.Chromium(self.linux)
-        self.chromium.start('nytimes.com')
+        chrome = self.init_chromium()
+        chrome.get('http://www.theguardian.com')
+        chrome.find_element_by_link_text('World').click()
+        chrome.find_element_by_link_text('Middle East').click()
         time.sleep(7)
+        chrome.find_element_by_link_text('Sport').click()
+        chrome.find_element_by_link_text('Cricket').click()
+#        code.interact(local=locals())
+    
+    @PerformanceBaseTest.measure_entire_function
+    def test_chromium_stream_youtube(self):
+        chrome = self.init_chromium()
+        chrome.get('http://www.youtube.com/')
+        search_text = chrome.find_element_by_id("masthead-search-term")
+        search_text.click()
+        search_text.send_keys("funny cats")
+        chrome.find_element_by_id("search-btn").click()
+        time.sleep(25)
+        funny_cats_video = chrome.find_element_by_partial_link_text("Epic")
+        funny_cats_video.click()
+ 
 
     @PerformanceBaseTest.measure_entire_function
     def test_writer_open_doc(self):
@@ -94,47 +117,47 @@ class BasicTests(PerformanceBaseTest):
     
     @PerformanceBaseTest.measure_entire_function
     def test_leafpad_open_file(self):
-        self.leafpad = Leafpad.Leafpad(self.linux)
-        self.leafpad.start()
-        self.leafpad.write_text('lets open a text file')
+        leafpad = Leafpad.Leafpad(self.linux)
+        leafpad.start()
+        leafpad.write_text('lets open a text file')
         time.sleep(4)
-        self.leafpad.open('example.txt')
+        leafpad.open('example.txt')
         time.sleep(5)
-        self.leafpad.stop()
+        leafpad.stop()
     
     @PerformanceBaseTest.measure_entire_function
     def test_evince_open_pdf_save_as(self):
-        self.evince = Evince.Evince(self.linux)
-        self.evince.start()
+        evince = Evince.Evince(self.linux)
+        evince.start()
         time.sleep(2)
-        self.evince.open('example_pdf.pdf')
+        evince.open('example_pdf.pdf')
         time.sleep(3)
-        self.evince.save_copy('myNewCopy')
+        evince.save_copy('myNewCopy')
         time.sleep(5)
-        self.evince.stop()
+        evince.stop()
 
     # TODO: fix
     @PerformanceBaseTest.measure_entire_function
     def test_firefox_open_cnn_then_world(self):
-        self.firefox = Firefox.Firefox(self.linux)
-        self.firefox.start()
+        firefox = Firefox.Firefox(self.linux)
+        firefox.start()
         time.sleep(10)
-        self.firefox.open('cnn.com')
+        firefox.open('cnn.com')
         time.sleep(12)
-        self.firefox.press_visible_link('World Sport')
+        firefox.press_visible_link('World Sport')
         time.sleep(20)
-        self.firefox.stop()
+        firefox.stop()
 
     @PerformanceBaseTest.measure_entire_function
     def test_totem_play_movie(self):
-        self.totem = Totem.Totem(self.linux)
-        self.totem.start()
+        totem = Totem.Totem(self.linux)
+        totem.start()
         time.sleep(9)
-        self.totem.open('movie.avi')
+        totem.open('movie.avi')
         time.sleep(10)
-        self.totem.toggle_play_pause()
+        totem.toggle_play_pause()
         time.sleep(5)
-        self.totem.stop()
+        totem.stop()
 
     @PerformanceBaseTest.measure_entire_function
     def test_lxmusic_play_music(self):
@@ -165,7 +188,7 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_pcmanfm_browse_dirs(self):
-        pcmanfm = Pcmanfm.Pcmanfm(self.linux)			
+        pcmanfm = Pcmanfm.Pcmanfm(self.linux)
         pcmanfm.start()
         time.sleep(3)
         pcmanfm.goto('/etc/apt')

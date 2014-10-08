@@ -1,8 +1,6 @@
 #!/bin/bash
 	
-# TODO: fix - check if device is connected via ip first
-
-DUT="Medfield"
+DUT="Medfield" # TODO: should be passed as argument
 
 mode=$1 	# valid options - wifi, usb
 shift

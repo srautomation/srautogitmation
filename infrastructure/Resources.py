@@ -98,15 +98,18 @@ class Resources(object):
                         collected = [x.mem.used for (t, x) in self._resources_handler.collected]
                     elif _self.action == "bat":
                         collected = [x.bat.percent for (t, x) in self._resources_handler.collected]
-
+                    
                     if name == "all":
                         return collected
-                    elif name == "max":
-                        return max(collected)
-                    elif name == "min":
-                        return min(collected)
-                    elif name == "avg":
-                        return 1.0 * sum(collected) / len(collected)
+                    if collected:
+                        if name == "max":
+                            return max(collected)
+                        elif name == "min":
+                            return min(collected)
+                        elif name == "avg":
+                            return 1.0 * sum(collected) / len(collected)
+                    else: return 0
+
                 else:
                     return getattr(_self, name)
         return _Measured()

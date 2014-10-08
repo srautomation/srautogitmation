@@ -1,4 +1,5 @@
-from infrastructure.BaseTest import BaseTest
+from tests.base.BaseTest import BaseTest
+from infrastructure.applications.Browser import Browser
 import slash
 import time
 import code
@@ -7,8 +8,9 @@ class Example2(BaseTest):
     def test_play_funny_cats_video_on_youtube(self):
         with self.tester.timeit.measure():
             #time.sleep(10)
-            self.linux.browser.start()
-            chrome = self.linux.browser.chromium
+            browser = Browser(self.linux)
+            browser.start()
+            chrome = browser.chromium
         slash.logger.info("Open chromium took %f seconds" % (self.tester.timeit.measured))
 
         with self.tester.timeit.measure():
@@ -32,7 +34,8 @@ class Example2(BaseTest):
             funny_cats_video.click()
         slash.logger.info("Funny cats video took: %f seconds" % (self.tester.timeit.measured))
 #        chrome.save_screenshot("/root/4.png")
-
+       
+        time.sleep(10)
         last_strong_tag = chrome.find_elements_by_tag_name("strong")[-1]
         slash.should.be(last_strong_tag.text.endswith('Published on Feb 6, 2013'), True)
-
+        code.interact(local = locals())

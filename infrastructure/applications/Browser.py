@@ -7,8 +7,8 @@ log = Logger("Browser")
 class Browser(object):
     CHROMEDRIVER_RPC_PORT = 12356
     def __init__(self, linux):
-        self._cmd  = cmd
-        self._ip   = ip
+        self._cmd  = linux.shell.cmd
+        self._ip   = linux._ip # TODO: fix private _ip
         self._process = None
         self._driver  = None
 

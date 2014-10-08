@@ -1,13 +1,17 @@
 + applications: Insert Lxmusic, Pcmanfm, Gpicview
 + PerformanceBaseTest: measure_and_validate() and validate()
-- run_usb and run_wifi they should also mount resources and results directories and umount
-- upgrade run_usb and run_wifi to check if device is connected first
-- BasicTests: move resources to the DUT in before()
++ upgrade run_usb and run_wifi to check if device is connected first
+- BasicTests: before and after session: mount results/ and resources/ and move resources/* to DUT, then erase them
 + results: migrate view_results
 + Collector: change name to Dumper and migrate
 + applications: shell=False in linux.cmd
-- mount resources and results from remote locations in before() and after()
 + BasicTests: update
 - Where to put cpu,mem,bat thresholds and RESULTS_FILE?
-- change functions names to test_*
-- limit DUT resolution to 720p
++ change functions names to test_*
++ limit DUT resolution to 720p
+- Should DUT resolution limit be automatic?
+- create central configuration location with defaults and ability to pass from command line (thresholds, etc...)
+- Resources: fix bug: ValueError: max() arg is an empty sequence - what to do? save sample?
+- Totem - "could not initialize supporting library"
+- How to debug errors inside tests??? 
+- log printed in UTC time
