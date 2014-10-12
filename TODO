@@ -15,3 +15,4 @@
 - Totem - "could not initialize supporting library"
 - How to debug errors inside tests??? 
 - log printed in UTC time
+- work as root in DUT to fix issues with Totem and Lxmusic

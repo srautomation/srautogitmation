@@ -8,9 +8,13 @@ class _Application(object):
         self._start_cmd = start_cmd
         self._stop_cmd = stop_cmd
         self._process = None
+        self._shell = False # TODO: handle cases of _shell=True with process group
 
     def start(self):
-        self._process = self._linux.shell.cmd(self._start_cmd.split(), shell = False)
+        cmd = self._start_cmd
+        if not self._shell: # if shell = False, cmd has to be split
+            cmd = cmd.split()
+        self._process = self._linux.shell.cmd(cmd, shell = self._shell)
 
     def stop(self):
         if self._process:

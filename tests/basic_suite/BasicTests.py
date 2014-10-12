@@ -36,7 +36,7 @@ def session_end():
 class BasicTests(PerformanceBaseTest):
     def before(self):
         self.config = slash.config.serialize_to_dict()['basic_suite'] # configuration of basic_suite
-
+        self.browser = None
         super(BasicTests, self).before()
         
         # TODO: mv sym link creation to session_start
@@ -44,6 +44,7 @@ class BasicTests(PerformanceBaseTest):
             shell = True)
         subprocess.Popen('ln -s %s %s'  % (self.config['resources_path'], RESOURCES_PATH_LOCAL),
             shell = True)
+        
 
     def after(self):
         super(BasicTests, self).after()
@@ -55,9 +56,9 @@ class BasicTests(PerformanceBaseTest):
         return os.path.join(TEST_PATH, 'resources', name)
 
     def init_chromium(self):
-        browser = Browser.Browser(self.linux)
-        browser.start()
-        return browser.chromium
+        self.browser = Browser.Browser(self.linux)
+        self.browser.start()
+        return self.browser.chromium
 
     @PerformanceBaseTest.measure_entire_function
     def test_chromium_browse_text(self):
@@ -68,8 +69,8 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(7)
         chrome.find_element_by_link_text('Sport').click()
         chrome.find_element_by_link_text('Cricket').click()
-#        code.interact(local=locals())
-    
+        self.browser.stop()
+ 
     @PerformanceBaseTest.measure_entire_function
     def test_chromium_stream_youtube(self):
         chrome = self.init_chromium()
@@ -81,7 +82,8 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(25)
         funny_cats_video = chrome.find_element_by_partial_link_text("Epic")
         funny_cats_video.click()
- 
+        time.sleep(15)
+        self.browser.stop()
 
     @PerformanceBaseTest.measure_entire_function
     def test_writer_open_doc(self):
