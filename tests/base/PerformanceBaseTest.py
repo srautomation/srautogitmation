@@ -7,7 +7,7 @@ import datetime
 log = Logger("PerformanceBaseTest")
 
 ################################################################
-CSV_FILE = "tests/basic_suite/results/measurements.csv"
+
 SAMPLES_DESCRIPTION =   ("application", 
                         "action", 
                         "start_date", 
@@ -15,16 +15,13 @@ SAMPLES_DESCRIPTION =   ("application",
                         "cpu", 
                         "memory", 
                         "battery")
-TIME_MAX = 300
-CPU_MAX = 0.9
-MEM_MAX = 995000000
-BAT_MAX = (0.25*1.05) / 60 # battery usage per second of DUT
+
 ################################################################
 
 class PerformanceBaseTest(BaseTest):
     def before(self):
         super(PerformanceBaseTest, self).before()
-        self.dumper = Dumper(CSV_FILE, *SAMPLES_DESCRIPTION)
+        self.dumper = Dumper(self.config['results_csv'], *SAMPLES_DESCRIPTION)
     
     def after(self):
         super(PerformanceBaseTest, self).after()
@@ -68,7 +65,10 @@ class PerformanceBaseTest(BaseTest):
                         SAMPLES_DESCRIPTION[6] : self.bat_usage }
 
                 self.dumper.append(**sample)
-                self._verify_measurements(TIME_MAX, CPU_MAX, MEM_MAX, BAT_MAX)
+                self._verify_measurements(self.config['time_max'],
+                        self.config['cpu_max'],
+                        self.config['mem_max'],
+                        self.config['bat_max'])
 
         return wrapper()
 

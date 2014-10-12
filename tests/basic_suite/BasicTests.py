@@ -1,6 +1,7 @@
 from tests.base.BaseTest import BaseTest
 from tests.base.PerformanceBaseTest import PerformanceBaseTest
-from infrastructure.applications import Leafpad, Evince, Firefox, Browser, Totem, Lxmusic, Gpicview, Pcmanfm
+from infrastructure.applications import Leafpad, Evince, Firefox, Browser, Totem,\
+Lxmusic, Gpicview, Pcmanfm
 from infrastructure.applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -12,14 +13,9 @@ import subprocess
 
 ###############################################################################
 
-RESULTS_PATH = os.environ['RESULTS_PATH']
-RESOURCES_PATH = os.environ['RESOURCES_PATH']
-
-TEST_PATH = os.path.dirname(os.path.realpath(__file__)) # Path of current file
+TEST_PATH = os.path.dirname(os.path.realpath(__file__)) # path of current file
 RESULTS_PATH_LOCAL = os.path.join(TEST_PATH, 'results') # path of results inside the project
-RESOURCES_PATH_LOCAL = os.path.join(TEST_PATH, 'resources')
-
-RESOURCES_PATH_REMOTE = '/root' # Path of resources on DUT
+RESOURCES_PATH_LOCAL = os.path.join(TEST_PATH, 'resources') # path of resources inside the project
 
 ###############################################################################
 
@@ -39,11 +35,14 @@ def session_end():
 
 class BasicTests(PerformanceBaseTest):
     def before(self):
+        self.config = slash.config.serialize_to_dict()['basic_suite'] # configuration of basic_suite
+
         super(BasicTests, self).before()
+        
         # TODO: mv sym link creation to session_start
-        subprocess.Popen('ln -s %s %s'  % (RESULTS_PATH, RESULTS_PATH_LOCAL), 
+        subprocess.Popen('ln -s %s %s'  % (self.config['results_path'], RESULTS_PATH_LOCAL), 
             shell = True)
-        subprocess.Popen('ln -s %s %s'  % (RESOURCES_PATH, RESOURCES_PATH_LOCAL),
+        subprocess.Popen('ln -s %s %s'  % (self.config['resources_path'], RESOURCES_PATH_LOCAL),
             shell = True)
 
     def after(self):

@@ -1,5 +1,3 @@
 #!/bin/sh
 export PROJECT_ROOT=`pwd`
-export PYTHONPATH=`pwd`:$PYTHONPATH
-export RESULTS_PATH=`pwd`/../tests/basic_suite/results
-export RESOURCES_PATH=`pwd`/../tests/basic_suite/resources
+export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH

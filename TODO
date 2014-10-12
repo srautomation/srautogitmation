@@ -6,11 +6,11 @@
 + Collector: change name to Dumper and migrate
 + applications: shell=False in linux.cmd
 + BasicTests: update
-- Where to put cpu,mem,bat thresholds and RESULTS_FILE?
++ Where to put cpu,mem,bat thresholds and RESULTS_FILE?
 + change functions names to test_*
 + limit DUT resolution to 720p
 - Should DUT resolution limit be automatic?
-- create central configuration location with defaults and ability to pass from command line (thresholds, etc...)
++ create central configuration location with defaults and ability to pass from command line (thresholds, etc...)
 - Resources: fix bug: ValueError: max() arg is an empty sequence - what to do? save sample?
 - Totem - "could not initialize supporting library"
 - How to debug errors inside tests??? 
