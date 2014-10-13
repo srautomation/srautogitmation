@@ -7,7 +7,7 @@ from logbook import Logger
 log = Logger("Resources")
 
 class Resources(object):
-    COMMAND = '"head -1 /proc/stat; head -2 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null"'
+    COMMAND = '"head -1 /proc/stat; head -4 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null"'
     SAMPLES_DELTA = 15
     def __init__(self, adb):
         self._adb = adb
@@ -22,11 +22,11 @@ class Resources(object):
         cpu = Bunch(zip(["user", "nice", "system", "idle", "iowait", "irq", "softirq", "steal", "guest", "guest_nice"], map(int, lines[0].split(' ')[2:])))
         cpu.total  = cpu.user + cpu.nice + cpu.system + cpu.idle + cpu.iowait + cpu.irq + cpu.softirq + cpu.steal + cpu.guest + cpu.guest_nice
         cpu.active = cpu.total - (cpu.idle + cpu.iowait)
-        mem = Bunch(zip(["total", "free"], [int(line.split(' ')[-2]) for line in lines[1:3]]))
-        mem.used = mem.total - mem.free
-        bat = Bunch(percent = int(lines[3]) / 100.0)
+        mem = Bunch(zip(["total", "free", "buffers", "cache"], [int(line.split(' ')[-2]) for line in lines[1:5]]))
+        mem.used = mem.total - mem.free - mem.buffers - mem.cache
+        bat = Bunch(percent = int(lines[5]) / 100.0)
         processes = {}
-        for line in lines[4:]:
+        for line in lines[6:]:
             cols = line.split(' ')
             pid, user, system = map(int, [cols[0], cols[13], cols[14]])
             processes[pid] = Bunch(cpu = Bunch(user = user, system = system))
