@@ -36,6 +36,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(7)
         chrome.find_element_by_link_text('Sport').click()
         chrome.find_element_by_link_text('Cricket').click()
+        time.sleep(20)
         self.browser.stop()
  
     @PerformanceBaseTest.measure_entire_function
@@ -49,7 +50,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(25)
         funny_cats_video = chrome.find_element_by_partial_link_text("Epic")
         funny_cats_video.click()
-        time.sleep(15)
+        time.sleep(30)
         self.browser.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -62,6 +63,7 @@ class BasicTests(PerformanceBaseTest):
         writer.set_bold()
         time.sleep(2)
         writer.set_italic()
+        time.sleep(20)
         writer.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -70,6 +72,7 @@ class BasicTests(PerformanceBaseTest):
         calc.start('/root/DoctorWho.xlsx')
         time.sleep(9)
         calc.capitalize()
+        time.sleep(20)
         calc.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -81,6 +84,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(10)
         impress.start_slideshow(10)
         time.sleep(4)
+        time.sleep(20)
         impress.stop()
     
     @PerformanceBaseTest.measure_entire_function
@@ -91,6 +95,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(4)
         leafpad.open('example.txt')
         time.sleep(5)
+        time.sleep(20)
         leafpad.stop()
     
     @PerformanceBaseTest.measure_entire_function
@@ -101,7 +106,7 @@ class BasicTests(PerformanceBaseTest):
         evince.open('example_pdf.pdf')
         time.sleep(3)
         evince.save_copy('myNewCopy')
-        time.sleep(5)
+        time.sleep(20)
         evince.stop()
 
     # TODO: fix
@@ -113,7 +118,7 @@ class BasicTests(PerformanceBaseTest):
         firefox.open('cnn.com')
         time.sleep(12)
         firefox.press_visible_link('World Sport')
-        time.sleep(20)
+        time.sleep(30)
         firefox.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -124,7 +129,7 @@ class BasicTests(PerformanceBaseTest):
         totem.open('movie.avi')
         time.sleep(10)
         totem.toggle_play_pause()
-        time.sleep(5)
+        time.sleep(20)
         totem.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -139,7 +144,7 @@ class BasicTests(PerformanceBaseTest):
         lxmusic.play('vivaldi.mp3')
         time.sleep(10)
         lxmusic.pause()
-        time.sleep(3)
+        time.sleep(20)
         lxmusic.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -151,7 +156,7 @@ class BasicTests(PerformanceBaseTest):
         gpicview.next_photo()
         time.sleep(4)
         gpicview.zoom_in()
-        time.sleep(4)
+        time.sleep(20)
         gpicview.stop()
 
     @PerformanceBaseTest.measure_entire_function
@@ -162,9 +167,10 @@ class BasicTests(PerformanceBaseTest):
         pcmanfm.goto('/etc/apt')
         time.sleep(5)
         pcmanfm.goto('/home/labuser')
-        time.sleep(5)
+        time.sleep(20)
         pcmanfm.stop()
 
+    # TODO: add fixture to launch imapapp
     @PerformanceBaseTest.measure_entire_function
     def test_thunderbird_compose(self):
         tb = Thunderbird.Thunderbird(self.linux)
@@ -179,9 +185,10 @@ class BasicTests(PerformanceBaseTest):
         composer.body("This is the email's body")
         time.sleep(3)
         composer.save()
-        time.sleep(5)
+        time.sleep(20)
         tb.stop() 
 
+    # TODO: add fixture to launch imapapp
     @PerformanceBaseTest.measure_entire_function
     def test_thunderbird_browse(self):
         tb = Thunderbird.Thunderbird(self.linux)
@@ -194,7 +201,7 @@ class BasicTests(PerformanceBaseTest):
         tb.inbox()
         time.sleep(3)
         tb.trash()
-        time.sleep(3)
+        time.sleep(20)
         tb.stop()
 
     def dummy(self): # TODO: Erase
