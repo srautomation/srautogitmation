@@ -1,4 +1,6 @@
 import datetime
+from Application import _Application
+import time
 
 class Thunderbird(_Application):
     def __init__(self, linux):
@@ -6,6 +8,7 @@ class Thunderbird(_Application):
         self._application = None
         self._main_frame  = None
         self._compose_frame = None
+        self._predicate = self._dogtail.predicate.GenericPredicate
 
     #-------------------------------------------
     # Mailbox files inspection
@@ -40,20 +43,27 @@ class Thunderbird(_Application):
     # GUI automation
     def start(self):
         super(Thunderbird, self).start()
+        time.sleep(10) 
         self._application = self._dogtail.tree.root.application("Thunderbird")
         self._main_frame = [x for x in self._application.findChildren(self._predicate(roleName = "frame")) if x.name.endswith("Mozilla Thunderbird")][0]
 
-    def inbox(self):
-        self._item = [x for x in self._main_frame.findChildren(self._predicate(roleName = "list item")) if x.name.startswith("Inbox")][0]
+    def _folder(self, folder):
+        try:
+            self._item = [x for x in self._main_frame.findChildren(self._predicate(roleName = "list item")) if x.name.startswith(folder)][0]
+        except IndexError as e:
+            tab = [x for x in self._main_frame.findChildren(self._predicate(roleName = "page tab"))][0]
+            tab.click()
+            self._item = [x for x in self._main_frame.findChildren(self._predicate(roleName = "list item")) if x.name.startswith(folder)][0]
         self._item.click()
+    
+    def inbox(self):
+        self._folder("Inbox")
 
     def drafts(self):
-        self._item = [x for x in self._main_frame.findChildren(self._predicate(roleName = "list item")) if x.name.startswith("Drafts")][0]
-        self._item.click()
+        self._folder("Drafts")
 
     def trash(self):
-        self._item = [x for x in self._main_frame.findChildren(self._predicate(roleName = "list item")) if x.name.startswith("Trash")][0]
-        self._item.click()
+        self._folder("Trash")
 
     def mails(self):
         mails = []

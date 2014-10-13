@@ -1,7 +1,7 @@
 from tests.base.BaseTest import BaseTest
 from tests.base.PerformanceBaseTest import PerformanceBaseTest
 from infrastructure.applications import Leafpad, Evince, Firefox, Browser, Totem,\
-Lxmusic, Gpicview, Pcmanfm
+Lxmusic, Gpicview, Pcmanfm, Thunderbird
 from infrastructure.applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -165,11 +165,35 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(5)
         pcmanfm.stop()
 
-    def thunderbird_compose():
-        raise NotImplementedError
+    def test_thunderbird_compose(self):
+        tb = Thunderbird.Thunderbird(self.linux)
+        tb.start()
+        time.sleep(5)
+        composer = tb.compose()
+        time.sleep(4)
+        composer.to(('example@example.com',))
+        time.sleep(3)
+        composer.subject('This is a Subject')
+        time.sleep(3)
+        composer.body("This is the email's body")
+        time.sleep(3)
+        composer.save()
+        time.sleep(5)
+        tb.stop() 
 
-    def thunderbird_read_mail():
-        raise NotImplementedError
+    def test_thunderbird_browse(self):
+        tb = Thunderbird.Thunderbird(self.linux)
+        tb.start()
+        time.sleep(5)
+        tb.drafts()
+        time.sleep(3)
+        tb.search('yoyoyo')
+        time.sleep(3)
+        tb.inbox()
+        time.sleep(3)
+        tb.trash()
+        time.sleep(3)
+        tb.stop()
 
     def dummy(self): # TODO: Erase
         code.interact(local = locals())
