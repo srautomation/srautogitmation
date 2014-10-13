@@ -24,7 +24,7 @@ class Resources(object):
         cpu.active = cpu.total - (cpu.idle + cpu.iowait)
         mem = Bunch(zip(["total", "free"], [int(line.split(' ')[-2]) for line in lines[1:3]]))
         mem.used = mem.total - mem.free
-        bat = Bunch(percent = 0)#int(lines[3]))
+        bat = Bunch(percent = int(lines[3]) / 100.0)
         processes = {}
         for line in lines[4:]:
             cols = line.split(' ')

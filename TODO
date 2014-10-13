@@ -1,7 +1,6 @@
 + applications: Insert Lxmusic, Pcmanfm, Gpicview
 + PerformanceBaseTest: measure_and_validate() and validate()
 + upgrade run_usb and run_wifi to check if device is connected first
-- BasicTests: before and after session: mount results/ and resources/ and move resources/* to DUT, then erase them
 + results: migrate view_results
 + Collector: change name to Dumper and migrate
 + applications: shell=False in linux.cmd
@@ -13,6 +12,11 @@
 + create central configuration location with defaults and ability to pass from command line (thresholds, etc...)
 - Resources: fix bug: ValueError: max() arg is an empty sequence - what to do? save sample?
 - Totem - "could not initialize supporting library"
-- How to debug errors inside tests??? 
 - log printed in UTC time
-- work as root in DUT to fix issues with Totem and Lxmusic
+- work as  labuser DUT to fix issues with Totem and Lxmusic
++ put all symbolic linking to externals in env
++ change .slashrc and run_Wifi, run_usb to be suite specific
++ .slashrc config part should be called "config"
+- measure execution of actions, not functions
+- measure memory used by applications, not cache
+- create mechanism to move resources to DUT upon request...
