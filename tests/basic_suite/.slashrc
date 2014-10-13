@@ -19,10 +19,10 @@ config = {
         },
         
         'thresholds' : {
-            'cpu_max'               : 0.9,
-            'mem_max'               : 995000000,
-            'bat_max'               : (0.25*1.05) / 60, # battery usage per second of DUT
-            'time_max'              : 300
+            'cpu_max'   : 0.9,
+            'mem_max'   : 900000000,
+            'bat_max'   : (0.25*1.05) / 60, # (=0.004375) batt use per sec. (out of 100)
+            'time_max'  : 0 
 
         }
 }

@@ -165,6 +165,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(5)
         pcmanfm.stop()
 
+    @PerformanceBaseTest.measure_entire_function
     def test_thunderbird_compose(self):
         tb = Thunderbird.Thunderbird(self.linux)
         tb.start()
@@ -181,6 +182,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(5)
         tb.stop() 
 
+    @PerformanceBaseTest.measure_entire_function
     def test_thunderbird_browse(self):
         tb = Thunderbird.Thunderbird(self.linux)
         tb.start()

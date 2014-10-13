@@ -5,8 +5,10 @@ import os
 from BaseTest import BaseTest
 from infrastructure.utils.Dumper import Dumper
 import slash
+from slash import config
 
 log = Logger("PerformanceBaseTest")
+conf = config.root
 
 ################################################################
 
@@ -23,15 +25,18 @@ SAMPLES_DESCRIPTION =   ("application",
 class PerformanceBaseTest(BaseTest):
     def before(self):
         super(PerformanceBaseTest, self).before()
-        results_file = os.path.join(slash.config.root.paths.results,
-                slash.config.root.paths.results_file)
+        results_file = os.path.join(conf.paths.results, conf.paths.results_file)
         self.dumper = Dumper(results_file, *SAMPLES_DESCRIPTION)
     
     def after(self):
         super(PerformanceBaseTest, self).after()
         self.dumper.save()
     
-    def measure_and_verify(self, application, action):
+    def measure_and_verify(self, application, action, 
+            cpu_max = conf.thresholds.cpu_max, 
+            mem_max = conf.thresholds.mem_max, 
+            bat_max = conf.thresholds.bat_max, 
+            time_max = conf.thresholds.time_max):
         '''
             Measures both execution time and resources consumption,
             logs the results and validates them.
@@ -52,7 +57,7 @@ class PerformanceBaseTest(BaseTest):
                 _self.timer.__exit__(None, None, None)
                 _self.meter.__exit__(None, None, None)
                 mes = self.device.resources.measured
-                self.bat_usage = (mes.bat.max - mes.bat.min) / 60 * 100 # battery usage per second
+                self.bat_usage = (mes.bat.max - mes.bat.min) / self.tester.timeit.measured * 100 # battery usage per second
 
                 log.notice("Finished Measurement")
                 log.notice("action took: %f seconds to complete" % self.tester.timeit.measured)
@@ -69,10 +74,7 @@ class PerformanceBaseTest(BaseTest):
                         SAMPLES_DESCRIPTION[6] : self.bat_usage }
 
                 self.dumper.append(**sample)
-                self._verify_measurements(slash.config.root.thresholds.time_max,
-                        slash.config.root.thresholds.cpu_max,
-                        slash.config.root.thresholds.mem_max,
-                        slash.config.root.thresholds.bat_max)
+                self._verify_measurements(time_max, cpu_max, mem_max, bat_max)
 
         return wrapper()
 
@@ -81,14 +83,15 @@ class PerformanceBaseTest(BaseTest):
             Verifies that no resource excedded its maximum value
         '''
         mes = self.device.resources.measured
-        slash.should.be(self.tester.timeit.measured < time_max, True, 
-                "Test took too much time to complete: %f" % self.tester.timeit.measured)
-        slash.should.be(mes.cpu.avg < cpu_max, True, 
+        if time_max:
+            slash.should.be(self.tester.timeit.measured < time_max, True, 
+                    "Test took too much time to complete: %f" % self.tester.timeit.measured)
+            slash.should.be(mes.cpu.avg < cpu_max, True, 
                 "Test cpu utilization passed threshold: %f" % mes.cpu.avg)
         slash.should.be(mes.mem.avg < mem_max, True, 
                 "Test memory usage passed threshold: %f" % mes.mem.avg)
         slash.should.be(self.bat_usage < bat_max, True, 
-                "Test battery usage passed threshold: %f" % mes.bat.avg)
+                "Test battery usage passed threshold: %f" % self.bat_usage)
 
     @staticmethod
     def measure_entire_function(fn):
