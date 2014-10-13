@@ -1,0 +1,4 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+../../run usb -vvv BasicTests.py "$@"
+cd -

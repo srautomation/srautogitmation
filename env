@@ -1,3 +1,5 @@
 #!/bin/sh
 export PROJECT_ROOT=`pwd`
 export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH
+
+ln -f -s ../externals ./externals

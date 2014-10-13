@@ -1,0 +1,4 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+../../run wifi 192.168.1.62 -vvv BasicTests.py "$@"
+cd -

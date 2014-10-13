@@ -1,0 +1,30 @@
+import slash
+import os
+from os import path
+
+project_root = os.getenv('PROJECT_ROOT')
+suite_name = path.basename(path.dirname(path.abspath(__file__)))
+externals = 'externals'
+
+config = {
+        
+        'paths' : {
+            'results' : path.join(project_root, externals, suite_name, 'results'),
+            'resources' : path.join(project_root, externals, suite_name, 'resources'),
+            'resources_remote' : '/root', # Path of resources on DUT
+            'results_file' : 'measurements.csv',
+            'suite_name' : suite_name,
+            'project_root' : project_root,
+            'externals' : externals
+        },
+        
+        'thresholds' : {
+            'cpu_max'               : 0.9,
+            'mem_max'               : 995000000,
+            'bat_max'               : (0.25*1.05) / 60, # battery usage per second of DUT
+            'time_max'              : 300
+
+        }
+}
+
+slash.config.extend(config)

@@ -56,7 +56,7 @@ case $mode in
                 then
                 echo "adb: no device connected please connect DUT via usb and try again..."
             
-            elif [ $num_devices -eq 3 ] && adb devices | grep $DUT
+            elif [ $num_devices -eq 3 ] && adb devices | grep $DUT &> /dev/null
 		then
 		echo "adb: DUT connected via usb..."
 		is_connected=0
@@ -70,7 +70,7 @@ esac
 
 if [ $is_connected -eq 0 ]
 	then
-	slash run -o log.console_level=0 tests/basic_suite/BasicTests.py "$@"
+	slash run "$@"
 fi
 
 exit 0

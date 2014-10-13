@@ -11,48 +11,15 @@ import code
 import os
 import subprocess
 
-###############################################################################
-
-TEST_PATH = os.path.dirname(os.path.realpath(__file__)) # path of current file
-RESULTS_PATH_LOCAL = os.path.join(TEST_PATH, 'results') # path of results inside the project
-RESOURCES_PATH_LOCAL = os.path.join(TEST_PATH, 'resources') # path of resources inside the project
-
-###############################################################################
-
-#TODO: fix session_start
-'''
-@slash.hooks.after_session_start.register # TODO: fix
-def session_start():
-    subprocess.Popen('adb push %s %s' % RESOURCES_PATH_LOCAL, RESOURCES_PATH_REMOTE,
-            shell = True)
-
-@slash.hooks.session_end.register
-def session_end():
-    for resource in os.listdir(RESOURCES_PATH_LOCAL):
-        subprocess.Popen('adb shell rm %s' % os.path.join(RESOURCES_PATH_REMOTE,
-            resource), shell = True)
-'''
-
 class BasicTests(PerformanceBaseTest):
     def before(self):
-        self.config = slash.config.serialize_to_dict()['basic_suite'] # configuration of basic_suite
         self.browser = None
         super(BasicTests, self).before()
         
-        # TODO: mv sym link creation to session_start
-        subprocess.Popen('ln -s %s %s'  % (self.config['results_path'], RESULTS_PATH_LOCAL), 
-            shell = True)
-        subprocess.Popen('ln -s %s %s'  % (self.config['resources_path'], RESOURCES_PATH_LOCAL),
-            shell = True)
-        
-
     def after(self):
         super(BasicTests, self).after()
-        # TODO: mv sym link deletion to session_end
-        subprocess.Popen('rm %s' % RESULTS_PATH_LOCAL, shell = True)
-        subprocess.Popen('rm %s' % RESOURCES_PATH_LOCAL, shell = True)
    
-    def resource(self, name):
+    def resource(self, name): #TODO
         return os.path.join(TEST_PATH, 'resources', name)
 
     def init_chromium(self):
@@ -206,25 +173,3 @@ class BasicTests(PerformanceBaseTest):
 
     def dummy(self): # TODO: Erase
         code.interact(local = locals())
-
-'''
-    def _test(self):
-        slash.log.set_log_color('my_logger', slash.logbook.NOTICE, "purple")
-         
-        tests = {   
-                    self.leafpad_open_file : [],
-                    self.evince_open_pdf_save_as : [],
-                    self.firefox_open_cnn_then_world : [],
-                    self.chromium_browse_text : [],
-                    self.writer_open_doc : [],
-                    self.calc_open_spreadsheet : [],
-                    self.impress_start_presentation : [],
-                    self.totem_play_movie : [],
-                    self.lxmusic_play_music : [],
-                    self.gpicview_browse_photos : []
-                }
-        
-        for test in tests:
-            slash.logger.notice('Starting test: %s ....' % test.__name__)
-            self.generic_test(test, *tests[test])
-'''

@@ -1,8 +1,10 @@
 from logbook import Logger
+import datetime
+import os
+
 from BaseTest import BaseTest
 from infrastructure.utils.Dumper import Dumper
 import slash
-import datetime
 
 log = Logger("PerformanceBaseTest")
 
@@ -21,7 +23,9 @@ SAMPLES_DESCRIPTION =   ("application",
 class PerformanceBaseTest(BaseTest):
     def before(self):
         super(PerformanceBaseTest, self).before()
-        self.dumper = Dumper(self.config['results_csv'], *SAMPLES_DESCRIPTION)
+        results_file = os.path.join(slash.config.root.paths.results,
+                slash.config.root.paths.results_file)
+        self.dumper = Dumper(results_file, *SAMPLES_DESCRIPTION)
     
     def after(self):
         super(PerformanceBaseTest, self).after()
@@ -48,14 +52,14 @@ class PerformanceBaseTest(BaseTest):
                 _self.timer.__exit__(None, None, None)
                 _self.meter.__exit__(None, None, None)
                 mes = self.device.resources.measured
-                self.bat_usage = (mes.bat.max - mes.bat.min) / 60 # battery usage per second
+                self.bat_usage = (mes.bat.max - mes.bat.min) / 60 * 100 # battery usage per second
 
                 log.notice("Finished Measurement")
                 log.notice("action took: %f seconds to complete" % self.tester.timeit.measured)
                 slash.logger.notice("Resources measurements results:")
                 slash.logger.notice("cpu: AVG=%f, MAX=%f, MIN=%f" % (mes.cpu.avg, mes.cpu.max, mes.cpu.min))        
                 slash.logger.notice("memory: AVG=%d, MAX=%d, MIN=%d" % (mes.mem.avg, mes.mem.max, mes.mem.min))
-                slash.logger.notice("battery: AVG=%d, MAX=%d, MIN=%d" % (mes.bat.avg, mes.bat.max, mes.bat.min))
+                slash.logger.notice("battery: AVG=%f, MAX=%f, MIN=%f" % (mes.bat.avg, mes.bat.max, mes.bat.min))
                 sample = { SAMPLES_DESCRIPTION[0] : application,
                         SAMPLES_DESCRIPTION[1] : action,
                         SAMPLES_DESCRIPTION[2] : _self.date,
@@ -65,10 +69,10 @@ class PerformanceBaseTest(BaseTest):
                         SAMPLES_DESCRIPTION[6] : self.bat_usage }
 
                 self.dumper.append(**sample)
-                self._verify_measurements(self.config['time_max'],
-                        self.config['cpu_max'],
-                        self.config['mem_max'],
-                        self.config['bat_max'])
+                self._verify_measurements(slash.config.root.thresholds.time_max,
+                        slash.config.root.thresholds.cpu_max,
+                        slash.config.root.thresholds.mem_max,
+                        slash.config.root.thresholds.bat_max)
 
         return wrapper()
 
