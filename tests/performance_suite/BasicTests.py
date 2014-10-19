@@ -1,5 +1,7 @@
 from tests.base.BaseTest import BaseTest
 from tests.base.PerformanceBaseTest import PerformanceBaseTest
+from tests.base.BrowserBaseTest import BrowserBaseTest
+from tests.base.EmailBaseTest import EmailBaseTest
 from infrastructure.applications import Leafpad, Evince, Firefox, Browser, Totem,\
 Lxmusic, Gpicview, Pcmanfm, Thunderbird
 from infrastructure.applications.Libreoffice import Writer, Calc, Impress
@@ -11,21 +13,13 @@ import code
 import os
 import subprocess
 
-class BasicTests(PerformanceBaseTest):
+class BasicTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
     def before(self):
         self.browser = None
         super(BasicTests, self).before()
         
     def after(self):
         super(BasicTests, self).after()
-   
-    def resource(self, name): #TODO
-        return os.path.join(TEST_PATH, 'resources', name)
-
-    def init_chromium(self):
-        self.browser = Browser.Browser(self.linux)
-        self.browser.start()
-        return self.browser.chromium
 
     @PerformanceBaseTest.measure_entire_function
     def test_chromium_browse_text(self):
@@ -55,10 +49,12 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_writer_open_doc(self):
+        DOC = 'Alice.odt'
+        self.prep_resource(DOC)
         writer = Writer.Writer(self.linux)
         writer.start()
         time.sleep(9)
-        writer.open('Alice.odt')
+        writer.open(DOC)
         time.sleep(5)
         writer.set_bold()
         time.sleep(2)
@@ -68,8 +64,11 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_calc_open_spreadsheet(self):
+        SPREADSHEET = 'DoctorWho.xlsx'
+        self.prep_resource(SPREADSHEET)
         calc = Calc.Calc(self.linux)
-        calc.start('/root/DoctorWho.xlsx')
+        calc.start(os.path.join(slash.config.root.paths.resources_remote,
+            SPREADSHEET))
         time.sleep(9)
         calc.capitalize()
         time.sleep(20)
@@ -77,10 +76,12 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_impress_start_presentation(self):
+        PRESENTATION = 'humor-business.ppt'
+        self.prep_resource(PRESENTATION)
         impress = Impress.Impress(self.linux)
         impress.start()
         time.sleep(7)
-        impress.open('humor-business.ppt')
+        impress.open(PRESENTATION)
         time.sleep(10)
         impress.start_slideshow(10)
         time.sleep(4)
@@ -89,21 +90,25 @@ class BasicTests(PerformanceBaseTest):
     
     @PerformanceBaseTest.measure_entire_function
     def test_leafpad_open_file(self):
+        TXT = 'example.txt'
+        self.prep_resource(TXT)
         leafpad = Leafpad.Leafpad(self.linux)
         leafpad.start()
         leafpad.write_text('lets open a text file')
         time.sleep(4)
-        leafpad.open('example.txt')
+        leafpad.open(TXT)
         time.sleep(5)
         time.sleep(20)
         leafpad.stop()
     
     @PerformanceBaseTest.measure_entire_function
     def test_evince_open_pdf_save_as(self):
+        PDF = 'example_pdf.pdf'
+        self.prep_resource(PDF)
         evince = Evince.Evince(self.linux)
         evince.start()
         time.sleep(2)
-        evince.open('example_pdf.pdf')
+        evince.open(PDF)
         time.sleep(3)
         evince.save_copy('myNewCopy')
         time.sleep(20)
@@ -123,10 +128,12 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_totem_play_movie(self):
+        MOVIE = 'movie.avi'
+        self.prep_resource(MOVIE)
         totem = Totem.Totem(self.linux)
         totem.start()
         time.sleep(9)
-        totem.open('movie.avi')
+        totem.open(MOVIE)
         time.sleep(10)
         totem.toggle_play_pause()
         time.sleep(20)
@@ -134,6 +141,8 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_lxmusic_play_music(self):
+        TRACK = 'vivaldi.mp3'
+        self.prep_resource(TRACK)
         lxmusic = Lxmusic.Lxmusic(self.linux)
         lxmusic.start()
         time.sleep(4)
@@ -141,7 +150,7 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(10)
         lxmusic.pause()
         time.sleep(3)
-        lxmusic.play('vivaldi.mp3')
+        lxmusic.play(TRACK)
         time.sleep(10)
         lxmusic.pause()
         time.sleep(20)
@@ -149,9 +158,11 @@ class BasicTests(PerformanceBaseTest):
 
     @PerformanceBaseTest.measure_entire_function
     def test_gpicview_browse_photos(self):
+        PHOTO = 'image.jpg'
+        self.prep_resource(PHOTO)
         gpicview = Gpicview.Gpicview(self.linux)
         gpicview.start()
-        gpicview.open('image.jpg')
+        gpicview.open(PHOTO)
         time.sleep(4)
         gpicview.next_photo()
         time.sleep(4)
@@ -170,9 +181,10 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(20)
         pcmanfm.stop()
 
-    # TODO: add fixture to launch imapapp
     @PerformanceBaseTest.measure_entire_function
     def test_thunderbird_compose(self):
+        if not self.start_imapapp():
+            slash.skip_test("Couldn't start ImapApp") 
         tb = Thunderbird.Thunderbird(self.linux)
         tb.start()
         time.sleep(5)
@@ -188,9 +200,10 @@ class BasicTests(PerformanceBaseTest):
         time.sleep(20)
         tb.stop() 
 
-    # TODO: add fixture to launch imapapp
     @PerformanceBaseTest.measure_entire_function
     def test_thunderbird_browse(self):
+        if not self.start_imapapp():
+            slash.skip_test("Couldn't start ImapApp") 
         tb = Thunderbird.Thunderbird(self.linux)
         tb.start()
         time.sleep(5)

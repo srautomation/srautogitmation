@@ -1,21 +1,26 @@
 import slash
+from datetime import datetime
 import os
 from os import path
 
 project_root = os.getenv('PROJECT_ROOT')
 suite_name = path.basename(path.dirname(path.abspath(__file__)))
 externals = 'externals'
+dut_chroot = '/data/debian'
+resources_remote = 'root'
 
 config = {
         
         'paths' : {
             'results' : path.join(project_root, externals, suite_name, 'results'),
             'resources' : path.join(project_root, externals, suite_name, 'resources'),
-            'resources_remote' : '/root', # Path of resources on DUT
+            'resources_remote' : path.join('/', resources_remote), # Path of resources on DUT
+            'resources_remote_adb' : path.join(dut_chroot, resources_remote),
             'results_file' : 'measurements.csv',
             'suite_name' : suite_name,
             'project_root' : project_root,
-            'externals' : externals
+            'externals' : externals,
+            'chroot' : dut_chroot
         },
         
         'thresholds' : {
@@ -27,4 +32,9 @@ config = {
         }
 }
 
+slash.config.root.log.root = config['paths']['results']
+slash.config.root.log.localtime = True
+timestamp = datetime.now().strftime('%d-%m-%y_%H-%M-%S')
+slash.config.root.log.subpath = timestamp + "/{context.test}/log"
+slash.config.root.log.session_subpath = timestamp + "/session.log"
 slash.config.extend(config)

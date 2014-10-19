@@ -18,5 +18,6 @@
 + change .slashrc and run_Wifi, run_usb to be suite specific
 + .slashrc config part should be called "config"
 - measure execution of actions, not functions
-- measure memory used by applications, not cache
-- create mechanism to move resources to DUT upon request...
++ measure memory used by applications, not cache
+- create mechanism to move resources to DUT upon request
+- when DUT has popup - infrastructure can't access intel app
