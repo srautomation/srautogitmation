@@ -5,7 +5,7 @@ pip install rpyc slash uiautomator gevent gevent-subprocess bunch selenium
 """
 
 DUT_commands = """
-apt-get -y install at-spi2-core git ldtp gconf2 python-gtk2 python-gtk2-dev qdbus python-pip python-pil python-dev python-pyatspi2 python-gobject python-gobject-2 statgrab libatk-bridge2.0-0 libatk-adaptor;
+apt-get -y install at-spi2-core git ldtp gconf2 python-gtk2 python-gtk2-dev qdbus python-pip python-pil python-dev python-pyatspi2 python-gobject python-gobject-2 statgrab libatk-bridge2.0-0 libatk-adaptor wmctrl;
 pip install rpyc psutil selenium twisted chromedriver
 git clone https://github.com/lorquas/dogtail; cd dogtail; python setup.py install; cd .. ;
 ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0;
