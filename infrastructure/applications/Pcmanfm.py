@@ -6,7 +6,7 @@ class Pcmanfm(_Application):
         super(Pcmanfm, self).__init__(linux, 'pcmanfm')
 
     def goto(self, dir):
-        app = self._dogtail.tree.root.application('pcmanfm')
+        app = self._app
         app.child(roleName = 'text').text = dir
         time.sleep(3)
         app.child('Jump to').click()

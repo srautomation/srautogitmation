@@ -4,8 +4,7 @@ import time
 
 class Thunderbird(_Application):
     def __init__(self, linux):
-        super(Thunderbird, self).__init__(linux, "thunderbird")
-        self._application = None
+        super(Thunderbird, self).__init__(linux, "thunderbird", dogtail_id = "Thunderbird")
         self._main_frame  = None
         self._compose_frame = None
         self._predicate = self._dogtail.predicate.GenericPredicate
@@ -44,8 +43,7 @@ class Thunderbird(_Application):
     def start(self):
         super(Thunderbird, self).start()
         time.sleep(10) 
-        self._application = self._dogtail.tree.root.application("Thunderbird")
-        self._main_frame = [x for x in self._application.findChildren(self._predicate(roleName = "frame")) if x.name.endswith("Mozilla Thunderbird")][0]
+        self._main_frame = [x for x in self._app.findChildren(self._predicate(roleName = "frame")) if x.name.endswith("Mozilla Thunderbird")][0]
 
     def _folder(self, folder):
         try:
@@ -83,13 +81,13 @@ class Thunderbird(_Application):
     def search(self, text):
         search_text = [x for x in self._main_frame.findChildren(self._predicate(roleName = "entry")) if x.name.startswith("Search")][0]
         search_text.text = text
-        self._application.keyCombo("<enter>")
-        self._application.child("Open email as list").click()
+        self._app.keyCombo("<enter>")
+        self._app.child("Open email as list").click()
 
 
     def compose(self):
         self._main_frame.child("Write").click()
-        self._compose_frame = [x for x in self._application.findChildren(self._predicate(roleName = "frame")) if x.name.startswith("Write:")][0]
+        self._compose_frame = [x for x in self._app.findChildren(self._predicate(roleName = "frame")) if x.name.startswith("Write:")][0]
         class Compose(object):
             def to(_self, emails):
                 self._compose_frame.child(name = "To:", roleName = "autocomplete").child(roleName = "entry").text = ",".join(emails)
@@ -106,7 +104,7 @@ class Thunderbird(_Application):
             def attach(_self, files_paths):
                 for file_path in files_paths:
                     self._compose_frame.button("Attach").click()
-                    attach_dialog = self._application.child(name = "Attach File(s)", roleName = "dialog")
+                    attach_dialog = self._app.child(name = "Attach File(s)", roleName = "dialog")
                     attach_dialog.child("/").click()
                     attach_dialog.child(roleName = "text").text = file_path
                     attach_dialog.button("Open").click()

@@ -3,18 +3,16 @@ import time
 
 class Writer(_Editor):
     def __init__(self, linux):
-        super(Writer, self).__init__(linux, 'libreoffice --writer --norestore', 'killall oosplash')
+        super(Writer, self).__init__(linux, 'libreoffice --writer --norestore', 'killall oosplash', 'soffice')
 
     def open(self, doc):
-        app = self._dogtail.tree.root.application('soffice')
+        app = self._app
         app.child('Open').click()
-        time.sleep(4)
-        app.child(doc).point()
-        time.sleep(1)
-        app.child(doc).doubleClick()
+        time.sleep(2)
+        self._open(doc)
 
     def set_bold(self):
-        app = self._dogtail.tree.root.application('soffice')
+        app = self._app
         app.child('Edit').click()
         time.sleep(1)
         app.child('Edit').child('Select All').point()
@@ -24,7 +22,7 @@ class Writer(_Editor):
         app.child('Bold').click()
 
     def set_italic(self):
-        app = self._dogtail.tree.root.application('soffice')
+        app = self._app
         app.child('Edit').click()
         time.sleep(1)
         app.child('Edit').child('Select All').point()
@@ -34,5 +32,5 @@ class Writer(_Editor):
         app.child('Italic').click()
 
     def write_text(self, text):
-        app = self._dogtail.tree.root.application('soffice')
+        app = self._app
         app.child(roleName = 'paragraph').text = text

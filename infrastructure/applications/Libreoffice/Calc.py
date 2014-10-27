@@ -3,7 +3,7 @@ import time
 
 class Calc(_Editor):
     def __init__(self, linux):
-        super(Calc, self).__init__(linux, 'libreoffice --calc --norestore', 'killall oosplash')
+        super(Calc, self).__init__(linux, 'libreoffice --calc --norestore', 'killall oosplash', 'soffice')
 
     '''
     def open(self, doc):
@@ -21,7 +21,7 @@ class Calc(_Editor):
         super(Calc, self).start(doc)
 
     def capitalize(self):
-        app = self._dogtail.tree.root.application('soffice')
+        app = self._app
         app.child('Edit').click()
         time.sleep(1)
         app.child('Edit').child('Select All').click()

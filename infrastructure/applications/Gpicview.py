@@ -7,7 +7,7 @@ class Gpicview(_Application):
 
     def open(self, photo):
         " photo must be in /root "
-        app = self._dogtail.tree.root.application('gpicview')
+        app = self._app
         app.child('Open').point()
         time.sleep(2)
         app.child('Open').click()
@@ -21,13 +21,13 @@ class Gpicview(_Application):
         app.child(photo).doubleClick()
 
     def next_photo(self):
-        app = self._dogtail.tree.root.application('gpicview')
+        app = self._app
         app.child('Forward').point()
         time.sleep(2)
         app.child('Forward').click()
 
     def zoom_in(self):
-        app = self._dogtail.tree.root.application('gpicview')
+        app = self._app
         app.child('Zoom In').point()
         time.sleep(2)
         app.child('Zoom In').click()

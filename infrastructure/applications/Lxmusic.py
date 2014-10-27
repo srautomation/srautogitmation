@@ -6,13 +6,13 @@ class Lxmusic(_Application):
         super(Lxmusic, self).__init__(linux, 'lxmusic')
 
     def play(self, track):
-        app = self._dogtail.tree.root.application('lxmusic')
+        app = self._app
         app.child(track).point()
         time.sleep(3)
         app.child(track).doubleClick()
 
     def pause(self):
-        app = self._dogtail.tree.root.application('lxmusic')
+        app = self._app
         app.child('Pause').point()
         time.sleep(2)
         app.child('Pause').click()

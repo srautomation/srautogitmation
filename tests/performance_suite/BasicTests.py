@@ -98,6 +98,7 @@ class BasicTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         time.sleep(4)
         leafpad.open(TXT)
         time.sleep(5)
+        leafpad.word_wrap()
         time.sleep(20)
         leafpad.stop()
     

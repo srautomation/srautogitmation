@@ -6,14 +6,14 @@ class Leafpad(Application._Editor):
         super(Leafpad, self).__init__(linux, 'leafpad')
 
     def write_text(self, text):
-        app = self._dogtail.tree.root.application('leafpad')
+        app = self._app
         textBox = app.child(roleName = 'text')
         textBox.grabFocus()
         textBox.text = text
 
     def open(self, file):
         ''' file has to be in /root '''
-        app = self._dogtail.tree.root.application('leafpad')
+        app = self._app
         textBox = app.child(roleName = 'text')
         textBox.grabFocus()
         app.child('File').click()
@@ -25,9 +25,10 @@ class Leafpad(Application._Editor):
             app.child(name = 'No', roleName = 'push button').click()
         time.sleep(1)
         app.child('root').click()
-        time.sleep(5)
-        app.child(file).doubleClick()
-        time.sleep(4)
+        self._open(file)
+
+    def word_wrap(self):
+        app = self._app
         app.child('Options').click()
         time.sleep(1)
         app.child('Word Wrap').click()

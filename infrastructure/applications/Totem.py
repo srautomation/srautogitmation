@@ -6,7 +6,7 @@ class Totem(_Application):
         super(Totem, self).__init__(linux, "totem")
 
     def open(self, movie):
-        app = self._dogtail.tree.root.application('totem')
+        app = self._app
         app.child('Movie').point()
         time.sleep(1)
         app.child('Movie').click()
@@ -20,7 +20,7 @@ class Totem(_Application):
         app.child(movie).doubleClick()
 
     def toggle_play_pause(self):
-        app = self._dogtail.tree.root.application('totem')
+        app = self._app
         app.child(name = 'Play / Pause', roleName = 'push button').point()
         time.sleep(2)
         app.child(name = 'Play / Pause', roleName = 'push button').click()

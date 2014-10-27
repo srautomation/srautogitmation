@@ -1,31 +1,20 @@
 from infrastructure.applications.Application import _Editor
+from os import path
 import time
 import dogtail
 
 class Impress(_Editor):
     def __init__(self, linux):
-        super(Impress, self).__init__(linux, 'libreoffice --impress --norestore', 'killall oosplash')
+        super(Impress, self).__init__(linux, 'libreoffice --impress --norestore', 'killall oosplash', 'soffice')
 
     def open(self, doc):
-        app = self._dogtail.tree.root.application('soffice')
+        app = self._app
         app.child('Open', 'push button').click()
         time.sleep(4)
-        app.child(doc).point()
-        time.sleep(1)
-        app.child(doc).doubleClick()
+        self._open(doc)
 
     def start_slideshow(self, mouse_clicks):
-        attempts = 0
-        while attempts < 5: #TODO: change workaround 
-            attempts += 1
-            try:
-                app = self._dogtail.tree.root.application('soffice')
-                break
-            except Exception as e:
-                if e.__class__.__name__ == 'gi._glib.GError':
-                    time.sleep(1)
-                else: 
-                    raise e
+        app = self._app
         btn = app.child('Start from first Slide', 'push button')
         btn.point()
         time.sleep(2)

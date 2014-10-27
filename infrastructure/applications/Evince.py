@@ -7,7 +7,7 @@ class Evince(Application._Editor):
     
     def open(self, file):
         '''file has to be in /root '''
-        app = self._dogtail.tree.root.application('evince')
+        app = self._app
         app.child('Document View').grabFocus()
         time.sleep(1)
         app.child('File').click()
@@ -18,7 +18,7 @@ class Evince(Application._Editor):
 
     def save_copy(self, new_name):
         ''' new_name is w/o .pdf (i.e. only base name '''
-        app = self._dogtail.tree.root.application('evince')
+        app = self._app
         app.child('Document View').grabFocus()
         time.sleep(1)
         app.child('File').click()
