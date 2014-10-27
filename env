@@ -1,9 +1,5 @@
 #!/bin/sh
-cd "$(dirname "$0")" 
-
 export PROJECT_ROOT=`pwd`
 export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH
 
-ln -f -s ../externals
-
-cd - &> /dev/null
+ln -s ../externals
