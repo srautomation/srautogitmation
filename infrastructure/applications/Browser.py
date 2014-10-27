@@ -3,18 +3,23 @@ from collections import namedtuple
 import time
 import code
 
+from infrastructure.applications.Application import _Application
+
 from logbook import Logger
 log = Logger("Browser")
 
-class Browser(object):
+
+class Browser(_Application):
     CHROMEDRIVER_RPC_PORT = 12356
-    def __init__(self, linux):
+    def __init__(self, linux): 
         self._cmd  = linux.shell.cmd
         self._ip   = linux._ip # TODO: fix private _ip
         self._process = None
         self._driver  = None
         self._dogtail = linux.ui.dogtail
         self._open_tabs = 0
+        self._title = 'Chromium' # used by _Application.grab_focus()
+        self._linux = linux # same
 
     def start(self):
         self._process = self._cmd(["/usr/local/CHROMEDRIVER", "--port=%d" % Browser.CHROMEDRIVER_RPC_PORT, "--whitelisted-ips", "*"], shell = False)
