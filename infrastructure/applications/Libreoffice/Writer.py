@@ -32,3 +32,7 @@ class Writer(_Editor):
         app.child('Edit').child('Select All').click()
         time.sleep(2)
         app.child('Italic').click()
+
+    def write_text(self, text):
+        app = self._dogtail.tree.root.application('soffice')
+        app.child(roleName = 'paragraph').text = text
