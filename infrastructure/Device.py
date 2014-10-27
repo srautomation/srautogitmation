@@ -37,6 +37,7 @@ class Device(object):
             {"type": "sysfs",   "dev": "sysfs",                "path": "/data/debian/sys"},
             {"options": "bind", "dev": "/dev",                 "path": "/data/debian/dev"},
             {"type": "devpts",  "dev": "devpts",               "path": "/data/debian/dev/pts"},
+            {"type": "tmpfs",   "dev": "/dev/shm",             "path": "/data/debian/dev/shm"}
             ]
     def _try_setup_mounts(self):
         mounted = [l.split(" ")[1] for l in self.android.adb.cmd("shell cat /proc/mounts").stdout.readlines()]
@@ -45,7 +46,7 @@ class Device(object):
                 continue
 
             type    = ["", "-t %s" % mount.get("type", "")]["type" in mount]
-            options = ["", "-o %s" % mount.get("options")]["opions" in mount]
+            options = ["", "-o %s" % mount.get("options")]["options" in mount]
             self.android.adb.cmd("shell mount %s %s %s %s" % (type, options, mount["dev"], mount["path"]))
 
 
@@ -65,7 +66,7 @@ class Device(object):
         return (0 < len(self.android.adb.cmd('shell "cat /proc/*/stat 2>/dev/null | grep rpyc_classic.py"').stdout.read()))
 
     def _is_rpyc_listening(self):
-        return (0 < len(self.android.adb.cmd('shell "netstat | grep 0.0.0.0:18812 | grep LISTEN"').stdout.read()))
+        return (0 < len(self.android.adb.cmd('shell "netstat | grep :18812 | grep LISTEN"').stdout.read()))
 
     def _start_connect_rpyc(self):
         if (not self._is_rpyc_running()):

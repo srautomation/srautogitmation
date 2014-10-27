@@ -17,7 +17,6 @@ class Linux(object):
 
     def start(self):
         self._shell = Shell(self._rpyc, self._device.resources)
-        self._shell.shell("ln -s /run/shm /dev/shm", infrastructure = True)
         self._accessibility = Accessibility(self._rpyc, self._shell)
         self._ui = UI(self._rpyc, self._shell, self._ip)
 
