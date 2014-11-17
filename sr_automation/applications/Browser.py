@@ -3,7 +3,7 @@ from collections import namedtuple
 import time
 import code
 
-from infrastructure.applications.Application import _Application
+from sr_automation.applications.Application import _Application
 
 from logbook import Logger
 log = Logger("Browser")

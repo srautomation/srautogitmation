@@ -2,12 +2,12 @@ import time, code, os
 
 import slash
 
-from tests.base.EmailBaseTest import EmailBaseTest
-from tests.base.PerformanceBaseTest import PerformanceBaseTest
-from tests.base.BrowserBaseTest import BrowserBaseTest
-from infrastructure.applications import Browser, Evince, Gpicview, Leafpad,\
+from sr_tests.base.EmailBaseTest import EmailBaseTest
+from sr_tests.base.PerformanceBaseTest import PerformanceBaseTest
+from sr_tests.base.BrowserBaseTest import BrowserBaseTest
+from sr_automation.applications import Browser, Evince, Gpicview, Leafpad,\
  Lxmusic, Pcmanfm, Thunderbird, Totem
-from infrastructure.applications.Libreoffice import Calc, Impress, Writer
+from sr_automation.applications.Libreoffice import Calc, Impress, Writer
 
 class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
     def test_youtube_doc_pdf(self):

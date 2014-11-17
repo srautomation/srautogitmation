@@ -1,5 +1,5 @@
-from tests.base.BaseTest import BaseTest
-from infrastructure.applications.Browser import Browser
+from sr_tests.base.BaseTest import BaseTest
+from sr_automation.applications.Browser import Browser
 import slash
 import time
 import code

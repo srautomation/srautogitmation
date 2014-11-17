@@ -1,5 +1,5 @@
-from tests.base.BaseTest import BaseTest
-from infrastructure.applications import Browser
+from sr_tests.base.BaseTest import BaseTest
+from sr_automation.applications import Browser
 
 class BrowserBaseTest(BaseTest):
     def init_chromium(self):

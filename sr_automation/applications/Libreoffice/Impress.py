@@ -1,4 +1,4 @@
-from infrastructure.applications.Application import _Editor
+from sr_automation.applications.Application import _Editor
 from os import path
 import time
 import dogtail

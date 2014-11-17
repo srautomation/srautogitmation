@@ -1,4 +1,4 @@
-from infrastructure.utils.Collector import Collector, CollectorHandler
+from sr_automation.utils.Collector import Collector, CollectorHandler
 from functools import partial
 from bunch import Bunch
 import time

@@ -1,10 +1,10 @@
-from tests.base.BaseTest import BaseTest
-from tests.base.PerformanceBaseTest import PerformanceBaseTest
-from tests.base.BrowserBaseTest import BrowserBaseTest
-from tests.base.EmailBaseTest import EmailBaseTest
-from infrastructure.applications import Leafpad, Evince, Firefox, Browser, Totem,\
+from sr_tests.base.BaseTest import BaseTest
+from sr_tests.base.PerformanceBaseTest import PerformanceBaseTest
+from sr_tests.base.BrowserBaseTest import BrowserBaseTest
+from sr_tests.base.EmailBaseTest import EmailBaseTest
+from sr_automation.applications import Leafpad, Evince, Firefox, Browser, Totem,\
 Lxmusic, Gpicview, Pcmanfm, Thunderbird
-from infrastructure.applications.Libreoffice import Writer, Calc, Impress
+from sr_automation.applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
 import time

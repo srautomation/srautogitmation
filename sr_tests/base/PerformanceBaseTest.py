@@ -3,7 +3,7 @@ import datetime
 import os
 
 from BaseTest import BaseTest
-from infrastructure.utils.Dumper import Dumper
+from sr_automation.utils.Dumper import Dumper
 import slash
 from slash import config
 

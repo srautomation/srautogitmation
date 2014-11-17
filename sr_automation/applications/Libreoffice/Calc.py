@@ -1,4 +1,4 @@
-from infrastructure.applications.Application import _Editor
+from sr_automation.applications.Application import _Editor
 import time
 
 class Calc(_Editor):

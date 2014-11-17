@@ -1,4 +1,4 @@
-from infrastructure.utils.Waiter import Waiter, Handler
+from sr_automation.utils.Waiter import Waiter, Handler
 
 import glib
 import dbus

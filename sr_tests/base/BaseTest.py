@@ -2,7 +2,7 @@ import os
 import subprocess
 import code
 
-from infrastructure.Tester import Tester
+from sr_automation.Tester import Tester
 import slash
 
 from logbook import Logger

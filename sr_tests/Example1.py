@@ -1,4 +1,4 @@
-from tests.base.BaseTest import BaseTest
+from sr_tests.base.BaseTest import BaseTest
 import slash
 import time
 
@@ -37,7 +37,7 @@ class Example1(BaseTest):
                 with self.tester.timeit.measure():
                     self.linux.ui.dogtail.tree.root.child("Example1.py").doubleClick()
                     textbox = leafpad.child(roleName = "text")
-                    while not textbox.text.startswith("from infrastructure"):
+                    while not textbox.text.startswith("from sr_automation"):
                         time.sleep(0.01)
                 time.sleep(4)
 
