@@ -18,6 +18,7 @@ requirements = [
     "bunch",
     "selenium",
     "Skype4py",
+    "baker",
 ]
 
 test_requirements = [
@@ -32,7 +33,7 @@ setup(
     #author='Barak Bercovitz',
     #author_email='barak@wizery.com',
     #url='https://github.com/barakber/sr_automation',
-    packages=[
+    packages=[ # can use find_packages() but prefer explicit
         'sr_automation',
         'sr_automation.utils',
         'sr_automation.platform',
@@ -40,13 +41,17 @@ setup(
         'sr_automation.platform.linux',
         'sr_automation.applications',
         'sr_automation.applications.Libreoffice',
+
         'sr_tests',
         'sr_tests.base',
         'sr_tests.performance_suite',
+
+        'sr_tools',
     ],
     package_dir={
         'sr_automation': 'sr_automation',
         'sr_tests': 'sr_tests',
+        'sr_tools': 'sr_tools',
         },
     include_package_data=True,
     install_requires=requirements,
@@ -67,7 +72,9 @@ setup(
     ],
     test_suite='tests',
     tests_require=test_requirements,
-    #entry_points = {
-    #    'console_scripts': ['bobo = sr_automation.bla:bobo'],
-    #    }
+    entry_points = {
+        'console_scripts': [
+            'sr_tool = sr_tools.sr_tool:main',
+            ],
+        }
 )
