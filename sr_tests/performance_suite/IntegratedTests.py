@@ -10,6 +10,7 @@ from sr_automation.applications import Browser, Evince, Gpicview, Leafpad,\
 from sr_automation.applications.Libreoffice import Calc, Impress, Writer
 
 class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
+    @PerformanceBaseTest.measure_entire_function
     def test_youtube_doc_pdf(self):
         DOC = 'Alice.odt'
         PDF = 'example_pdf.pdf' 
@@ -41,6 +42,7 @@ class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         time.sleep(2)
         writer.set_bold()
 
+    @PerformanceBaseTest.measure_entire_function
     def test_lxmusic_gpicview_calc(self):
         TRACK1 = 'vivaldi.mp3'
         TRACK2 = 'altj.mp3'
@@ -80,6 +82,7 @@ class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         gpicview.stop()
         lxmusic.stop()
 
+    @PerformanceBaseTest.measure_entire_function
     def test_totem_thunderbird_leafpad(self):
         MOVIE = 'movie.avi'
         self.prep_resource(MOVIE)
@@ -120,6 +123,7 @@ class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         totem.stop()
         thunderbird.stop()
 
+    @PerformanceBaseTest.measure_entire_function
     def test_chrome_news_radio_pcmanfm(self):
         chrome = self.init_chromium()
         time.sleep(20)
@@ -156,6 +160,7 @@ class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         time.sleep(10)
         self.browser.stop()
 
+    @PerformanceBaseTest.measure_entire_function
     def test_lxmusic_impress_thunderbird(self):
         TRACK = 'vivaldi.mp3'
         PRESENTATION = 'humor-business.ppt'

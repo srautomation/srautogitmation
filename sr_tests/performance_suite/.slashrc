@@ -1,9 +1,13 @@
 import slash
 from datetime import datetime
-import os
 from os import path
+import os,sys
 
 project_root = os.getenv('PROJECT_ROOT')
+if not project_root:
+	slash.logger.error('PROJECT_ROOT enviroment variable is not set, did you run env?')
+	sys.exit(-1)
+
 suite_name = path.basename(path.dirname(path.abspath(__file__)))
 externals = 'externals'
 dut_chroot = '/data/debian'
