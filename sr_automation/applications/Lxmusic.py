@@ -16,3 +16,9 @@ class Lxmusic(_Application):
         app.child('Pause').point()
         time.sleep(2)
         app.child('Pause').click()
+
+    def stop(self):
+        app = self._app
+        app.child('File').click()
+        time.sleep(2)
+        app.child('Close').click()
