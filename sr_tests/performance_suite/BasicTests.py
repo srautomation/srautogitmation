@@ -3,7 +3,7 @@ from sr_tests.base.PerformanceBaseTest import PerformanceBaseTest
 from sr_tests.base.BrowserBaseTest import BrowserBaseTest
 from sr_tests.base.EmailBaseTest import EmailBaseTest
 from sr_automation.applications import Leafpad, Evince, Firefox, Browser, Totem,\
-Lxmusic, Gpicview, Pcmanfm, Thunderbird
+Lxmusic, Gpicview, Pcmanfm, Thunderbird, Skype
 from sr_automation.applications.Libreoffice import Writer, Calc, Impress
 import slash
 import slash.log
@@ -217,6 +217,20 @@ class BasicTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         tb.trash()
         time.sleep(20)
         tb.stop()
+    @PerformanceBaseTest.measure_entire_function
+    def test_skype(self):
+        ''' 
+        NOT TESTED! 
+        Initiates a call to Skype's echo service and inject a wav file as input. 
+        '''
+        WAV = 'alt-j.wav'
+        self.prep_resource(WAV)
+        skype = Skype.Skype(self.linux)
+        skype.input_device = Skype.Skype.INPUT_DEVICE_TYPE_FILE, WAV
+        call = skype.place_call('echo123')
+        # wait for call to finish, TODO: check end cases
+        while call.Status != skype._Skype4Py.clsFinished:
+            time.sleep(1)
 
     def dummy(self): # TODO: Erase
         code.interact(local = locals())
