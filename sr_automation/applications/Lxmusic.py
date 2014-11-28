@@ -21,4 +21,4 @@ class Lxmusic(_Application):
         app = self._app
         app.child('File').click()
         time.sleep(2)
-        app.child('Close').click()
+        app.child('Quit').click()

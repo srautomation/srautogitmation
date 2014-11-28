@@ -234,6 +234,7 @@ class BasicTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         WAV = 'alt-j.wav'
         self.prep_resource(WAV)
         skype = Skype.Skype(self.linux)
+        skype.start()
         skype.input_device = Skype.Skype.INPUT_DEVICE_TYPE_FILE, WAV
         call = skype.place_call('echo123')
         # wait for call to finish, TODO: check end cases

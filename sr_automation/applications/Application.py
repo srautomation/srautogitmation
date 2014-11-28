@@ -21,7 +21,7 @@ class _Application(object):
         if not self._shell: # if shell = False, cmd has to be split
             cmd = cmd.split()
         self._process = self._linux.shell.cmd(cmd, shell = self._shell)
-        time.sleep(5)
+        time.sleep(9)
         self._app = self._dogtail.tree.root.application(self._dogtail_id)
 
     def stop(self):
