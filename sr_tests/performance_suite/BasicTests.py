@@ -40,7 +40,15 @@ class BasicTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         search_text = chrome.find_element_by_id("masthead-search-term")
         search_text.click()
         search_text.send_keys("funny cats")
-        chrome.find_element_by_id("search-btn").click()
+        search_btn = chrome.find_element_by_id("search-btn")
+        try:
+            search_btn.click()
+        except Browser.exceptions.WebDriverException as e:
+            try: # try dismissing new youtube popup
+                chrome.find_element_by_class_name('iph-dialog-dismiss-container').click()
+            except:
+                time.sleep(10) # hacky- wait for popup to fade
+            search_btn.click()
         time.sleep(25)
         funny_cats_video = chrome.find_element_by_partial_link_text("Epic")
         funny_cats_video.click()

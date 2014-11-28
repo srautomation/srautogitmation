@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common import exceptions
 from collections import namedtuple
 import time
 import code
