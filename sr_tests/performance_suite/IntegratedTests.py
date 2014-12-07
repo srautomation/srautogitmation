@@ -100,7 +100,7 @@ class IntegratedTests(PerformanceBaseTest, EmailBaseTest, BrowserBaseTest):
         thunderbird.grab_focus('Thunderbird')
         composer = thunderbird.compose()
         time.sleep(5)
-        composer.to('my@recepient.com')
+        composer.to(['my@recepient.com'])
         time.sleep(2)
         composer.subject('This is a subject')
         time.sleep(2)
