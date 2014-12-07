@@ -3,7 +3,7 @@ import time
 
 class Firefox(_Application):
     def __init__(self, linux):
-        super(Firefox, self).__init__(linux, 'firefox', 'killall firefox')
+        super(Firefox, self).__init__(linux, 'firefox', 'killall firefox', 'Firefox')
             
     def start(self, url = ''):
         self._start_cmd = self._start_cmd + ' ' + url
@@ -11,7 +11,7 @@ class Firefox(_Application):
         is_window_visible = self._ldtp.waittillguiexist('Firefox')
 
     def open(self, url):
-        app = self._dogtail.tree.root.application('Firefox')
+        app = self._app
         childs = app.findChildren(self._dogtail.predicate.GenericPredicate(name = 'Search or enter address', roleName = 'entry'))
         if len(childs) > 1: txt_box = 1
         else: txt_box = 0
@@ -22,7 +22,7 @@ class Firefox(_Application):
         self._dogtail.rawinput.pressKey('enter')
 
     def press_visible_link(self, link, retries = 10):
-        app = self._dogtail.tree.root.application('Firefox')
+        app = self._app
         try:
             childs = app.findChildren(self._dogtail.predicate.GenericPredicate(name = 'Search or enter address', 
                                                                                 roleName = 'entry'))
