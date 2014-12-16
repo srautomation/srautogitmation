@@ -3,7 +3,7 @@
 
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
@@ -19,6 +19,8 @@ requirements = [
     "selenium",
     "Skype4py",
     "baker",
+    "SQLAlchemy",
+    "IMAPClient",
 ]
 
 test_requirements = [
@@ -33,21 +35,7 @@ setup(
     #author='Barak Bercovitz',
     #author_email='barak@wizery.com',
     #url='https://github.com/barakber/sr_automation',
-    packages=[ # can use find_packages() but prefer explicit
-        'sr_automation',
-        'sr_automation.utils',
-        'sr_automation.platform',
-        'sr_automation.platform.android',
-        'sr_automation.platform.linux',
-        'sr_automation.applications',
-        'sr_automation.applications.Libreoffice',
-
-        'sr_tests',
-        'sr_tests.base',
-        'sr_tests.performance_suite',
-
-        'sr_tools',
-    ],
+    packages= find_packages(),
     package_dir={
         'sr_automation': 'sr_automation',
         'sr_tests': 'sr_tests',

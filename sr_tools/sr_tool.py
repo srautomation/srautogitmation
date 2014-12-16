@@ -90,12 +90,15 @@ def install_dut(device_id = None):
         print line,
     process.wait()
 
-
+"""
+run from a directory with a .slashrc in it (TODO: fix)
+sudo sr_tool run_tests --suite=mail -vvv BasicTests.py
+"""
 @baker.command(params={
     "path": "Path of test file", 
     "suite": "Suite name",
     "externals": "Path of external resources",})
-def run_tests(path=None, suite=None, externals=None, *args):
+def run_tests(path=None, suite=None, externals="", *args):
     """Run tests"""
     if ((path is None) and (suite is None)) or ((path is not None) and (suite is not None)):
         return

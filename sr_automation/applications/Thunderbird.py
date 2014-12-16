@@ -1,42 +1,85 @@
+import re
 import datetime
 from Application import _Application
 import time
+import os
+import mailbox
+import dateutil.parser
+from rpyc.utils.classic import download_file
+from bunch import Bunch
+
 
 class Thunderbird(_Application):
+    SQLITE_DB_NAME = "global-messages-db.sqlite"
+    PATH_LOCAL = os.path.join("/tmp", SQLITE_DB_NAME)
+    PROFILES_INI_PATTERN = re.compile("\[([^\s]+?)\][^\[]*?Name=([^\s]+?)$[^\[]*?Path=([^\s]+?)$", re.DOTALL | re.MULTILINE)
+
     def __init__(self, linux):
         super(Thunderbird, self).__init__(linux, "thunderbird", dogtail_id = "Thunderbird")
         self._main_frame  = None
         self._compose_frame = None
         self._predicate = self._dogtail.predicate.GenericPredicate
+        self._profiles  = None
+        self._mailboxes = None
+        self._profile_path = None
 
-    #-------------------------------------------
-    # Mailbox files inspection
-    def folder(self, name):
-        mails = self._mailbox.mbox(name)
-        for mail in mails:
-            mail.sender     = mail['From']
-            mail.to         = mail['To']
-            mail.subject    = mail['Subject']
-            mail.date       = datetime.datetime.strptime(mail['Date'].rsplit(" ", 1)[0], "%a, %d %b %Y %H:%M:%S %Z")
+    def _load_profiles(self):
+        text = self._linux.shell.shell("cat ~/.thunderbird/profiles.ini").stdout.read()
+        self._profiles = {name: path for (_, name, path) in Thunderbird.PROFILES_INI_PATTERN.findall(text)}
+        return self._profiles
+
+    def _find_mailboxes(self, profile):
+        profile = "default" # TODO: fix
+        self._profile_path = os.path.join(self._linux._rpyc.modules.os.path.expanduser("~"), ".thunderbird", self._profiles[profile])
+        results = self._linux.shell.shell("find %s -name *.msf" % self._profile_path).stdout.readlines()
+        results = [x[x.find("Mail"):].rsplit(".", 1)[0] for x in results]
+        results = {x.rsplit("/", 1)[1]: x for x in results}
+        self._mailboxes = results
+        return self._mailboxes
+
+    def _pull_mailbox(self, name):
+        assert name in self._mailboxes.keys()
+        remote_path = os.path.join(self._profile_path, self._mailboxes[name])
+        local_path  = os.path.join("/tmp", name + ".mbox")
+        remote_file = self._linux._rpyc.builtins.file(remote_path, "rb")
+        local_file  = file(local_path, "wb")
+        local_file.write(remote_file.read())
+        remote_file.close()
+        local_file.close()
+        return local_path
+
+    def _load_mailbox(self, name):
+        mbox = mailbox.mbox(self._pull_mailbox(name)) 
+        return mbox
             
-            mozilla_status = int(mail["X-Mozilla-Status"])
-            mail.is_read    = (mozilla_status & 1)
-            mail.is_starred = (mozilla_status & 4)
-            mail.is_deleted = (mozilla_status & 8)
+    def messages(self, email, mailbox):
+        self._find_mailboxes(email)
+        mbox = self._load_mailbox(mailbox) 
+        _messages = [Bunch(
+            time  = dateutil.parser.parse(m["date"]),
+            from_ = m["from"],
+            to    = m["to"],
+            cc    = None,
+            subject = m["subject"],
+            flags = Bunch(
+                read    = (0 != int(m["X-Mozilla-Status"]) & 1),
+                starred = (0 != int(m["X-Mozilla-Status"]) & 4),
+                deleted = (0 != int(m["X-Mozilla-Status"]) & 8),
+                attachment = False,
+                favorite   = False,
+                loaded     = False,
+                ),
+            body = Bunch(
+                text = m.get_payload(),
+                html = None,
+                ),
+            )
+            for m in mbox]
+        return _messages
 
-        return [mail for mail in mails if mail.is_deleted is False]
-
-    def drafts(self):
-        return self.folder("Drafts")
-
-    def inbox(self):
-        return self.folder("Inbox")
-
-    def sent(self):
-        return self.folder("Sent")
-
-    def trash(self):
-        return self.folder("Trash")
+    def load(self):
+        self._load_profiles()
+        return self
 
     #-------------------------------------------
     # GUI automation
