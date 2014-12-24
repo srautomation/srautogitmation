@@ -12,6 +12,7 @@ import IPython #TODO: use IPython insted of code
 import code
 import os
 import subprocess
+import IPython
 
 class BasicTests(EmailBaseTest):
     def before(self):
@@ -22,5 +23,5 @@ class BasicTests(EmailBaseTest):
         super(BasicTests, self).after()
 
     def test_comapre_subjects(self):
-        code.interact(local = locals())
+        IPython.embed()
 

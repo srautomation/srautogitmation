@@ -25,6 +25,7 @@ requirements = [
 
 test_requirements = [
     "slash",
+    "ipython",
 ]
 
 setup(
