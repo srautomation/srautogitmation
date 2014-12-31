@@ -32,24 +32,43 @@ class EmailBaseTest(BaseTest):
             linux   = None,
             )
 
+    def _folder_mapper(self, name):
+        name = name.lower()
+        return {"inbox":  Bunch(linux = "INBOX", android = "Inbox"),
+                "drafts": Bunch(linux = "DRAFTS", android = "Drafts"),
+                "outbox": Bunch(linux = "OUTBOX", android = "Outbox"),
+                "sent":   Bunch(linux = "SENT", android = "Sent"),
+                "trash":  Bunch(linux = "TRASH", android = "Trash"),
+                }[name]
+
     def choose_email(self, email, password=None):
         self.mail.email = email
         self.mail.password = password
         self.mail.android.choose_email(email, password)
         self.mail.linux.choose_email(email, password)
+        return self
 
-    def choose_folder(self, folder):
+    def choose_folder(self, _folder):
+        folder = self._folder_mapper(_folder)
         self.mail.folder = folder
-        self.mail.android.choose_folder(self.mail.folder)
-        self.mail.linux.choose_folder(self.mail.folder)
+        self.mail.android.choose_folder(self.mail.folder.android)
+        self.mail.linux.choose_folder(self.mail.folder.linux)
+        return self
 
     def load(self):
         self.mail.android.load()
         self.mail.linux.load()
+        self.messages.android = self.mail.android.messages()
+        self.messages.linux   = self.mail.linux.messages()
 
-    def mail_compare(self, (android_account, android_mailbox), (linux_account, linux_mailbox)):
-        self.messages.android = self.mail.android.messages(android_account, android_mailbox)
-        self.messages.linux   = self.mail.linux.messages(linux_account, linux_mailbox)
+    def compare_all(self):
+        return (self.compare_count()   and 
+                self.compare_from()    and 
+                self.compare_to()      and
+                self.compare_cc()      and
+                self.compare_subject() and
+                self.compare_flags()   and
+                self.compare_body())
 
     def compare_count(self):
         return len(self.messages.android) == len(self.messages.linux)
@@ -58,7 +77,10 @@ class EmailBaseTest(BaseTest):
         return all([a.from_ == l.from_ for (a, l) in zip(self.messages.android, self.messages.linux)])
 
     def compare_to(self):
-        return True # False
+        return all([a.to == l.to for (a, l) in zip(self.messages.android, self.messages.linux)])
+
+    def compare_cc(self):
+        return all([a.cc == l.cc for (a, l) in zip(self.messages.android, self.messages.linux)])
     
     def compare_subject(self):
         return all([a.subject == l.subject for (a, l) in zip(self.messages.android, self.messages.linux)])
@@ -71,11 +93,13 @@ class EmailBaseTest(BaseTest):
 
     def compare_body(self):
         for a_msg, l_msg in zip(self.messages.android, self.messages.linux):
-            if (len(a_msg.text) > 0) and (len(l_msg.text) > 0):
-                if a_msg.text != l_msg.text:
+            a_body = a_msg.body
+            l_body = l_msg.body
+            if (a_body.text is not None) and (l_body.text is not None) and (len(a_body.text) > 0) and (len(l_body.text) > 0):
+                if a_msg.body.text != l_msg.body.text:
                     return False
-            if (len(a_msg.html) > 0) and (len(l_msg.html) > 0):
-                if a_msg.html != l_msg.html:
+            if (a_body.html is not None) and (l_body.html is not None) and (len(a_body.html) > 0) and (len(l_body.html) > 0):
+                if a_msg.body.html.encode('utf8') != l_msg.body.html:
                     return False
         return True
 

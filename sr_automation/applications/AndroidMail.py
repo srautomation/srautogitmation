@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.orm import create_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+import pytz
 from bunch import Bunch
 
 class AndroidMail(object):
@@ -88,7 +89,7 @@ class AndroidMail(object):
             self.Body.messageKey.in_(ids))
         _bodies = {m.messageKey: m for m in _bodies}
         messages = [Bunch(
-            time  = datetime.fromtimestamp(m.timeStamp / 1000.0),
+            time  = pytz.utc.localize(datetime.utcfromtimestamp(m.timeStamp / 1000.0)),
             from_ = m.fromList,
             to    = m.toList,
             cc    = m.ccList,
