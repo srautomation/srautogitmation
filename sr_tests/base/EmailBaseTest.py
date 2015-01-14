@@ -105,35 +105,43 @@ class EmailBaseTest(BaseTest):
         return len(self.messages.android) == len(self.messages.linux)
 
     def compare_from(self):
-        return all([a.from_ == l.from_ for (a, l) in zip(self.messages.android, self.messages.linux)])
+        return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
+                if a.from_ != l.from_]
 
     def compare_to(self):
-        return all([a.to == l.to for (a, l) in zip(self.messages.android, self.messages.linux)])
+        return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
+                if a.to != l.to]
 
     def compare_cc(self):
-        return all([a.cc == l.cc for (a, l) in zip(self.messages.android, self.messages.linux)])
+        return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
+                if a.cc != l.cc]
     
     def compare_subject(self):
-        return all([a.subject.encode('utf8') == decode_header(l.subject)[0][0].replace("\r\n", "")
-            for (a, l) in zip(self.messages.android, self.messages.linux)])
+        return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
+                if a.subject.encode('utf8') != decode_header(l.subject)[0][0].replace("\r\n", "")]
 
     def compare_date(self):
-        return all([a.time == l.time for (a, l) in zip(self.messages.android, self.messages.linux)])
+        return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
+                if a.time != l.time]
 
     def compare_flags(self):
         return True # False
 
     def compare_body(self):
-        for a_msg, l_msg in zip(self.messages.android, self.messages.linux):
+        different = []
+        for index, (a_msg, l_msg) in enumerate(zip(self.messages.android, self.messages.linux)):
             a_body = a_msg.body
             l_body = l_msg.body
-            if (a_body.text is not None) and (l_body.text is not None) and (len(a_body.text) > 0) and (len(l_body.text) > 0):
-                if a_msg.body.text != l_msg.body.text:
-                    return False
-            if (a_body.html is not None) and (l_body.html is not None) and (len(a_body.html) > 0) and (len(l_body.html) > 0):
-                if a_msg.body.html.encode('utf8') != l_msg.body.html:
-                    return False
-        return True
+            if (a_body.text is not None) and (l_body.text is not None):
+                if (len(a_body.text) > 0) and (len(l_body.text) > 0):
+                    if a_msg.body.text.encode('utf8') != l_msg.body.text.decode('base64'):
+                        different.append(index)
+                        continue
+            if (a_body.html is not None) and (l_body.html is not None):
+                if (len(a_body.html) > 0) and (len(l_body.html) > 0):
+                    if a_msg.body.html.encode('utf8') != l_msg.body.html:
+                        different.append(index)
+        return different
 
     def compare_attachments(self):
         return True # False
