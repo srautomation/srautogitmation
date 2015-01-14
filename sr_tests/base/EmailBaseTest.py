@@ -3,6 +3,7 @@ import datetime
 import os
 from bunch import Bunch
 import time
+from email.header import decode_header
 
 from BaseTest import BaseTest
 from sr_automation.applications.AndroidMail import AndroidMail
@@ -113,7 +114,8 @@ class EmailBaseTest(BaseTest):
         return all([a.cc == l.cc for (a, l) in zip(self.messages.android, self.messages.linux)])
     
     def compare_subject(self):
-        return all([a.subject == l.subject for (a, l) in zip(self.messages.android, self.messages.linux)])
+        return all([a.subject.encode('utf8') == decode_header(l.subject)[0][0].replace("\r\n", "")
+            for (a, l) in zip(self.messages.android, self.messages.linux)])
 
     def compare_date(self):
         return all([a.time == l.time for (a, l) in zip(self.messages.android, self.messages.linux)])
