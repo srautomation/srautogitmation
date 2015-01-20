@@ -68,7 +68,7 @@ APT_PACKAGES = [
     "python-dev", "python-pip", "python-pyatspi2", "python-gtk2", "python-gtk2-dev", "python-pil", "python-gobject", "python-gobject-2", 
     "statgrab", "wmctrl",
 ]
-PIP_PACKAGES = ["rpyc", "psutil", "selenium", "chromedriver", "Skype4py"] # "twisted"
+PIP_PACKAGES = ["rpyc", "psutil", "selenium", "chromedriver", "Skype4py", "caldav"] # "twisted"
 
 @baker.command(params={"device_id": "Device id"})
 def install_dut(device_id = None):
