@@ -80,17 +80,14 @@ class AndroidMail(object):
         return self._session_db.query(obj)
 
     def messages(self):
-        _messages = self.query(self.Message).filter(
-            self.Account.emailAddress == self._email,
-            self.Mailbox.displayName  == self._folder,
-            )
+        _messages = self._session_db.query(self.Message).join(self.Message.mailbox).filter(self.Mailbox.displayName == self._folder, self.Account.emailAddress == self._email)
         ids = [x._id for x in _messages]
         _bodies = self._session_body.query(self.Body).filter(
             self.Body.messageKey.in_(ids))
         _bodies = {m.messageKey: m for m in _bodies}
         messages = [Bunch(
             time  = pytz.utc.localize(datetime.utcfromtimestamp(m.timeStamp / 1000.0)),
-            from_ = m.fromList,
+            from_ = m.fromList.split('\x02')[0],
             to    = m.toList,
             cc    = m.ccList,
             subject = m.subject,
