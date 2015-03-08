@@ -86,6 +86,7 @@ class Device(object):
     #---------------------------------------------------------------------------------------
 
     def desktop_start(self):
+        log.info('Starting Desktop')
         self.android.ui.wakeup()
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
@@ -100,6 +101,7 @@ class Device(object):
 
     def desktop_stop(self):
         #self.android.cmd("shell /data/data/com.intel.desktopinyourpocket/files/stopDesktop.tablet.bash")
+        log.info('Stopping Desktop')
         self.switch_to_android()
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         self.android.ui(text = Device.APP_TITLE).wait.exists()
@@ -113,6 +115,7 @@ class Device(object):
         self.android.cmd("shell am force-stop com.intel.desktopinyourpocket")
 
     def switch_to_desktop(self):
+        log.info('Switching to desktop')
         self.android.ui.wakeup()
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
@@ -127,6 +130,7 @@ class Device(object):
         #self.android.cmd('shell %s start' % (self.SRCTL_PATH))
 
     def switch_to_android(self):
+        log.info('Switching to android')
         m = self.linux.ui.pymouse.PyMouse()
         scx, scy = m.screen_size()
         m.click(scx - 20, 20)
