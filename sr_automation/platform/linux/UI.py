@@ -12,6 +12,7 @@ class UI(object):
     def start(self):
         self._dogtail = self._rpyc.modules.dogtail
         self._ldtp = xmlrpclib.ServerProxy("http://%s:4118" % self._ip)
+        self._pymouse = self._rpyc.modules.pymouse
         log.info("Connected to ldtp with xmlrpc")
 
     def stop(self):
@@ -24,6 +25,10 @@ class UI(object):
     @property
     def dogtail(self):
         return self._dogtail
+
+    @property
+    def pymouse(self):
+        return self._pymouse
 
     def run(self, name):
         self._dogtail.utils.run(name)
