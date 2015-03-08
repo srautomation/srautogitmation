@@ -2,7 +2,10 @@ import os
 import subprocess
 import code
 
+from bunch import Bunch
+
 from sr_automation.Tester import Tester
+from sr_automation.Device import Device
 import slash
 
 from logbook import Logger
@@ -11,13 +14,28 @@ log = Logger("BaseTest")
 class BaseTest(slash.Test):
     def before(self):
         self.tester = Tester()
-        self.device = self.tester.device()
-        self.device.start()
-        self.linux = self.device.linux
-        self.android = self.device.android
 
-    def after(self):
-        self.device.stop()
+    @slash.hooks.session_start.register
+    def start_device():
+        slash.g = Bunch
+        slash.g.device = Device()
+        slash.g.device.start()
+
+    @slash.hooks.result_summary.register
+    def stop_device():
+        slash.g.device.stop()
+
+    @property
+    def device(self):
+        return slash.g.device
+
+    @property
+    def linux(self):
+        return slash.g.device.linux
+
+    @property
+    def android(self):
+        return slash.g.device.android
 
     def prep_resource(self, rsrc):
         'checks if rsrc is on device, if not - moves it and returns remote path'
