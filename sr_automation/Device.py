@@ -13,8 +13,10 @@ log = Logger("Device")
 class Device(object):
     DEFAULT_RPYC_INTERFACE = "rndis0"
     APP_TITLE        = "Intel's Desktop In Your Pocket"
-    APP_START_BUTTON = "Start Desktop OS"
-    APP_STOP_BUTTON  = "Kill Desktop OS"
+    APP_START_BUTTON = "Start Desktop"
+    APP_STOP_BUTTON  = "Kill Desktop"
+    APP_SWITCH_BUTTON = "Switch To Desktop"
+    SRCTL_PATH = 'data/debian/home/labuser/srctl'
 
     def __init__(self, device_id = None, linux_ip = None):
         if device_id is None:
@@ -90,20 +92,46 @@ class Device(object):
         self.android.ui(text = Device.APP_TITLE).wait.exists()
         time.sleep(1.5)
         self.android.ui.press.menu()
-        self.android.ui(text = Device.APP_START_BUTTON).wait.exists()
+        self.android.ui(text = Device.APP_START_BUTTON).wait.exists(timeout = 2)
+        if not self.android.ui(text = Device.APP_START_BUTTON).exists:
+            self.android.ui.press.menu()
         self.android.ui(text = Device.APP_START_BUTTON).click()
         self.android.ui.press.home()
 
     def desktop_stop(self):
         #self.android.cmd("shell /data/data/com.intel.desktopinyourpocket/files/stopDesktop.tablet.bash")
+        self.switch_to_android()
         self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
         self.android.ui(text = Device.APP_TITLE).wait.exists()
         time.sleep(1.5)
         self.android.ui.press.menu()
-        self.android.ui(text = Device.APP_STOP_BUTTON).wait.exists()
+        self.android.ui(text = Device.APP_STOP_BUTTON).wait.exists(timeout = 2)
+        if not self.android.ui(text = Device.APP_STOP_BUTTON).exists:
+            self.android.ui.press.menu()
         self.android.ui(text = Device.APP_STOP_BUTTON).click()
         self.android.ui.press.home()
         self.android.cmd("shell am force-stop com.intel.desktopinyourpocket")
+
+    def switch_to_desktop(self):
+        self.android.ui.wakeup()
+        self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
+        #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
+        self.android.ui(text = Device.APP_TITLE).wait.exists()
+        time.sleep(1.5)
+        self.android.ui.press.menu()
+        self.android.ui(text = Device.APP_SWITCH_BUTTON).wait.exists(timeout = 2)
+        if not self.android.ui(text = Device.APP_SWITCH_BUTTON).exists:
+            self.android.ui.press.menu()
+        self.android.ui(text = Device.APP_SWITCH_BUTTON).click()
+        #self.android.ui.press.home()
+        #self.android.cmd('shell %s start' % (self.SRCTL_PATH))
+
+    def switch_to_android(self):
+        m = self.linux.ui.pymouse.PyMouse()
+        scx, scy = m.screen_size()
+        m.click(scx - 20, 20)
+        time.sleep(1)
+        m.click(7 * scx / 12, 7 * scy / 12)
 
     def start(self):
         if self._android is None:
