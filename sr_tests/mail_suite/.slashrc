@@ -1,4 +1,5 @@
 import slash
+from bunch import Bunch
 from datetime import datetime
 import os
 from os import path
@@ -9,8 +10,15 @@ externals = 'externals'
 dut_chroot = '/data/debian'
 resources_remote = 'root'
 
+filenames = {
+    'pdf'   : 'example_pdf.pdf',
+    'docx'  : 'example_docx.docx',
+    'large' : 'largefile.file',
+    'pic'   : 'example_jpg.jpg',
+    'diflangs' : 'example_txt.txt'
+}
+config = Bunch()
 config = {
-        
         'paths' : {
             'results' : path.join(project_root, externals, suite_name, 'results'),
             'resources' : path.join(project_root, externals, suite_name, 'resources'),
@@ -22,15 +30,26 @@ config = {
             'externals' : externals,
             'chroot' : dut_chroot
         },
-        
+
         'thresholds' : {
             'cpu_max'   : 0.9,
             'mem_max'   : 900000000,
             'bat_max'   : (0.25*1.05) / 60, # (=0.004375) batt use per sec. (out of 100)
             'time_max'  : 0 
 
+        },
+
+        'mail' : {
+            'to'        : ['to@reciever.com'],
+            'subject'   : 'subject',
+            'body'      : 'body',
+            'inlinepic' : '<img src="' + filenames['pic'] + '">',
+            'inbox'     : 'inbox',
+            'sent'      : 'sent',
+            'link'      : '<a href="www.google.com">Google</a>',
+            'filepaths' : filenames
+            }
         }
-}
 
 slash.config.root.log.root = config['paths']['results']
 slash.config.root.log.localtime = True

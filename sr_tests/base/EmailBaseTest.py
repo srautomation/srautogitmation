@@ -1,6 +1,7 @@
 from logbook import Logger
 import datetime
 import os
+import slash
 from bunch import Bunch
 import time
 from email.header import decode_header
@@ -10,66 +11,81 @@ from sr_automation.applications.AndroidMail import AndroidMail
 from sr_automation.applications.IMAPApp import IMAPApp 
 
 class EmailBaseTest(BaseTest):
-    def _start_imapapp(self):
-        if self.linux.shell.is_running_by_short_name("imapapp"):
-            return
-        username = "labuser"
-        filesystem_fix_after_boot = " ; ".join([
-            "USER={}".format(username)
-            , "mkdir /tmp_imap 2>/dev/null"
-            , "chmod 755 /tmp_imap"
-            , "mount -t tmpfs none /tmp_imap"
-            , "chmod 755 /tmp_imap"
-            , "stat /bin/imapsmtp.bak 2>/dev/null || cp -n /bin/imapsmtp /bin/imapsmtp.bak"
-            , "rm /tmp_imap/imapsmtp -rf"
-            , "cp /bin/imapsmtp.bak /tmp_imap/imapsmtp"
-            , "chown root:$USER /tmp_imap/imapsmtp"
-            , "setcap CAP_NET_BIND_SERVICE+ep /tmp_imap/imapsmtp"
-            , "chmod 110 /tmp_imap/imapsmtp"
-            , "ln -sf /tmp_imap/imapsmtp /bin/imapsmtp"
-            , "chown -h root:$USER /bin/imapsmtp"])
-        self.linux.shell.shell(filesystem_fix_after_boot).wait()
-        self.linux.shell.shell('su - {} -c "/home/labuser/imap_config.py &"'.format(username))
-        while not self.linux.shell.is_running_by_short_name("imap_config.py"): pass
-        IMAPAPP_TITLE = "ImapApp"
-        self.android.cmd("shell am start -n com.example.imapapp/.TestActivity")
-        self.android.ui(text = IMAPAPP_TITLE).wait.exists()
-        if not self.android.ui.press.home(): # try again
-            time.sleep(0.5)
-            self.android.ui.press.home()
-        while self.linux.shell.is_running_by_short_name("imap_config.py"): pass
-        return True
 
-    def _kill_imapapp(self):
-        self.android.cmd("shell am force-stop com.example.imapapp")
-        self.linux.shell.shell("killall -9 imapsmtp")
+    @slash.hooks.session_start.register
+    def start_mail_sync():
+        def _start_imapapp():
+            if slash.g.device.linux.shell.is_running_by_short_name("imapapp"):
+                return
+            username = "labuser"
+            filesystem_fix_after_boot = " ; ".join([
+                "USER={}".format(username)
+                , "mkdir /tmp_imap 2>/dev/null"
+                , "chmod 755 /tmp_imap"
+                , "mount -t tmpfs none /tmp_imap"
+                , "chmod 755 /tmp_imap"
+                , "stat /bin/imapsmtp.bak 2>/dev/null || cp -n /bin/imapsmtp /bin/imapsmtp.bak"
+                , "rm /tmp_imap/imapsmtp -rf"
+                , "cp /bin/imapsmtp.bak /tmp_imap/imapsmtp"
+                , "chown root:$USER /tmp_imap/imapsmtp"
+                , "setcap CAP_NET_BIND_SERVICE+ep /tmp_imap/imapsmtp"
+                , "chmod 110 /tmp_imap/imapsmtp"
+                , "ln -sf /tmp_imap/imapsmtp /bin/imapsmtp"
+                , "chown -h root:$USER /bin/imapsmtp"])
+            slash.g.device.linux.shell.shell(filesystem_fix_after_boot).wait()
+            slash.g.device.linux.shell.shell('su - {} -c "/home/labuser/imap_config.py &"'.format(username))
+            while not slash.g.device.linux.shell.is_running_by_short_name("imap_config.py"): pass
+            IMAPAPP_TITLE = "ImapApp"
+            slash.g.device.android.cmd("shell am start -n com.example.imapapp/.TestActivity")
+            time.sleep(2)
+            slash.g.device.android.ui(text = IMAPAPP_TITLE).wait.exists()
+            if not slash.g.device.android.ui.press.home(): # try again
+                time.sleep(0.5)
+                slash.g.device.android.ui.press.home()
+            while slash.g.device.linux.shell.is_running_by_short_name("imap_config.py"): pass
+            return True
 
-    def before(self):
-        super(EmailBaseTest, self).before()
-        self._start_imapapp()
-        self.mail = Bunch(
-            android = AndroidMail(self.android),
-            linux   = IMAPApp(self.linux),
+        _start_imapapp()
+        slash.g.mail = Bunch(
+            android = AndroidMail(slash.g.device.android),
+            linux   = IMAPApp(slash.g.device.linux),
             email   = None,
             password = None,
             folder  = None,
             )
-        self.messages = Bunch(
+        slash.g.messages = Bunch(
             android = None,
             linux   = None,
             )
 
+    @slash.hooks.session_end.register
+    def stop_mail_sync():
+        def _kill_imapapp():
+            slash.g.device.android.cmd("shell am force-stop com.example.imapapp")
+            slash.g.device.linux.shell.shell("killall -9 imapsmtp")
+        _kill_imapapp()
+
+    @property
+    def mail(self):
+        return slash.g.mail
+
+    @property
+    def messages(self):
+        return slash.g.messages
+
+    def before(self):
+        super(EmailBaseTest, self).before()
+
     def after(self):
-        self._kill_imapapp()
         super(EmailBaseTest, self).after()
 
     def _folder_mapper(self, name):
         name = name.lower()
         return {"inbox":  Bunch(linux = "INBOX", android = "Inbox"),
-                "drafts": Bunch(linux = "DRAFTS", android = "Drafts"),
-                "outbox": Bunch(linux = "OUTBOX", android = "Outbox"),
-                "sent":   Bunch(linux = "SENT", android = "Sent"),
-                "trash":  Bunch(linux = "TRASH", android = "Trash"),
+                "drafts": Bunch(linux = "Drafts", android = "Drafts"),
+                "outbox": Bunch(linux = "Outbox", android = "Outbox"),
+                "sent":   Bunch(linux = "Sent", android = "Sent"),
+                "trash":  Bunch(linux = "Trash", android = "Trash"),
                 }[name]
 
     def choose_email(self, email, password=None):

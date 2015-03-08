@@ -3,6 +3,7 @@ from sqlalchemy.orm import create_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import pytz
+import time
 from bunch import Bunch
 
 class AndroidMail(object):
@@ -38,6 +39,7 @@ class AndroidMail(object):
         self._engine_body = create_engine("sqlite:///%s" % AndroidMail.PATH_LOCAL_BODY)
         self._metadata_db   = MetaData(bind = self._engine_db)
         self._metadata_body = MetaData(bind = self._engine_body)
+        time.sleep(2)
 
         class Account(Base):
             __table__ = Table("Account", self._metadata_db, autoload = True)

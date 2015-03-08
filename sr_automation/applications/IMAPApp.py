@@ -19,7 +19,7 @@ class IMAPApp(object):
         assert result == "OK"
 
     def _read_key(self):
-        return self._linux.shell.shell("cat /var/run/imapsmtp/key").stdout.read().strip()
+        return self._linux.shell.shell("cat /run/imapsmtp/key").stdout.read().strip()
 
     def choose_email(self, email, password=""):
         self._email = email
