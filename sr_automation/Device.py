@@ -11,7 +11,7 @@ from logbook import Logger
 log = Logger("Device")
 
 class Device(object):
-    DEFAULT_RPYC_INTERFACE = "wlan0"
+    DEFAULT_RPYC_INTERFACE = "rndis0"
     APP_TITLE        = "Intel's Desktop In Your Pocket"
     APP_START_BUTTON = "Start Desktop OS"
     APP_STOP_BUTTON  = "Kill Desktop OS"
@@ -54,12 +54,12 @@ class Device(object):
         if self._android is None:
             self._android = Android.Android(self._device_id)
         self._try_setup_mounts()
-        chroot_path = ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "bin"]
+        chroot_path = ["/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "bin", "/system/xbin"]
         if shell is True:
             command = 'su - -c "%s"' % (cmdline)
         else:
             command = cmdline
-        chroot_cmdline = 'USER=root DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root /system/xbin/chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
+        chroot_cmdline = 'USER=root DISPLAY=:0 GTK_MODULES=gail:atk-bridge PATH=%s HOME=/root busybox chroot %s %s' % (':'.join(chroot_path), Device._MOUNTS[0]["path"], command)
         return self.android.adb.cmd("shell " + chroot_cmdline)
 
     def _is_rpyc_running(self):
