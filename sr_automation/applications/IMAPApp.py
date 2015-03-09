@@ -1,6 +1,6 @@
 import email
 import time
-import dateutil
+from dateutil import parser
 from bunch import Bunch
 
 class IMAPApp(object):
@@ -72,7 +72,7 @@ class IMAPApp(object):
 
     def messages(self):
         _messages = [Bunch(
-            time  = dateutil.parser.parse(mail["date"]),
+            time  = parser.parse(mail["date"]),
             from_ = mail["from"],
             to    = mail["to"],
             cc    = mail["cc"],
