@@ -6,6 +6,8 @@ import pytz
 import time
 from bunch import Bunch
 
+from EmailGuiController import EmailGuiController
+
 class AndroidMail(object):
     PATH_ANDROID_DB   = "/data/data/com.android.email/databases/EmailProvider.db"
     PATH_ANDROID_BODY = "/data/data/com.android.email/databases/EmailProviderBody.db"
@@ -17,6 +19,8 @@ class AndroidMail(object):
         self._email = None
         self._password = None
         self._folder = None
+
+        self.gui = EmailGuiController(android.ui)
 
     def _pull_database(self):
         self._android.cmd("root")
@@ -107,7 +111,8 @@ class AndroidMail(object):
             for m in _messages]
         return messages
                          
-    
+    def send(self, to, subject, body, attachments=[]):
+        self.gui.send(to, subject, body, attachments)
 """
 a = AndroidMail(self.android).load()
 print a.query(a.Message).filter(a.Message.flagAttachment == 1, a.Account.emailAddress == "barak@wizery.com", ).all()
