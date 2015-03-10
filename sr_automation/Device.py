@@ -115,27 +115,29 @@ class Device(object):
         self.android.cmd("shell am force-stop com.intel.desktopinyourpocket")
 
     def switch_to_desktop(self):
-        log.info('Switching to desktop')
-        self.android.ui.wakeup()
-        self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
-        #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
-        self.android.ui(text = Device.APP_TITLE).wait.exists()
-        time.sleep(1.5)
-        self.android.ui.press.menu()
-        self.android.ui(text = Device.APP_SWITCH_BUTTON).wait.exists(timeout = 2)
-        if not self.android.ui(text = Device.APP_SWITCH_BUTTON).exists:
+        if not self.is_desktop_running():
+            log.info('Switching to desktop')
+            self.android.ui.wakeup()
+            self.android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
+            #self.android.cmd("shell su -/data/data/com.intel.desktopinyourpocket/files/startDesktop.tablet.bash")
+            self.android.ui(text = Device.APP_TITLE).wait.exists()
+            time.sleep(1.5)
             self.android.ui.press.menu()
-        self.android.ui(text = Device.APP_SWITCH_BUTTON).click()
-        #self.android.ui.press.home()
-        #self.android.cmd('shell %s start' % (self.SRCTL_PATH))
+            self.android.ui(text = Device.APP_SWITCH_BUTTON).wait.exists(timeout = 2)
+            if not self.android.ui(text = Device.APP_SWITCH_BUTTON).exists:
+                self.android.ui.press.menu()
+            self.android.ui(text = Device.APP_SWITCH_BUTTON).click()
+            #self.android.ui.press.home()
+            #self.android.cmd('shell %s start' % (self.SRCTL_PATH))
 
     def switch_to_android(self):
-        log.info('Switching to android')
-        m = self.linux.ui.pymouse.PyMouse()
-        scx, scy = m.screen_size()
-        m.click(scx - 20, 20)
-        time.sleep(1)
-        m.click(7 * scx / 12, 7 * scy / 12)
+        if self.is_desktop_running():
+            log.info('Switching to android')
+            m = self.linux.ui.pymouse.PyMouse()
+            scx, scy = m.screen_size()
+            m.click(scx - 20, 20)
+            time.sleep(1)
+            m.click(7 * scx / 12, 7 * scy / 12)
 
     def start(self):
         if self._android is None:
@@ -155,6 +157,9 @@ class Device(object):
         self.desktop_stop()
         self._linux.stop()
         self._android.stop()
+
+    def is_desktop_running(self):
+        return bool(int(subprocess.Popen("adb shell getprop sunriver.active", shell = True, stdout = subprocess.PIPE).stdout.read().strip()))
 
     def __enter__(self):
         self.start()
