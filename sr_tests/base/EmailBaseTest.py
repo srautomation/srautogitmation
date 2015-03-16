@@ -111,13 +111,13 @@ class EmailBaseTest(BaseTest):
         self.messages.linux   = self.mail.linux.messages()
 
     def compare_all(self):
-        return (self.compare_count()   and 
-                self.compare_from()    and 
-                self.compare_to()      and
-                self.compare_cc()      and
-                self.compare_subject() and
-                self.compare_flags()   and
-                self.compare_body())
+        return (self.compare_count()             and 
+                not bool(self.compare_from())    and 
+                not bool(self.compare_to())      and
+                not bool(self.compare_cc())      and
+                not bool(self.compare_subject()) and
+                not bool(self.compare_flags())   and
+                not bool(self.compare_body()))
 
     def compare_count(self):
         return len(self.messages.android) == len(self.messages.linux)
@@ -143,7 +143,7 @@ class EmailBaseTest(BaseTest):
                 if a.time != l.time]
 
     def compare_flags(self):
-        return True # False
+        return [] # False
 
     def compare_body(self):
         different = []
@@ -162,5 +162,5 @@ class EmailBaseTest(BaseTest):
         return different
 
     def compare_attachments(self):
-        return True # False
+        return [] # False
 
