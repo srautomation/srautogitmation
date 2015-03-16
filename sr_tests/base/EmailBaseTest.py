@@ -15,8 +15,8 @@ class EmailBaseTest(BaseTest):
     @slash.hooks.session_start.register
     def start_mail_sync():
         def _start_imapapp():
-            if slash.g.device.linux.shell.is_running_by_short_name("imapapp"):
-                return
+            #if slash.g.device.linux.shell.is_running_by_short_name("imapapp"):
+            #    return
             username = "labuser"
             filesystem_fix_after_boot = " ; ".join([
                 "USER={}".format(username)
@@ -75,6 +75,8 @@ class EmailBaseTest(BaseTest):
 
     def before(self):
         super(EmailBaseTest, self).before()
+        if self.mail.linux._imap.state == 'NONAUTH':
+            self.choose_email("srusertest@gmail.com")
 
     def after(self):
         super(EmailBaseTest, self).after()
