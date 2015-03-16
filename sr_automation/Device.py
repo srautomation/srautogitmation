@@ -97,7 +97,7 @@ class Device(object):
         if not self.android.ui(text = Device.APP_START_BUTTON).exists:
             self.android.ui.press.menu()
         self.android.ui(text = Device.APP_START_BUTTON).click()
-        self.android.ui.press.home()
+        #self.android.ui.press.home()
 
     def desktop_stop(self):
         #self.android.cmd("shell /data/data/com.intel.desktopinyourpocket/files/stopDesktop.tablet.bash")
