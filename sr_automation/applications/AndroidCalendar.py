@@ -11,11 +11,11 @@ class AndroidCalendar(object):
     
     def __init__(self, android):
         self._android = android
-        self._account = account
+        self._account = None
 
     def _pull_database(self):
         self._android.cmd("root")
-        self._android.cmd("pull %s %s" % (AndroidCalendar.PATH_ANDROID_DB, AndoirdCalendar.PATH_LOCAL_DB))
+        self._android.cmd("pull %s %s" % (AndroidCalendar.PATH_ANDROID_DB, AndroidCalendar.PATH_LOCAL_DB))
 
     def choose_account(self, account):
         self._account = account
@@ -24,7 +24,7 @@ class AndroidCalendar(object):
     def load(self):
         self._pull_database()
         Base = declarative_base()
-        self._engine_db = create_engine("sqlite:///%s" % AndroidMail.PATH_LOCAL_DB)
+        self._engine_db = create_engine("sqlite:///%s" % AndroidCalendar.PATH_LOCAL_DB)
         self._metadata_db = MetaData(bind = self._engine_db)
 
         class CalendarCache(Base):
@@ -34,13 +34,13 @@ class AndroidCalendar(object):
         class Attendees(Base):
             __table__ = Table("Attendees", self._metadata_db,
                     Column("event_id", Integer, ForeignKey("Events._id")),
-                    autload = True)
-        self.Attendess = Attendess
+                    autoload = True)
+        self.Attendees = Attendees
 
         class Reminders(Base):
             __table__ = Table("Reminders", self._metadata_db,
                     Column("event_id", Integer, ForeignKey("Events._id")),
-                    autload = True)
+                    autoload = True)
         self.Reminders = Reminders
 
         class CalendarAlerts(Base):
@@ -57,7 +57,7 @@ class AndroidCalendar(object):
 
         class Colors(Base):
             __table__ = Table("Colors", self._metadata_db, # Maybe add acount_name reference
-                    autload = True)
+                    autoload = True)
         self.Colors = Colors
 
         class Calendars(Base):
@@ -89,7 +89,9 @@ class AndroidCalendar(object):
 
         self._session_db = create_session(bind = self._engine_db)
         return self
-
     
-                    
+    def query(self, obj):
+        return self._session_db.query(obj)
 
+    def events(self):
+        pass
