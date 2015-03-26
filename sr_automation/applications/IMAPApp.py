@@ -1,4 +1,10 @@
-import email
+from email import message_from_string
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+from email import encoders
+
 import time
 from dateutil import parser
 from bunch import Bunch
@@ -7,7 +13,9 @@ class IMAPApp(object):
     def __init__(self, linux):
         self._linux = linux
         self._imap_module = self._linux._rpyc.modules.imaplib
+        self._smtp_module = self._linux._rpyc.modules.smtplib
         self._imap = self._imap_module.IMAP4("localhost")
+        self._smtp = self._smtp_module.SMTP("localhost")
         self._key = self._read_key()
 
         self._email = None
@@ -66,7 +74,7 @@ class IMAPApp(object):
         result, data = self._imap.uid("fetch", uids_text, "(UID BODY[])") #)BODY.PEEK[HEADER.FIELDS (From To Cc Bcc Subject Date Message-ID Priority X-Priority References Newsgroups In-Reply-To Content-Type Reply-To)]")
         self._assert_result(result)
         # dict indexed by uid
-        self._msgs = {int(x[0].split(" ", 3)[2]): email.message_from_string(x[1]) for x in data[::2]}
+        self._msgs = {int(x[0].split(" ", 3)[2]): message_from_string(x[1]) for x in data[::2]}
         return self
         #return data
 
@@ -86,3 +94,11 @@ class IMAPApp(object):
             )
             for (uid, mail) in sorted(self._msgs.iteritems())]
         return _messages
+
+    def send(self, to, subject, attachments = []):
+        msg = MIMEMultipart()
+        from_ = self._email
+        msg['From'] = from_
+        msg['To'] = COMMASPACE.join(to)
+        msg['Date'] = formatdate(localtime = True)
+        self._smtp.sendmail(msg['From'], msg['To'], msg.as_string())
