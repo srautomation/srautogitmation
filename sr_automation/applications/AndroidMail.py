@@ -114,6 +114,11 @@ class AndroidMail(object):
                          
     def send(self, to, subject, body, attachments=[]):
         self.gui.send(to, subject, body, attachments)
+
+    def send_(self, self, to_list, subject, body, attachments=[]):
+        to = ', '.join(to_list)
+        self._android.sl4a.sendEmail(to, subject, body)
+        self._android.ui(descriptionContains = "send").click()
 """
 a = AndroidMail(self.android).load()
 print a.query(a.Message).filter(a.Message.flagAttachment == 1, a.Account.emailAddress == "barak@wizery.com", ).all()
