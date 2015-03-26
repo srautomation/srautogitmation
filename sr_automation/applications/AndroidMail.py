@@ -92,6 +92,7 @@ class AndroidMail(object):
             self.Body.messageKey.in_(ids))
         _bodies = {m.messageKey: m for m in _bodies}
         messages = [Bunch(
+            _uid  = m._id,
             time  = pytz.utc.localize(datetime.utcfromtimestamp(m.timeStamp / 1000.0)),
             from_ = m.fromList.split('\x02')[0],
             to    = m.toList,

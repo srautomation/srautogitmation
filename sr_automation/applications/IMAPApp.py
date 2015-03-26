@@ -72,6 +72,7 @@ class IMAPApp(object):
 
     def messages(self):
         _messages = [Bunch(
+            _uid  = uid,
             time  = parser.parse(mail["date"]),
             from_ = mail["from"],
             to    = mail["to"],
@@ -83,5 +84,5 @@ class IMAPApp(object):
                 html = mail.get_payload()[0].get_payload().decode('base64'),
                 ),
             )
-            for (uid, mail) in self._msgs.iteritems()]
+            for (uid, mail) in sorted(self._msgs.iteritems())]
         return _messages
