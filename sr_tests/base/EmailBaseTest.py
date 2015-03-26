@@ -45,7 +45,7 @@ class EmailBaseTest(BaseTest):
             while slash.g.device.linux.shell.is_running_by_short_name("imap_config.py"): pass
             return True
 
-        _start_imapapp()
+        #_start_imapapp()
         slash.g.mail = Bunch(
             android = AndroidMail(slash.g.device.android),
             linux   = IMAPApp(slash.g.device.linux),
@@ -121,6 +121,10 @@ class EmailBaseTest(BaseTest):
 
     def compare_count(self):
         return len(self.messages.android) == len(self.messages.linux)
+
+    def compare_uid(self):
+        return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
+                if a._uid != l._uid]
 
     def compare_from(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
