@@ -65,20 +65,24 @@ class IMAPApp(object):
     def load(self):
         result, data = self._imap.uid("fetch", "1:*", "(FLAGS)")
         self._assert_result(result)
-        _tmp = [x.split(" ", 3) for x in data]
-        # dict indexed by uid
-        self._flags = {int(x[2]): self.flags_string_to_bunch(x[3]) for x in _tmp}
+        self._msgs = None
+        if data[0] != None:
+            _tmp = [x.split(" ", 3) for x in data]
+            # dict indexed by uid
+            self._flags = {int(x[2]): self.flags_string_to_bunch(x[3]) for x in _tmp}
 
-        # for now, fetch all TODO: think about it
-        uids_text = ','.join(map(str, self._flags.keys())) 
-        result, data = self._imap.uid("fetch", uids_text, "(UID BODY[])") #)BODY.PEEK[HEADER.FIELDS (From To Cc Bcc Subject Date Message-ID Priority X-Priority References Newsgroups In-Reply-To Content-Type Reply-To)]")
-        self._assert_result(result)
-        # dict indexed by uid
-        self._msgs = {int(x[0].split(" ", 3)[2]): message_from_string(x[1]) for x in data[::2]}
+            # for now, fetch all TODO: think about it
+            uids_text = ','.join(map(str, self._flags.keys())) 
+            result, data = self._imap.uid("fetch", uids_text, "(UID BODY[])") #)BODY.PEEK[HEADER.FIELDS (From To Cc Bcc Subject Date Message-ID Priority X-Priority References Newsgroups In-Reply-To Content-Type Reply-To)]")
+            self._assert_result(result)
+            # dict indexed by uid
+            self._msgs = {int(x[0].split(" ", 3)[2]): message_from_string(x[1]) for x in data[::2]}
         return self
         #return data
 
     def messages(self):
+        if self._msgs == None:
+            return []
         _messages = [Bunch(
             _uid  = uid,
             time  = parser.parse(mail["date"]),

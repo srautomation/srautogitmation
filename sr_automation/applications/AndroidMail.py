@@ -88,6 +88,8 @@ class AndroidMail(object):
     def messages(self):
         _messages = self._session_db.query(self.Message).join(self.Message.mailbox).filter(self.Mailbox.displayName == self._folder, self.Account.emailAddress == self._email)
         ids = [x._id for x in _messages]
+        if len(ids) == 0:
+            return []
         _bodies = self._session_body.query(self.Body).filter(
             self.Body.messageKey.in_(ids))
         _bodies = {m.messageKey: m for m in _bodies}
