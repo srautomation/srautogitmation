@@ -93,10 +93,10 @@ class AndroidMail(object):
         _bodies = {m.messageKey: m for m in _bodies}
         messages = [Bunch(
             _uid  = m._id,
-            time  = pytz.utc.localize(datetime.utcfromtimestamp(m.timeStamp / 1000.0)),
+            time  = pytz.utc.localize(datetime.utcfromtimestamp(m.timeStamp / 1000)),
             from_ = m.fromList.split('\x02')[0],
-            to    = m.toList,
-            cc    = m.ccList,
+            to    = '' if m.toList == None else m.toList,
+            cc    = '' if m.ccList == None else m.ccList,
             subject = m.subject,
             flags = Bunch(
                 read       = (m.flagRead == 1),
@@ -115,7 +115,7 @@ class AndroidMail(object):
     def send(self, to, subject, body, attachments=[]):
         self.gui.send(to, subject, body, attachments)
 
-    def send_(self, self, to_list, subject, body, attachments=[]):
+    def send_(self, to_list, subject, body, attachments=[]):
         to = ', '.join(to_list)
         self._android.sl4a.sendEmail(to, subject, body)
         self._android.ui(descriptionContains = "send").click()

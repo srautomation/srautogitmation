@@ -128,15 +128,28 @@ class EmailBaseTest(BaseTest):
 
     def compare_from(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
-                if a.from_ != l.from_]
+                if self.clean_addresses(a.from_) != self.clean_addresses(l.from_)]
 
     def compare_to(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
-                if a.to != l.to]
+                if self.clean_addresses(a.to) != self.clean_addresses(l.to)]
 
     def compare_cc(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
-                if a.cc != l.cc]
+                if self.clean_addresses(a.cc) != self.clean_addresses(l.cc)]
+
+    def clean_addresses(self, addresses):
+        if addresses == None:
+            return ''
+        addresses = addresses.replace(' ','').split(',')
+        addresses = map(self.clean_address, addresses)
+        return addresses
+
+    def clean_address(self, address):
+        tag_index = address.find('<')
+        if tag_index != -1:
+            address = address[tag_index + 1:address.find('>')]
+        return address.encode('utf8')
     
     def compare_subject(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
@@ -154,15 +167,18 @@ class EmailBaseTest(BaseTest):
         for index, (a_msg, l_msg) in enumerate(zip(self.messages.android, self.messages.linux)):
             a_body = a_msg.body
             l_body = l_msg.body
+            html_not_equal = False
+            text_not_equal = False
             if (a_body.text is not None) and (l_body.text is not None):
                 if (len(a_body.text) > 0) and (len(l_body.text) > 0):
                     if a_msg.body.text.encode('utf8') != l_msg.body.text.decode('base64'):
-                        different.append(index)
-                        continue
+                        text_not_equal = True
             if (a_body.html is not None) and (l_body.html is not None):
                 if (len(a_body.html) > 0) and (len(l_body.html) > 0):
                     if a_msg.body.html.encode('utf8') != l_msg.body.html:
-                        different.append(index)
+                        html_not_equal = True
+            if text_not_equal and html_not_equal:
+                different.append(index)
         return different
 
     def compare_attachments(self):

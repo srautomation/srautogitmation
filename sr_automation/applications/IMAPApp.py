@@ -82,9 +82,9 @@ class IMAPApp(object):
         _messages = [Bunch(
             _uid  = uid,
             time  = parser.parse(mail["date"]),
-            from_ = mail["from"],
-            to    = mail["to"],
-            cc    = mail["cc"],
+            from_ = '' if mail["from"] == None else mail["from"],
+            to    = '' if mail["to"] == None else mail["to"],
+            cc    = '' if mail["cc"] == None else mail["cc"],
             subject = mail["subject"],
             flags = self._flags[uid],
             body = Bunch(
@@ -94,6 +94,7 @@ class IMAPApp(object):
             )
             for (uid, mail) in sorted(self._msgs.iteritems())]
         return _messages
+
 
     def send(self, to, subject, attachments = []):
         msg = MIMEMultipart()
