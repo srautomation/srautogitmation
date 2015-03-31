@@ -1,7 +1,3 @@
-from Battery import Battery
-from Activities import Activities
-from Processes import Processes
-from NetInterfaces import NetInterfaces
 import uiautomator
 import sl4a
 import time
@@ -16,12 +12,19 @@ class Android(object):
         self._ui = uiautomator.Device(serial = self._device_id)
         self._adb = self._ui.server.adb
         self.adb.cmd("root").wait()
-        self.adb.cmd("wait-for-device").wait()
-        self._battery = Battery(self._adb)
-        self._processes = Processes(self._adb)
-        self._activities = Activities(self._adb)
-        self._interfaces = NetInterfaces(self._adb)
+        RETRIES = 3
+        for i in xrange(RETRIES):
+            try:
+                self.adb.cmd("wait-for-device").wait()
+            except EnvironmentError, e:
+                time.sleep(1)
+                continue
+            break
         self._sl4a = None
+
+    @classmethod
+    def devices(cls):
+        return uiautomator.Adb().devices()
 
     def start_sl4a(self):
         self.adb.cmd("shell", "am", "start", "-a", "com.googlecode.android_scripting.action.LAUNCH_SERVER", 
@@ -54,21 +57,11 @@ class Android(object):
     def sl4a(self):
         return self._sl4a
 
-    @property
-    def battery(self):
-        return self._battery
-
-    @property
-    def processes(self):
-        return self._processes
-
-    @property
-    def activities(self):
-        return self._activities
-
-    @property
-    def interfaces(self):
-        return self._interfaces
-
     def cmd(self, cmdline):
         return self.adb.cmd(cmdline)
+
+if __name__ == "__main__":
+    device_id  = Android.devices().keys()[0]
+    android    = Android(device_id)
+    print device_id
+    print android.cmd("shell ls").stdout.read()

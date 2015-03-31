@@ -9,8 +9,8 @@ log = Logger("Resources")
 class Resources(object):
     COMMAND = '"head -1 /proc/stat; head -4 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null"'
     SAMPLES_DELTA = 15
-    def __init__(self, adb):
-        self._adb = adb
+    def __init__(self, android):
+        self._android = android
         self._resources_handler = CollectorHandler()
         self._samples = []
         self._own_pids = set()
@@ -52,7 +52,7 @@ class Resources(object):
         return sample
 
     def _input(self, pattern = None):
-        sample = self._parse(self._adb.cmd('shell', Resources.COMMAND).stdout.readlines())
+        sample = self._parse(self._android.cmd('shell ' + Resources.COMMAND).stdout.readlines())
         sample.time = time.time()
         self._samples.append(sample)
         if len(self._samples) < Resources.SAMPLES_DELTA:
@@ -113,4 +113,15 @@ class Resources(object):
                 else:
                     return getattr(_self, name)
         return _Measured()
+
+if __name__ == "__main__":
+    from Android import Android
+    device_id = Android.devices().keys()[0]
+    android   = Android(device_id)
+    resources = Resources(android)
+    with resources.measure():
+        time.sleep(5)
+    print resources.measured.mem.avg
+    print resources.measured.bat.min
+    print resources.measured.cpu.max
 

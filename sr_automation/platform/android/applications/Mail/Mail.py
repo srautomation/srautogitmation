@@ -6,8 +6,6 @@ import pytz
 import time
 from bunch import Bunch
 
-from EmailGuiController import EmailGuiController
-
 class AndroidMail(object):
     PATH_ANDROID_DB   = "/data/data/com.android.email/databases/EmailProvider.db"
     PATH_ANDROID_BODY = "/data/data/com.android.email/databases/EmailProviderBody.db"
@@ -19,8 +17,6 @@ class AndroidMail(object):
         self._email = None
         self._password = None
         self._folder = None
-
-        self.gui = EmailGuiController(android.ui)
 
     def _pull_database(self):
         self._android.cmd("root")
@@ -114,16 +110,16 @@ class AndroidMail(object):
             for m in _messages]
         return messages
                          
-    def send(self, to, subject, body, attachments=[]):
-        self.gui.send(to, subject, body, attachments)
-
     def send_(self, to_list, subject, body, attachments=[]):
         to = ', '.join(to_list)
         self._android.sl4a.sendEmail(to, subject, body)
         self._android.ui(descriptionContains = "send").click()
-"""
-a = AndroidMail(self.android).load()
-print a.query(a.Message).filter(a.Message.flagAttachment == 1, a.Account.emailAddress == "barak@wizery.com", ).all()
-print a.query(a.Message).count()
-print [message.subject for message in a.query(a.Message).all()]
-"""
+
+if __name__ == "__main__":
+    import sys; sys.path.append("../..")
+    from Android import Android
+    device_id = Android.devices().keys()[0]
+    android   = Android(device_id)
+    mail      = AndroidMail(android)
+    mail.choose_email("intel.elad1@gmail.com", None).choose_folder("Inbox").load()
+    print mail.messages()

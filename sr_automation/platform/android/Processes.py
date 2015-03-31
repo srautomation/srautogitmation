@@ -5,8 +5,8 @@ from collections import namedtuple
 class Processes(object):
     MIN_FETCH_DELAY = 0.1 # seconds
     Process = namedtuple("Process", ["name", "pid", "cpu", "mem"])
-    def __init__(self, adb):
-        self._adb = adb
+    def __init__(self, android):
+        self._android = android 
         self._last_fetched = -1 * Processes.MIN_FETCH_DELAY
         self._parsed = None
 
@@ -14,8 +14,8 @@ class Processes(object):
         current_time = time.time()
         if (current_time < self._last_fetched + Processes.MIN_FETCH_DELAY): 
             return
-        cpu_text = self._adb.cmd("shell", "dumpsys", "cpuinfo").stdout.read()
-        mem_text = self._adb.cmd("shell", "dumpsys", "meminfo").stdout.read()
+        cpu_text = self._android.cmd("shell dumpsys cpuinfo").stdout.read()
+        mem_text = self._android.cmd("shell dumpsys meminfo").stdout.read()
         cpu_temp = re.compile("\s+?(?P<percent>\d+?)% (?P<pid>\d+?)/(?P<name>.*?): ").findall(cpu_text)
         mem_temp = re.compile("\s+?(\d+?) kB: (.*?) \(pid (\d+?)\)").findall(mem_text)
         self._parsed = [Processes.Process(name = x[0][2], pid = int(x[0][1]), cpu = int(x[0][0]), mem = int(x[1][0])) for x in zip(cpu_temp, mem_temp)]
@@ -27,4 +27,12 @@ class Processes(object):
     def __len__(self):
         self._fetch()
         return len(self._parsed)
+
+if __name__ == "__main__":
+    from Android import Android
+    device_id  = Android.devices().keys()[0]
+    android    = Android(device_id)
+    processes = Processes(android)
+    print processes[0]
+
 

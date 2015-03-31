@@ -95,3 +95,13 @@ class AndroidCalendar(object):
 
     def events(self):
         pass
+
+
+if __name__ == "__main__":
+    import sys; sys.path.append("../..")
+    from Android import Android
+    device_id = Android.devices().keys()[0]
+    android   = Android(device_id)
+    calendar  = AndroidCalendar(android)
+    calendar.load()
+    print calendar

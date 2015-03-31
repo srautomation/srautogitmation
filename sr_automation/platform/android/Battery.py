@@ -3,15 +3,15 @@ import time
 
 class Battery(object):
     MIN_FETCH_DELAY = 0.01 # seconds
-    def __init__(self, adb):
-        self._adb = adb
+    def __init__(self, android):
+        self._android = android
         self._last_fetched = -1 * Battery.MIN_FETCH_DELAY
 
     def _fetch(self):
         current_time = time.time()
         if (current_time < self._last_fetched + Battery.MIN_FETCH_DELAY): 
             return
-        text = self._adb.cmd("shell", "dumpsys", "battery").stdout.read()
+        text = self._android.cmd("shell dumpsys battery").stdout.read()
         self._last_fetched = current_time
         self._parsed = dict(re.compile("\s+(.*?)\s*?: ([^\s]+)").findall(text))
 
@@ -59,4 +59,11 @@ class Battery(object):
     def technology(self):
         self._fetch()
         return self._parsed["technology"]
+
+if __name__ == "__main__":
+    from Android import Android
+    device_id = Android.devices().keys()[0]
+    android   = Android(device_id)
+    battery   = Battery(android)
+    print battery.level
 

@@ -1,10 +1,9 @@
-import uiautomator
 import time
 
-class EmailGuiController(object):
-
-    def __init__(self, device):
-        self.d = device
+class AndroidMailGUI(object):
+    def __init__(self, android):
+        self._android = android
+        self.d = self._android.ui
         self.x_middle = self.d.info['displayWidth'] / 2
         self.y_bottom = self.d.info['displayHeight'] - 10
         self.y_top = 200
@@ -286,14 +285,11 @@ class EmailGuiController(object):
         #self.d(text="No messages.").wait.exists()
         while not self.d(text="No messages.").exists: pass
 
+if __name__ == "__main__":
+    import sys; sys.path.append("../..")
+    from Android import Android
+    device_id = Android.devices().keys()[0]
+    android   = Android(device_id)
+    gui       = AndroidMailGUI(android)
+    gui.open_email_app()
 
-def main():
-    import IPython, loremipsum, time
-    am = EmailGuiController(uiautomator.device)
-    to='srusertest@gmail.com'
-    for i in range(12):
-        am.send(to, loremipsum.get_sentence().encode('utf8')," ".join(loremipsum.get_sentences(4)).encode('utf8'))
-    #IPython.embed()
-
-if __name__ == '__main__':
-    main()

@@ -5,8 +5,8 @@ from collections import namedtuple
 class Activities(object):
     MIN_FETCH_DELAY = 0.01 # seconds
     Activity = namedtuple('Activity', ["task", "activity", "pid", "mResumed", "mStopped", "mFinished", "mLoaderStarted", "mChangingConfigurations", "mCurrentConfig"])
-    def __init__(self, adb):
-        self._adb = adb
+    def __init__(self, android):
+        self._android = android 
         self._last_fetched = -1 * Activities.MIN_FETCH_DELAY
         self._parsed = None
 
@@ -14,7 +14,7 @@ class Activities(object):
         current_time = time.time()
         if (current_time < self._last_fetched + Activities.MIN_FETCH_DELAY): 
             return
-        text = self._adb.cmd("shell", "dumpsys", "activity", "top").stdout.read() 
+        text = self._android.cmd("shell dumpsys activity top").stdout.read() 
         pattern = "ACTIVITY (.*?)/(.*?) \d.*?pid=([^\s]+).*?mResumed=([^\s]+) mStopped=([^\s]+) mFinished=([^\s]+).*?mLoadersStarted=([^\s]+).*?mChangingConfigurations=([^\s]+).*?mCurrentConfig={(.*?)}"
         temp = re.compile(pattern, re.DOTALL | re.MULTILINE).findall(text)
         self._parsed = [Activities.Activity(task = x1, activity = x2, pid = int(x3),
@@ -30,3 +30,10 @@ class Activities(object):
     def __len__(self):
         return len(self._parsed)
 
+
+if __name__ == "__main__":
+    from Android import Android
+    device_id  = Android.devices().keys()[0]
+    android    = Android(device_id)
+    activities = Activities(android)
+    print activities[0]
