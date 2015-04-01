@@ -50,9 +50,13 @@ class UI(object):
         return self._pymouse
 
 if __name__ == "__main__":
-    import sys; sys.path.append("../android"); sys.path.append("../android/applications/DesktopInYourPocket")
+    import sys
+    sys.path.append("../android")
+    sys.path.append("../sunriver")
+    sys.path.append("../sunriver/applications/DesktopInYourPocket")
     import time
     from Android import Android
+    from Sunriver import Sunriver
     from Chroot  import Chroot
     from NetInterfaces import NetInterfaces
     from DesktopInYourPocket import DesktopInYourPocket
@@ -66,7 +70,7 @@ if __name__ == "__main__":
 
     chroot     = Chroot(android)
     interfaces = NetInterfaces(android)
-    linux = Linux.connect(chroot, interfaces)
+    linux = Sunriver.connect(chroot, interfaces)
     shell = Shell(linux.modules, linux._rpyc)
     ui    = UI(shell)
     ui.start()

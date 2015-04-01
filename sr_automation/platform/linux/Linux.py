@@ -16,25 +16,8 @@ class Linux(object):
         if self._rpyc is not None:
             self._rpyc.close()
 
-    @classmethod
-    def connect(cls, chroot, interfaces):
-        log.info("Starting RPyC")
-        rpyc_process = chroot.run("rpyc_classic.py", shell=False)
-        log.info("Waiting RPyC")
-        android = chroot._android
-        while (0 == len(android.cmd('shell "netstat | grep :18812 | grep LISTEN"').stdout.read())):
-            time.sleep(0.5)
-        try:
-            iface = interfaces["rndis0"]
-        except KeyError, e:
-            iface = interfaces["wlan0"]
-        log.info("Connecting RPyC: %r" % iface.ip)
-        rpyc_connection = rpyc.classic.connect(iface.ip)
-        return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection)
-
     def start(self):
-        self._ui = UI(self._rpyc, self._shell, self._ip)
-
+        self._ui = UI(self._shell)
         self._ui.start()
 
     def stop(self):
@@ -56,17 +39,10 @@ class Linux(object):
         return self.shell.cmd(cmdline, *args, **kw)
 
 if __name__ == "__main__":
-    import sys; sys.path.append("../android")
-    from Android import Android
-    from Chroot  import Chroot
-    from NetInterfaces import NetInterfaces
-    device_id  = Android.devices().keys()[0]
-    android    = Android(device_id)
-
-    chroot     = Chroot(android)
-    interfaces = NetInterfaces(android)
-    linux = Linux.connect(chroot, interfaces)
-
-    print linux.modules.os.listdir("/")
+    from bunch import Bunch
+    import os
+    import psutil
+    modules = Bunch(os=os, psutil=psutil)
+    
+    linux = Linux(modules=modules)
     print linux.cmd("ls -la").stdout.read()
-

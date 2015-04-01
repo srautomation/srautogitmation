@@ -32,7 +32,7 @@ class DesktopInYourPocket(object):
         return bool(int(output))
 
 if __name__ == "__main__":
-    import sys; sys.path.append("../..")
+    import sys; sys.path.append("../../../android")
     import time
     from Android import Android
     device_id = Android.devices().keys()[0]

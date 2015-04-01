@@ -55,6 +55,7 @@ class Chroot(object):
         return self._android.cmd('shell %s' % chroot_cmdline)
 
 if __name__ == "__main__":
+    import sys; sys.path.append("../android")
     from Android import Android
     device_id  = Android.devices().keys()[0]
     android    = Android(device_id)

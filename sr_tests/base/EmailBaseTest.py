@@ -14,38 +14,6 @@ class EmailBaseTest(BaseTest):
 
     @slash.hooks.session_start.register
     def start_mail_sync():
-        def _start_imapapp():
-            #if slash.g.device.linux.shell.is_running_by_short_name("imapapp"):
-            #    return
-            username = "labuser"
-            filesystem_fix_after_boot = " ; ".join([
-                "USER={}".format(username)
-                , "mkdir /tmp_imap 2>/dev/null"
-                , "chmod 755 /tmp_imap"
-                , "mount -t tmpfs none /tmp_imap"
-                , "chmod 755 /tmp_imap"
-                , "stat /bin/imapsmtp.bak 2>/dev/null || cp -n /bin/imapsmtp /bin/imapsmtp.bak"
-                , "rm /tmp_imap/imapsmtp -rf"
-                , "cp /bin/imapsmtp.bak /tmp_imap/imapsmtp"
-                , "chown root:$USER /tmp_imap/imapsmtp"
-                , "setcap CAP_NET_BIND_SERVICE+ep /tmp_imap/imapsmtp"
-                , "chmod 110 /tmp_imap/imapsmtp"
-                , "ln -sf /tmp_imap/imapsmtp /bin/imapsmtp"
-                , "chown -h root:$USER /bin/imapsmtp"])
-            slash.g.device.linux.shell.shell(filesystem_fix_after_boot).wait()
-            slash.g.device.linux.shell.shell('su - {} -c "/home/labuser/imap_config.py &"'.format(username))
-            while not slash.g.device.linux.shell.is_running_by_short_name("imap_config.py"): pass
-            IMAPAPP_TITLE = "ImapApp"
-            slash.g.device.android.cmd("shell am start -n com.example.imapapp/.TestActivity")
-            time.sleep(2)
-            slash.g.device.android.ui(text = IMAPAPP_TITLE).wait.exists()
-            if not slash.g.device.android.ui.press.home(): # try again
-                time.sleep(0.5)
-                slash.g.device.android.ui.press.home()
-            while slash.g.device.linux.shell.is_running_by_short_name("imap_config.py"): pass
-            return True
-
-        #_start_imapapp()
         slash.g.mail = Bunch(
             android = AndroidMail(slash.g.device.android),
             linux   = IMAPApp(slash.g.device.linux),
