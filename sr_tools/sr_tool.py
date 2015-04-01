@@ -63,7 +63,7 @@ def mode_usb(device_id = None):
 
 APT_PACKAGES = [
     "git",
-    "at-spi2-core", "libatk-bridge2.0-0", "libatk-adaptor", "ldtp", 
+    "at-spi2-core", "libatk-bridge2.0-0", "libatk-adaptor",
     "gconf2", 
     "python-dev", "python-pip", "python-pyatspi2", "python-gtk2", "python-gtk2-dev", "python-pil", "python-gobject", "python-gobject-2", 
     "statgrab", "wmctrl",

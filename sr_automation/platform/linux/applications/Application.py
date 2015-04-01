@@ -3,7 +3,6 @@ import time
 class _Application(object):
     def __init__(self, linux, start_cmd, stop_cmd = None, dogtail_id = None, title = None):
         self._linux = linux
-        self._ldtp = self._linux.ui.ldtp
         self._dogtail = self._linux.ui.dogtail
         self._start_cmd = start_cmd
         self._stop_cmd = stop_cmd
