@@ -28,7 +28,13 @@ class AndroidMail(object):
         self._password = password
         return self
 
-    def choose_folder(self, folder):
+    def choose_folder(self, _folder):
+        folder = { "inbox":  "Inbox"
+                 , "drafts": "Drafts"
+                 , "outbox": "Outbox"
+                 , "sent":   "Sent"
+                 , "trash":  "Trash"
+                 }[_folder]
         self._folder = folder
         return self
 
@@ -117,9 +123,11 @@ class AndroidMail(object):
 
 if __name__ == "__main__":
     import sys; sys.path.append("../..")
+    email = sys.argv[1]
+
     from Android import Android
     device_id = Android.devices().keys()[0]
     android   = Android(device_id)
     mail      = AndroidMail(android)
-    mail.choose_email("intel.elad1@gmail.com", None).choose_folder("Inbox").load()
+    mail.choose_email(email, None).choose_folder("inbox").load()
     print mail.messages()

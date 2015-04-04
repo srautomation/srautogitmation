@@ -1,62 +1,50 @@
-from logbook import Logger
-import datetime
-import os
-import slash
-from bunch import Bunch
-import time
+from sr_automation.platform.android.applications.Mail.Mail import AndroidMail
+from sr_automation.platform.android.applications.Mail.GUI import AndroidMailGUI
+from sr_automation.platform.linux.applications.Mail.Mail import LinuxMail
+from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
+from sr_tests.base.Base import BaseTest
+
 from email.header import decode_header
+from bunch import Bunch
+import slash
 
-from BaseTest import BaseTest
-from sr_automation.applications.AndroidMail import AndroidMail
-from sr_automation.applications.IMAPApp import IMAPApp 
+from logbook import Logger
+log = Logger("MailBaseTest")
 
-class EmailBaseTest(BaseTest):
+@slash.hooks.session_start.register
+def start_mail_sync():
+    log.info("Starting IMAPApp")
+    slash.g.imapapp = IMAPApp(slash.g.sunriver)
+    slash.g.imapapp.start()
 
-    @slash.hooks.session_start.register
-    def start_mail_sync():
-        slash.g.mail = Bunch(
-            android = AndroidMail(slash.g.device.android),
-            linux   = IMAPApp(slash.g.device.linux),
-            email   = None,
-            password = None,
-            folder  = None,
-            )
-        slash.g.messages = Bunch(
-            android = None,
-            linux   = None,
-            )
+    slash.g.mail = Bunch( android  = AndroidMail(slash.g.sunriver.android)
+                        , linux    = LinuxMail(slash.g.sunriver.linux)
+                        , email    = None
+                        , password = None
+                        , folder   = None
+                        )
+    slash.g.messages = Bunch( android = None
+                            , linux   = None
+                            )
 
-    @slash.hooks.session_end.register
-    def stop_mail_sync():
-        def _kill_imapapp():
-            slash.g.device.android.cmd("shell am force-stop com.example.imapapp")
-            slash.g.device.linux.shell.shell("killall -9 imapsmtp")
-        _kill_imapapp()
+@slash.hooks.result_summary.register
+def stop_mail_sync():
+    log.info("Stopping IMAPApp")
+    slash.g.imapapp.stop()
+    slash.g.mail = None
 
-    @property
-    def mail(self):
-        return slash.g.mail
 
-    @property
-    def messages(self):
-        return slash.g.messages
-
+class MailBaseTest(BaseTest):
     def before(self):
-        super(EmailBaseTest, self).before()
-        if self.mail.linux._imap.state == 'NONAUTH':
-            self.choose_email("srusertest@gmail.com")
-
-    def after(self):
-        super(EmailBaseTest, self).after()
-
-    def _folder_mapper(self, name):
-        name = name.lower()
-        return {"inbox":  Bunch(linux = "INBOX", android = "Inbox"),
-                "drafts": Bunch(linux = "Drafts", android = "Drafts"),
-                "outbox": Bunch(linux = "Outbox", android = "Outbox"),
-                "sent":   Bunch(linux = "Sent", android = "Sent"),
-                "trash":  Bunch(linux = "Trash", android = "Trash"),
-                }[name]
+        super(MailBaseTest, self).before()
+        self.mail = slash.g.mail
+        self.messages = slash.g.messages
+   #     if self.mail.linux._imap.state == 'NONAUTH':
+   #         self.choose_email("srusertest@gmail.com")
+    
+    def test(self):
+        import IPython
+        IPython.embed()
 
     def choose_email(self, email, password=None):
         self.mail.email = email
@@ -66,7 +54,6 @@ class EmailBaseTest(BaseTest):
         return self
 
     def choose_folder(self, _folder):
-        folder = self._folder_mapper(_folder)
         self.mail.folder = folder
         self.mail.android.choose_folder(self.mail.folder.android)
         self.mail.linux.choose_folder(self.mail.folder.linux)

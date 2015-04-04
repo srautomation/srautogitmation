@@ -2,14 +2,14 @@ from email import message_from_string
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE, formatdate
+from email.utils import COMMASPACE, formatdate, formataddr
 from email import encoders
 
 import time
 from dateutil import parser
 from bunch import Bunch
 
-class IMAPApp(object):
+class LinuxMail(object):
     def __init__(self, linux):
         self._linux = linux
         self._imap_module = self._linux._rpyc.modules.imaplib
@@ -22,23 +22,35 @@ class IMAPApp(object):
         self._password = None
         self._folder = None
         self._count = None
+    
+    def _read_key(self):
+        return self._linux.shell.shell("cat /run/imapsmtp/key").stdout.read().strip()
 
     def _assert_result(self, result):
         assert result == "OK"
 
-    def _read_key(self):
-        return self._linux.shell.shell("cat /run/imapsmtp/key").stdout.read().strip()
+    def _auth_string(self, email, password=""):
+        return "\x00{} {}\x00{}".format(email, self._key, password)
 
     def choose_email(self, email, password=""):
         self._email = email
         self._password = password
+        self._auth_token = self._auth_string(email, password)
         def authentication_callback(response):
-            return "\x00{} {}\x00{}".format(email, self._key, password)
+            return self._auth_token
         result, _unused = self._imap.authenticate("PLAIN", authentication_callback)
         self._assert_result(result)
+        result = self._smtp.docmd("AUTH PLAIN {}".format(self._auth_token.encode("base64")))
+        assert "Logged in" == result[1]
         return self
 
-    def choose_folder(self, folder):
+    def choose_folder(self, _folder):
+        folder = { "inbox":  "INBOX"
+                 , "drafts": "Drafts"
+                 , "outbox": "Outbox"
+                 , "sent":   "Sent"
+                 , "trash":  "Trash"
+                 }[_folder]
         self._folder = folder
         result, count = self._imap.select(folder)
         self._assert_result(result)
@@ -99,11 +111,38 @@ class IMAPApp(object):
             for (uid, mail) in sorted(self._msgs.iteritems())]
         return _messages
 
-
     def send(self, to, subject, attachments = []):
         msg = MIMEMultipart()
         from_ = self._email
         msg['From'] = from_
-        msg['To'] = COMMASPACE.join(to)
+        msg['To'] = to #COMMASPACE.join(to)
         msg['Date'] = formatdate(localtime = True)
-        self._smtp.sendmail(msg['From'], msg['To'], msg.as_string())
+        self._smtp.sendmail( from_addr=msg['From']
+                           , to_addrs=msg['To']
+                           , msg=msg.as_string()
+                           )
+
+if __name__ == "__main__":
+    import sys
+    email = sys.argv[1]
+    
+    from sr_automation.utils.TimeIt import TimeIt
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
+    from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
+    sunriver = Sunriver()
+    sunriver.desktop.start()
+    imap = IMAPApp(sunriver)
+    imap.start()
+
+    mail = LinuxMail(sunriver.linux)
+    t = TimeIt()
+    with t.measure():
+        mail.choose_email(email).choose_folder("inbox").load()
+    print t.measured
+
+    import IPython
+    IPython.embed()
+
+    imap.stop()
+    sunriver.desktop.stop()
+
