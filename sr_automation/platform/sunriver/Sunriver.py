@@ -15,6 +15,18 @@ class Sunriver(object):
         self._android = Android(self._device_id)
         self._desktop = DesktopInYourPocket(self._android)
         self._linux = Sunriver.connect(Chroot(self._android), NetInterfaces(self._android))
+    
+    @property
+    def android(self):
+        return self._android
+
+    @property
+    def linux(self):
+        return self._linux
+
+    @property
+    def desktop(self):
+        return self._desktop
 
     @classmethod
     def connect(cls, chroot, interfaces):
@@ -32,18 +44,58 @@ class Sunriver(object):
         rpyc_connection = rpyc.classic.connect(iface.ip)
         return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection)
 
-    @property
-    def android(self):
-        return self._android
-
-    @property
-    def linux(self):
-        return self._linux
-
-    @property
-    def desktop(self):
-        return self._desktop
+    @classmethod
+    def install(cls, chroot):
+        APT_PACKAGES = [ "git"
+                       , "at-spi2-core"
+                       , "libatk-bridge2.0-0"
+                       , "libatk-adaptor"
+                       , "gconf2"
+                       , "python-dev"
+                       , "python-pip"
+                       , "python-pyatspi2"
+                       , "python-gtk2"
+                       , "python-gtk2-dev"
+                       , "python-pil"
+                       , "python-gobject"
+                       , "python-gobject-2"
+                       , "statgrab"
+                       , "wmctrl"
+                       ]
+        PIP_PACKAGES = [ "rpyc"
+                       , "psutil"
+                       , "selenium"
+                       , "chromedriver"
+                       , "Skype4py"
+                       , "caldav"
+                       , "pyuserinput"
+                       , "python-xlib"
+                       ]
+        commands = "\n".join([ "apt-get -y install {}".format(" ".join(APT_PACKAGES))
+                             , "pip install {}".format(" ".join(PIP_PACKAGES))
+                             , "git clone https://github.com/lorquas/dogtail; cd dogtail; python setup.py install; cd .. ;"
+                             , "ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0;", # TODO: validate
+                             ])
+        process = chroot.run(commands)
+        while True:
+            line = process.stdout.readline()
+            if not line: break
+            print line,
+        process.wait()
 
 if __name__ == "__main__":
-    sunriver = Sunriver()
-    print sunriver
+    import baker
+
+    @baker.command
+    def install():
+        device_id = Android.devices().keys()[0]
+        android = Android(device_id)
+        chroot  = Chroot(android)
+        Sunriver.install(chroot)
+
+    @baker.command
+    def test():
+        sunriver = Sunriver()
+        print sunriver
+
+    baker.run()

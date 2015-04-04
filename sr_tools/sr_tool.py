@@ -1,6 +1,7 @@
 import baker
 import re
 import time
+import os
 from bunch import Bunch
 import helpers as H
 from subprocess import Popen, PIPE
@@ -8,20 +9,21 @@ from subprocess import Popen, PIPE
 @baker.command
 def devices():
     """Show connected devices"""
-    print H.adb_devices()
+    from sr_automation.platform.android.Android import Android
+    print Android.devices()
 
+def _project_root():
+    return os.path.split(os.path.abspath(os.path.join(__file__, "..")))[0]
 
 @baker.command
 def project_root():
     """Show project root path"""
-    print H.project_root()
-
+    print _project_root()
 
 @baker.command
 def mount_resources():
     """Mount externals directory"""
     pass
-
 
 @baker.command(params={"device_id": "Device id"})
 def mode_wifi(device_id = None):
@@ -43,7 +45,6 @@ def mode_wifi(device_id = None):
     H.wait_usb_disconnection()
     print H.adb_devices()
 
-
 @baker.command(params={"device_id": "Device id"})
 def mode_usb(device_id = None):
     """Connect DUT over USB, disconnect WIFI"""
@@ -60,55 +61,45 @@ def mode_usb(device_id = None):
     H.wait_usb_connection()
     print H.adb_devices()
 
-
-APT_PACKAGES = [
-    "git",
-    "at-spi2-core", "libatk-bridge2.0-0", "libatk-adaptor",
-    "gconf2", 
-    "python-dev", "python-pip", "python-pyatspi2", "python-gtk2", "python-gtk2-dev", "python-pil", "python-gobject", "python-gobject-2", 
-    "statgrab", "wmctrl",
-]
-PIP_PACKAGES = ["rpyc", "psutil", "selenium", "chromedriver", "Skype4py", "caldav", "pyuserinput", "python-xlib"] # "twisted"
-
-@baker.command(params={"device_id": "Device id"})
-def install_dut(device_id = None):
+@baker.command
+def install_dut():
     """Prepare DUT for use by automation framework"""
-    from sr_automation.Device import Device
-    devices = H.adb_devices()
-    if device_id is not None: assert device_id in devices
-    device = Device(device_id)
-    commands = "\n".join([
-        "apt-get -y install " + " ".join(APT_PACKAGES),
-        "pip install "        + " ".join(PIP_PACKAGES),
-        "git clone https://github.com/lorquas/dogtail; cd dogtail; python setup.py install; cd .. ;",
-        "ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0;", # TODO: validate
-    ])
-    process = device._chroot_run(commands)
-    while True:
-        line = process.stdout.readline()
-        if not line: break
-        print line,
-    process.wait()
+    from sr_automation.platform.android.Android import Android
+    from sr_automation.platform.sunriver.Chroot import Chroot
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
+    device_id = Android.devices().keys()[0]
+    android = Android(device_id)
+    chroot  = Chroot(android)
+    Sunriver.install(chroot)
 
-"""
-run from a directory with a .slashrc in it (TODO: fix)
-sudo sr_tool run_tests --suite=mail -vvv BasicTests.py
-"""
-@baker.command(params={
-    "path": "Path of test file", 
-    "suite": "Suite name",
-    "externals": "Path of external resources",})
-def run_tests(path=None, suite=None, externals="", *args):
-    """Run tests"""
-    if ((path is None) and (suite is None)) or ((path is not None) and (suite is not None)):
-        return
-    import os
-    os.environ["PROJECT_ROOT"] = H.project_root()
-    os.environ["EXTERNALS"] = externals
-    if suite is not None:
-        path = os.path.join(os.environ["PROJECT_ROOT"], "sr_tests", suite + "_suite")
+@baker.command
+def run(config, *args, **kw):
+    """Run Sunriver tests with specific configuration"""
+    command="SLASH_SETTINGS={} slash run {} {}".format( config
+                                                      , " ".join(args)
+                                                      , " ".join(["{}={}".format(k,v) for (k,v) in kw.iteritems()])
+                                                      )
+    os.system(command)
+
+@baker.command
+def run_suite(suite, config=None, *args, **kw):
+    """
+    Run Sunriver suite
+    sr_tool run_suite mail Base.py  
+    """
+    path = os.path.join(_project_root(), "sr_tests", "suites", suite)
+    if config is None:
+        config = os.path.join(path, "config.py")
+    command="SLASH_SETTINGS={} slash run -vvv {} {}".format( config
+                                                           , " ".join(args)
+                                                           , " ".join(["{}={}".format(k,v) for (k,v) in kw.iteritems()])
+                                                           )
     with H.chdir(path):
-        os.system("slash run %s" % " ".join(args))
+        os.system(command)
 
 def main():
     baker.run()
+
+if __name__ == "__main__":
+    main()
+
