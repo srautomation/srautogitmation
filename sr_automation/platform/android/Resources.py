@@ -7,7 +7,7 @@ from logbook import Logger
 log = Logger("Resources")
 
 class Resources(object):
-    COMMAND = '"head -1 /proc/stat; head -4 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null"'
+    COMMAND = '"busybox head -1 /proc/stat;busybox head -4 /proc/meminfo; cat /sys/class/power_supply/*bat*/capacity; cat /proc/*/stat 2>/dev/null"'
     SAMPLES_DELTA = 15
     def __init__(self, android):
         self._android = android
