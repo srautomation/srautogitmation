@@ -2,6 +2,7 @@ from sr_automation.platform.android.Android import Android
 from sr_automation.platform.android.NetInterfaces import NetInterfaces
 from sr_automation.platform.linux.Linux import Linux
 from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket
+from sr_automation.platform.sunriver.applications.SwitchToAndroid.SwitchToAndroid import SwitchToAndroid
 from Chroot import Chroot
 import rpyc
 import time
@@ -15,6 +16,7 @@ class Sunriver(object):
         self._android = Android(self._device_id)
         self._desktop = DesktopInYourPocket(self._android)
         self._linux = Sunriver.connect(Chroot(self._android), NetInterfaces(self._android))
+        self._switch_to_android =  SwitchToAndroid(self._linux)
     
     @property
     def android(self):
@@ -27,6 +29,10 @@ class Sunriver(object):
     @property
     def desktop(self):
         return self._desktop
+
+    @property
+    def switch_to_android(self):
+        return self._switch_to_android
 
     @classmethod
     def connect(cls, chroot, interfaces):
