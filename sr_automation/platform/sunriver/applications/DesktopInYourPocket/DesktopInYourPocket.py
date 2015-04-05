@@ -14,7 +14,8 @@ class DesktopInYourPocket(object):
         log.info(pattern)
         self._android.ui.wakeup()
         self._android.cmd("shell am start -n com.intel.desktopinyourpocket/.MainActivity")
-        assert self._android.ui(text=DesktopInYourPocket.APP_TITLE, packageName=DesktopInYourPocket.APP_PACKAGE).wait.exists()
+        self._android.ui(text=DesktopInYourPocket.APP_TITLE, packageName=DesktopInYourPocket.APP_PACKAGE).wait.exists()
+        self._android.ui(description="More options").wait.exists()
         self._android.ui.press.menu()
         self._android.ui(textContains=pattern).click.wait()
 
@@ -25,7 +26,7 @@ class DesktopInYourPocket(object):
         self.click_menu(pattern=DesktopInYourPocket.BUTTON_STOP)
 
     def switch_to_desktop(self):
-        self.click_menu(pattern=BUTTON_SWITCH_TO_DESKTOP)
+        self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
 
     def is_desktop_running(self):
         output = self._android.cmd("shell getprop sunriver.active").stdout.read().strip()
