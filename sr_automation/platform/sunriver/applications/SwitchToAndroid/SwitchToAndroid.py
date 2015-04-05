@@ -1,3 +1,4 @@
+import time
 from logbook import Logger
 log = Logger("SwitchToAndroid")
 
@@ -14,13 +15,15 @@ class SwitchToAndroid(object):
         mouse.click(7 * scx / 12, 7 * scy / 12)
 
 if __name__ == "__main__":
+    from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
     import sys; sys.path.append("../../../android")
-    import time
     from Android import Android
-    device_id = Android.devices().keys()[0]
-    android   = Android(device_id)
-    desktop   = DesktopInYourPocket(android)
-    desktop.start()
+    sunriver = Sunriver()
+    sunriver.desktop.start()
     time.sleep(3)
-    desktop.stop()
+    sunriver.linux.start()
+    switcher = SwitchToAndroid(sunriver.linux)
+    switcher.switch()
+    sunriver.desktop.stop()
 
