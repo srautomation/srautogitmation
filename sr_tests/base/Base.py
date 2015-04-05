@@ -29,6 +29,8 @@ def sync_resources():
 @slash.hooks.result_summary.register
 def stop_sunriver():
     log.info("Stopping Desktop")
+    if slash.g.sunriver.desktop.is_desktop_running():
+        slash.g.sunriver.switch_to_android.switch()
     slash.g.sunriver.desktop.stop()
 
 class BaseTest(slash.Test):
