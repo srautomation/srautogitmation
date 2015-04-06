@@ -54,9 +54,9 @@ class MailBaseTest(BaseTest):
         return self
 
     def choose_folder(self, _folder):
-        self.mail.folder = folder
-        self.mail.android.choose_folder(self.mail.folder.android)
-        self.mail.linux.choose_folder(self.mail.folder.linux)
+        self.mail.folder = _folder
+        self.mail.android.choose_folder(self.mail.folder)
+        self.mail.linux.choose_folder(self.mail.folder)
         return self
 
     def load(self):
