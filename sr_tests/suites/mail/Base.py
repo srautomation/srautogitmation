@@ -27,7 +27,7 @@ def start_mail_sync():
                             , linux   = None
                             )
 
-@slash.hooks.result_summary.register
+@slash.hooks.session_end.register
 def stop_mail_sync():
     log.info("Stopping IMAPApp")
     slash.g.imapapp.stop()
