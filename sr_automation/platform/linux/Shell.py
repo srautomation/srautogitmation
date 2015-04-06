@@ -45,7 +45,7 @@ class Shell(object):
 
     def is_running(self, name):
         process_list = [process for process in self._psutil.get_process_list() if process.is_running() == True]
-        processes_names = [process.name for process in process_list]
+        processes_names = [process.name for process in process_list if process.is_running()]
         if name in processes_names:
             return True
         return False
