@@ -39,12 +39,9 @@ class MailBaseTest(BaseTest):
         super(MailBaseTest, self).before()
         self.mail = slash.g.mail
         self.messages = slash.g.messages
-   #     if self.mail.linux._imap.state == 'NONAUTH':
-   #         self.choose_email("srusertest@gmail.com")
-    
-    def test(self):
-        import IPython
-        IPython.embed()
+        if not self.mail.linux.is_logged_in():
+            self.choose_email(self.config.sr.mail.sender)
+
 
     def choose_email(self, email, password=None):
         self.mail.email = email
@@ -138,4 +135,3 @@ class MailBaseTest(BaseTest):
 
     def compare_attachments(self):
         return [] # False
-
