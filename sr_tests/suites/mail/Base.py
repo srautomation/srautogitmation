@@ -66,13 +66,13 @@ class MailBaseTest(BaseTest):
         self.messages.linux   = self.mail.linux.messages()
 
     def compare_all(self):
-        return (self.compare_count()             and 
-                not bool(self.compare_from())    and 
-                not bool(self.compare_to())      and
-                not bool(self.compare_cc())      and
-                not bool(self.compare_subject()) and
-                not bool(self.compare_flags())   and
-                not bool(self.compare_body()))
+        slash.should.be(self.compare_count(), True)
+        slash.should.be(len(self.compare_from()), 0)
+        slash.should.be(len(self.compare_to()), 0)
+        slash.should.be(len(self.compare_cc()), 0)
+        slash.should.be(len(self.compare_subject()), 0)
+        slash.should.be(len(self.compare_body()), 0)
+        #slash.should.be(len(self.compare_flags()), True)
 
     def compare_count(self):
         return len(self.messages.android) == len(self.messages.linux)
