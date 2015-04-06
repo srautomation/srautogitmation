@@ -44,6 +44,9 @@ class LinuxMail(object):
         assert "Logged in" == result[1]
         return self
 
+    def is_logged_in(self):
+        return self._imap.state != 'NONAUTH'
+
     def choose_folder(self, _folder):
         folder = { "inbox":  "INBOX"
                  , "drafts": "Drafts"
