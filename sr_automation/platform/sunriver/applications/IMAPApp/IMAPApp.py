@@ -10,7 +10,8 @@ class IMAPApp(object):
         self._sunriver = sunriver
 
     def is_running(self):
-        return self._sunriver.linux.shell.is_running_by_short_name("imapapp")
+        return (self._sunriver.linux.shell.is_running_by_short_name("imapapp") and
+                self._sunriver.linux.shell.is_running_by_short_name("imapsmtp"))
 
     def start(self):
         if self.is_running():
@@ -41,6 +42,7 @@ class IMAPApp(object):
             time.sleep(0.5)
             self._sunriver.android.ui.press.home()
         while self._sunriver.linux.shell.is_running_by_short_name("imap_config.py"): pass
+        while not self._sunriver.linux.shell.is_running_by_short_name("imapsmtp"): pass
         return True
 
     def stop(self):

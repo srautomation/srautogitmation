@@ -14,10 +14,16 @@ class LinuxMail(object):
         self._linux = linux
         self._imap_module = self._linux._rpyc.modules.imaplib
         self._smtp_module = self._linux._rpyc.modules.smtplib
-        self._imap = self._imap_module.IMAP4("localhost")
-        self._smtp = self._smtp_module.SMTP("localhost")
-        self._key = self._read_key()
 
+        while (0 == len(self._linux.cmd('netstat -na | grep ":143 " | grep LISTEN').stdout.read())):
+            time.sleep(0.5)
+        self._imap = self._imap_module.IMAP4("localhost")
+
+        while (0 == len(self._linux.cmd('netstat -na | grep ":25 " | grep LISTEN').stdout.read())):
+            time.sleep(0.5)
+        self._smtp = self._smtp_module.SMTP("localhost")
+
+        self._key = self._read_key()
         self._email = None
         self._password = None
         self._folder = None
@@ -42,6 +48,12 @@ class LinuxMail(object):
         self._assert_result(result)
         result = self._smtp.docmd("AUTH PLAIN {}".format(self._auth_token.encode("base64")))
         assert "Logged in" == result[1]
+
+        ########################################
+        # This is due to a bug in smtplib
+        # that sends an extra newline in docmd
+        self._smtp.getreply()
+
         return self
 
     def is_logged_in(self):
@@ -114,38 +126,71 @@ class LinuxMail(object):
             for (uid, mail) in sorted(self._msgs.iteritems())]
         return _messages
 
-    def send(self, to, subject, attachments = []):
+    def send(self, to, subject, body, attachments = []):
         msg = MIMEMultipart()
         from_ = self._email
         msg['From'] = from_
         msg['To'] = to #COMMASPACE.join(to)
+        msg['Subject'] = subject
         msg['Date'] = formatdate(localtime = True)
-        self._smtp.sendmail( from_addr=msg['From']
-                           , to_addrs=msg['To']
-                           , msg=msg.as_string()
-                           )
+        msg.attach(MIMEText(body))
+        try:
+            self._smtp.sendmail(msg['From'], msg['To'], msg=msg.as_string())
+        except Exception, e:
+            if (e.smtp_code == 25) and (e.smtp_error == "OK"):
+                return True
+            raise e
 
 if __name__ == "__main__":
-    import sys
-    email = sys.argv[1]
-    
-    from sr_automation.utils.TimeIt import TimeIt
-    from sr_automation.platform.sunriver.Sunriver import Sunriver
-    from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
-    sunriver = Sunriver()
-    sunriver.desktop.start()
-    imap = IMAPApp(sunriver)
-    imap.start()
+    import baker
 
-    mail = LinuxMail(sunriver.linux)
-    t = TimeIt()
-    with t.measure():
-        mail.choose_email(email).choose_folder("inbox").load()
-    print t.measured
+    @baker.command
+    def interactive(account_email):
+        """
+        python Mail.py interactive --account_email="intel.elad1@gmail.com"
+        """
+        from sr_automation.utils.TimeIt import TimeIt
+        from sr_automation.platform.sunriver.Sunriver import Sunriver
+        from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
+        sunriver = Sunriver()
+        sunriver.desktop.start()
+        imap = IMAPApp(sunriver)
+        imap.start()
 
-    import IPython
-    IPython.embed()
+        mail = LinuxMail(sunriver.linux)
+        t = TimeIt()
+        with t.measure():
+            mail.choose_email(account_email).choose_folder("inbox").load()
+        print t.measured
 
-    imap.stop()
-    sunriver.desktop.stop()
+        import IPython
+        IPython.embed()
+
+        imap.stop()
+        sunriver.desktop.stop()
+
+    @baker.command
+    def send(account_email, to, subject, body):
+        """
+        python Mail.py send --account_email="intel.elad1@gmail.com" --to="barak@wizery.com" --subject="subject test" --body="body test"
+        """
+        from sr_automation.utils.TimeIt import TimeIt
+        from sr_automation.platform.sunriver.Sunriver import Sunriver
+        from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
+        sunriver = Sunriver()
+        sunriver.desktop.start()
+        imap = IMAPApp(sunriver)
+        imap.start()
+
+        mail = LinuxMail(sunriver.linux)
+        mail.choose_email(account_email).choose_folder("inbox")
+        mail.send( to = to
+                 , subject = subject
+                 , body = body
+                 )
+
+        imap.stop()
+        sunriver.desktop.stop()
+
+    baker.run()
 
