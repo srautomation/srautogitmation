@@ -14,6 +14,7 @@ def start_sunriver():
     slash.g.sunriver = Sunriver()
     log.info("Starting Desktop")
     slash.g.sunriver.desktop.start()
+    slash.g.sunriver.linux.start()
     sync_resources()
 
 def sync_resources():
@@ -31,6 +32,7 @@ def stop_sunriver():
     log.info("Stopping Desktop")
     if slash.g.sunriver.desktop.is_desktop_running():
         slash.g.sunriver.switch_to_android.switch()
+    slash.g.sunriver.linux.stop()
     slash.g.sunriver.desktop.stop()
 
 class BaseTest(slash.Test):
