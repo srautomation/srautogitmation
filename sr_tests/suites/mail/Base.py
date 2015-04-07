@@ -35,12 +35,13 @@ def stop_mail_sync():
 
 
 class MailBaseTest(BaseTest):
+
     def before(self):
         super(MailBaseTest, self).before()
         self.mail = slash.g.mail
         self.messages = slash.g.messages
         if not self.mail.linux.is_logged_in():
-            self.choose_email(self.config.sr.mail.sender)
+            self.choose_email(slash.config.sr.mail.sender)
 
 
     def choose_email(self, email, password=None):
