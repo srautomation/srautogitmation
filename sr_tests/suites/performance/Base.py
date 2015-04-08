@@ -1,102 +1,112 @@
-from logbook import Logger
-import datetime
+from sr_automation.utils.TimeIt import TimeIt
+from sr_automation.platform.android.Resources import Resources
+from sr_automation.platform.android.applications.Mail.Mail import AndroidMail
+from sr_automation.platform.android.applications.Mail.GUI import AndroidMailGUI
+from sr_automation.platform.linux.applications.Mail.Mail import LinuxMail
+from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
+from sr_tests.base.Base import BaseTest
+
+from bunch import Bunch
+import csv
 import os
-
-from BaseTest import BaseTest
-from sr_automation.utils.Dumper import Dumper
+import datetime
 import slash
-from slash import config
+from slash import should
 
+from logbook import Logger
 log = Logger("PerformanceBaseTest")
-conf = config.root
 
-################################################################
+@slash.hooks.session_start.register
+def start_performance():
+    log.info("Starting performance suite")
+    slash.g.resources = Resources(slash.g.sunriver.android)
+    slash.g.timeit    = TimeIt()
+    slash.g.collected = []
 
-SAMPLES_DESCRIPTION =   ("application", 
-                        "action", 
-                        "start_date", 
-                        "elapsed_time", 
-                        "cpu", 
-                        "memory", 
-                        "battery")
-
-################################################################
+@slash.hooks.result_summary.register
+def generate_csv():
+    log.info("Creating CSV output")
+    csv_output_path = os.path.join(slash.config.sr.paths.outputs, "measurements_{}.csv".format(slash.ctx.session.id))
+    csv_file = file(csv_output_path, 'w')
+    headers= [ "test"
+             , "date"
+             , "time"
+             , "cpu_max"
+             , "cpu_min"
+             , "cpu_avg"
+             , "mem_max"
+             , "mem_min"
+             , "mem_avg"
+             , "bat_max"
+             , "bat_min"
+             , "bat_avg"
+             , "bat_usage"
+             ]
+    csv_obj = csv.DictWriter(csv_file, headers)
+    csv_obj.writeheader()
+    csv_obj.writerows(slash.g.collected)
+    csv_file.close()
 
 class PerformanceBaseTest(BaseTest):
     def before(self):
         super(PerformanceBaseTest, self).before()
-        results_file = os.path.join(conf.paths.results, conf.paths.results_file)
-        self.dumper = Dumper(results_file, *SAMPLES_DESCRIPTION)
+        self.resources = slash.g.resources
+        self.timeit    = slash.g.timeit
+        self.collected = slash.g.collected
+        self.date      = None
     
     def after(self):
         super(PerformanceBaseTest, self).after()
-        self.dumper.save()
+        measurement = self.measurement()
+        self.verify(measurement)
+        self.collected.append(measurement)
     
-    def measure_and_verify(self, application, action, 
-            cpu_max = conf.thresholds.cpu_max, 
-            mem_max = conf.thresholds.mem_max, 
-            bat_max = conf.thresholds.bat_max, 
-            time_max = conf.thresholds.time_max):
-        '''
-            Measures both execution time and resources consumption,
-            logs the results and validates them.
-        '''
-        if callable(action):        action = action.func_name
-        if callable(application):   application = application.func_name
-
+    def measure(self):
         class wrapper(object):
             def __enter__(_self):
-                log.notice("Starting Measurement of action: %s.%s" % (application, action))
-                _self.timer = self.tester.timeit.measure()
+                self.date = str(datetime.datetime.now())
+                _self.timer = self.timeit.measure()
                 _self.timer.__enter__()
-                _self.meter = self.device.resources.measure()
+                _self.meter = self.resources.measure()
                 _self.meter.__enter__()
-                _self.date = str(datetime.datetime.now())
             
             def __exit__(_self, type, value, tb):
                 _self.timer.__exit__(None, None, None)
                 _self.meter.__exit__(None, None, None)
-                mes = self.device.resources.measured
-                self.bat_usage = (mes.bat.max - mes.bat.min) / self.tester.timeit.measured * 100 # battery usage per second
-
-                log.notice("Finished Measurement")
-                log.notice("action took: %f seconds to complete" % self.tester.timeit.measured)
-                slash.logger.notice("Resources measurements results:")
-                slash.logger.notice("cpu: AVG=%f, MAX=%f, MIN=%f" % (mes.cpu.avg, mes.cpu.max, mes.cpu.min))        
-                slash.logger.notice("memory: AVG=%d, MAX=%d, MIN=%d" % (mes.mem.avg, mes.mem.max, mes.mem.min))
-                slash.logger.notice("battery: AVG=%f, MAX=%f, MIN=%f" % (mes.bat.avg, mes.bat.max, mes.bat.min))
-                sample = { SAMPLES_DESCRIPTION[0] : application,
-                        SAMPLES_DESCRIPTION[1] : action,
-                        SAMPLES_DESCRIPTION[2] : _self.date,
-                        SAMPLES_DESCRIPTION[3] : self.tester.timeit.measured,
-                        SAMPLES_DESCRIPTION[4] : mes.cpu.avg,
-                        SAMPLES_DESCRIPTION[5] : mes.mem.avg,
-                        SAMPLES_DESCRIPTION[6] : self.bat_usage }
-
-                self.dumper.append(**sample)
-                self._verify_measurements(time_max, cpu_max, mem_max, bat_max)
-
         return wrapper()
 
-    def _verify_measurements(self, time_max, cpu_max, mem_max, bat_max):
-        ''' 
-            Verifies that no resource excedded its maximum value
-        '''
-        mes = self.device.resources.measured
-        if time_max:
-            slash.should.be(self.tester.timeit.measured < time_max, True, 
-                    "Test took too much time to complete: %f" % self.tester.timeit.measured)
-            slash.should.be(mes.cpu.avg < cpu_max, True, 
-                "Test cpu utilization passed threshold: %f" % mes.cpu.avg)
-        slash.should.be(mes.mem.avg < mem_max, True, 
-                "Test memory usage passed threshold: %f" % mes.mem.avg)
-        slash.should.be(self.bat_usage < bat_max, True, 
-                "Test battery usage passed threshold: %f" % self.bat_usage)
 
-    @staticmethod
-    def measure_entire_function(fn):
-        def wrapper(self, *args, **kwargs):
-            with self.measure_and_verify(fn.func_name, "Entire Scenario"):
-                fn(self, *args, **kwargs)
+    def measurement(self):
+        measured = self.resources.measured
+        return Bunch( test=self.current_test()
+                    , date=self.date
+                    , time=self.timeit.measured
+                    , cpu_max=measured.cpu.max
+                    , cpu_min=measured.cpu.min
+                    , cpu_avg=measured.cpu.avg
+                    , mem_max=measured.mem.max
+                    , mem_min=measured.mem.min
+                    , mem_avg=measured.mem.avg
+                    , bat_max=measured.bat.max
+                    , bat_min=measured.bat.min
+                    , bat_avg=measured.bat.avg
+                    , bat_usage=(measured.bat.max - measured.bat.min) / self.timeit.measured * 100 # battery usage per second
+                    )
 
-        return wrapper
+    def verify(self, measurement):
+        should.be( measurement.time < self.config.sr.thresholds.time_max
+                 , True
+                 , "Test took too much time to complete {}".format(measurement.time)
+                 )
+        should.be( measurement.cpu_avg < self.config.sr.thresholds.cpu_max
+                 , True
+                 , "Test cpu utilization passed threshold: {}".format(measurement.cpu_avg)
+                 )
+        should.be( measurement.mem_avg < self.config.sr.thresholds.mem_max
+                 , True
+                 , "Test memory usage passed threshold: {}".format(measurement.mem_avg)
+                 )
+        should.be( measurement.bat_usage < self.config.sr.thresholds.bat_max
+                 , True
+                 , "Test battery usage passed threshold: {}".format(measurement.bat_usage)
+                 )
