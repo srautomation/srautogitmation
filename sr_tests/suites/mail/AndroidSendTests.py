@@ -15,6 +15,4 @@ class AndroidSendTests(BaseSendTests):
         if slash.g.sunriver.desktop.is_desktop_running():
             slash.g.sunriver.switch_to_android.switch()
         slash.g.mail.androidGUI.send(to, subject, body, attachments)
-        if body == "":
-            self.android.ui(text='Send').click()
         #slash.should.be(sentSuccessfully, True)
