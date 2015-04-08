@@ -11,13 +11,16 @@ class AndroidMailGUI(object):
 #############################
 #      Writing messages     #
 #############################
-    def send(self, to, subject, body, attachments = []):
-        self.choose_folder('outbox')
+    def send(self, to, subject, body, attachments = [], to_drafts=False):
         self.write_mail(to, subject, body, attachments)
-        self.d(resourceId = 'com.android.email:id/send').click()
-        if not body:
-            self.d(text="Send").click()
-        self.wait_outbox_empty()
+        if to_drafts:
+            self.save_draft()
+        else:
+            self.d(resourceId = 'com.android.email:id/send').click()
+            if not body:
+                self.d(text="Send").click()
+            self.choose_folder('outbox')
+            self.wait_outbox_empty()
 
     def write_mail(self, to, subject, body, attachments = []):
         self.main_view()
@@ -31,8 +34,7 @@ class AndroidMailGUI(object):
         body_textbox = self.d(resourceId="com.android.email:id/body")
         body_textbox.set_text(body)
 
-    def save_draft(self, to = '', subject = '', body = '', attachments = []):
-        self.write_mail(to, subject, body, attachments)
+    def save_draft(self):
         self.d.press.menu()
         self.d(text = 'Save draft').click()
         self.main_view()
@@ -43,23 +45,35 @@ class AndroidMailGUI(object):
         self.d(descriptionContains = 'edit').click()
         self.d(resourceId = 'com.android.email:id/send').click()
 
-    def reply(self, body):
+    def reply(self, body, to_drafts=False):
         self.d(resourceId = "com.android.email:id/reply").click()
         self.d(text = "Compose email").set_text(body)
-        self.d(resourceId = 'com.android.email:id/send').click()
+        if to_drafts:
+            self.save_draft()
+        else:
+            self.d(resourceId = 'com.android.email:id/send').click()
 
-    def reply_all(self, body):
+    def reply_all(self, body, to_drafts=False):
         self.d(description = "More options", resourceId = "com.android.email:id/overflow").click()
         self.d(text = "Reply all").click()
         self.d(text = "Compose email").set_text(body)
-        self.d(resourceId = 'com.android.email:id/send').click()
+        if to_drafts:
+            self.save_draft()
+        else:
+            self.d(resourceId = 'com.android.email:id/send').click()
 
-    def forward(self, to, body):
+    def forward(self, to, body, to_drafts=False):
         self.d(description = "More options", resourceId = "com.android.email:id/overflow").click()
         self.d(text = "Forward").click()
-        self.d(text = "To").set_text(to)
+        if isinstance(to, basestring):
+            self.d(resourceId = 'com.android.email:id/to_content').set_text(to)
+        else:
+            self.d(resourceId = 'com.android.email:id/to_content').set_text(','.join(to))
         self.d(text = "Compose email").set_text(body)
-        self.d(resourceId = 'com.android.email:id/send').click()
+        if to_drafts:
+            self.save_draft()
+        else:
+            self.d(resourceId = 'com.android.email:id/send').click()
 
 ###############################
 #      Email app actions      #
