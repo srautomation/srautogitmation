@@ -38,8 +38,6 @@ class MailBaseTest(BaseTest):
 
     def before(self):
         super(MailBaseTest, self).before()
-        self.mail = slash.g.mail
-        self.messages = slash.g.messages
         if not self.mail.linux.is_logged_in():
             self.choose_email(slash.config.sr.mail.sender)
 
@@ -136,3 +134,11 @@ class MailBaseTest(BaseTest):
 
     def compare_attachments(self):
         return [] # False
+
+    @property
+    def mail(self):
+        return slash.g.mail
+
+    @property
+    def messages(self):
+        return slash.g.messages
