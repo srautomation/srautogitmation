@@ -38,3 +38,7 @@ def stop_sunriver():
 class BaseTest(slash.Test):
     def before(self):
         self.sunriver = slash.g.sunriver
+        self.config   = slash.config
+
+    def current_test(self):
+        return str(slash.ctx.test)
