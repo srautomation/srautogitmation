@@ -62,6 +62,19 @@ def mode_usb(device_id = None):
     print H.adb_devices()
 
 @baker.command
+def screenshot():
+    from sr_automation.platform.android.Android import Android
+    from sr_automation.platform.sunriver.Chroot import Chroot
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
+    device_id = Android.devices().keys()[0]
+    android = Android(device_id)
+    chroot  = Chroot(android)
+    chroot.run("DISPLAY=:0 gnome-screenshot -f /tmp/screenshot.png").wait()
+    android.cmd("pull /data/debian/tmp/screenshot.png /tmp/screenshot.png").wait()
+    import os
+    os.system("feh /tmp/screenshot.png; rm -f /tmp/screenshot.png")
+
+@baker.command
 def install_dut():
     """Prepare DUT for use by automation framework"""
     from sr_automation.platform.android.Android import Android
