@@ -30,6 +30,8 @@ class DesktopInYourPocket(object):
 
     def is_desktop_running(self):
         output = self._android.cmd("shell getprop sunriver.active").stdout.read().strip()
+        if len(output) == 0:
+            return False
         return bool(int(output))
 
 if __name__ == "__main__":
