@@ -1,9 +1,19 @@
-import Application
+from sr_automation.platform.linux.applications.dialogs.DialogOpen import DialogOpen
 import time
 
-class Leafpad(Application._Editor):
+class Leafpad(object):
     def __init__(self, linux):
-        super(Leafpad, self).__init__(linux, 'leafpad')
+        self._linux = linux
+
+    def start(self):
+        self._dogtail = self._linux.ui.dogtail
+        self._process = self._linux.cmd("leafpad")
+        time.sleep(9)
+        self._app = self._dogtail.tree.root.application("leafpad")
+
+    def stop(self):
+        if self._process.is_running():
+            self._process.terminate()
 
     def write_text(self, text):
         app = self._app
@@ -25,10 +35,26 @@ class Leafpad(Application._Editor):
             app.child(name = 'No', roleName = 'push button').click()
         time.sleep(1)
         app.child('root').click()
-        self._open(file)
+        DialogOpen.open(app, file)
 
     def word_wrap(self):
         app = self._app
         app.child('Options').click()
         time.sleep(1)
         app.child('Word Wrap').click()
+
+if __name__ == "__main__":
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
+    sunriver = Sunriver()
+    sunriver.desktop.start()
+    sunriver.linux.start()
+    
+    leafpad = Leafpad(sunriver.linux)
+    leafpad.start()
+    leafpad.open("/etc/sysctl.conf")
+    raw_input("Press enter to finish")
+    leafpad.stop()
+
+    sunriver.linux.stop()
+    sunriver.desktop.stop()
+

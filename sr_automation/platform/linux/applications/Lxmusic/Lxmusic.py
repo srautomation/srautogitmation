@@ -1,9 +1,18 @@
 import time
-from Application import _Application
 
-class Lxmusic(_Application):
+class Lxmusic(object):
     def __init__(self, linux):
-        super(Lxmusic, self).__init__(linux, 'lxmusic')
+        self._linux = linux
+    
+    def start(self):
+        self._dogtail = self._linux.ui.dogtail
+        self._process = self._linux.cmd("lxmusic")
+        time.sleep(9)
+        self._app = self._dogtail.tree.root.application("lxmusic")
+
+    def stop(self):
+        if self._process.is_running():
+            self._process.terminate()
 
     def play(self, track):
         app = self._app
@@ -22,3 +31,20 @@ class Lxmusic(_Application):
         app.child('File').click()
         time.sleep(2)
         app.child('Quit').click()
+
+if __name__ == "__main__":
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
+    sunriver = Sunriver()
+    sunriver.desktop.start()
+    sunriver.linux.start()
+    
+    lxmusic = Lxmusic(sunriver.linux)
+    lxmusic.start()
+    import IPython
+    IPython.embed()
+    lxmusic.stop()
+
+    sunriver.linux.stop()
+    sunriver.desktop.stop()
+
+

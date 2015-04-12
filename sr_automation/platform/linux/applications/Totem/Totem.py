@@ -3,7 +3,17 @@ from Application import _Application
 
 class Totem(_Application):
     def __init__(self, linux):
-        super(Totem, self).__init__(linux, "totem")
+        self._linux = linux
+    
+    def start(self):
+        self._dogtail = self._linux.ui.dogtail
+        self._process = self._linux.cmd("totem")
+        time.sleep(9)
+        self._app = self._dogtail.tree.root.application("totem")
+
+    def stop(self):
+        if self._process.is_running():
+            self._process.terminate()
 
     def open(self, movie):
         app = self._app

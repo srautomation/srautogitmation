@@ -5,10 +5,11 @@ class Skype(object):
     INPUT_DEVICE_TYPE_FILE = Skype4Py.callIoDeviceTypeFile
 
     def __init__(self, linux):
+        self._linux = linux
         self._Skype4Py = linux._rpyc.modules.Skype4Py
         self._skype = self._Skype4Py.Skype(Events=self._SkypeEvents())
-        self._cmd = linux.cmd
-        self._input_device = {  'DeviceType' : '',
+        self._input_device = { 'DeviceType' : ''
+                             ,
                                 'Value'      : '' }
 
     def start(self):
@@ -22,7 +23,7 @@ class Skype(object):
             return 0
 
     def stop(self):
-        return self.cmd('killall skype', shell = True)
+        self._linux.cmd("killall skype", shell=True)
 
     def grab_focus(self):
         return self._skype.Client.Focus()

@@ -1,9 +1,20 @@
-from sr_automation.applications.Application import _Editor
 import time
 
-class Calc(_Editor):
+class Calc(object):
     def __init__(self, linux):
-        super(Calc, self).__init__(linux, 'libreoffice --calc --norestore', 'killall oosplash', 'soffice')
+        self._linux = linux
+
+    def start(self):
+        self._dogtail = self._linux.ui.dogtail
+        self._process = self._linux.cmd("libreoffice --calc --norestore")
+        time.sleep(9)
+        self._app = self._dogtail.tree.root.application("soffice")
+
+    def stop(self):
+        if self._process.is_running():
+            self._linux.cmd("killall oosplash")
+        if self._process.is_running():
+            self._process.terminate()
 
     '''
     def open(self, doc):
@@ -16,9 +27,6 @@ class Calc(_Editor):
         time.sleep(1)
         app.child(doc).doubleClick()
     '''
-
-    def start(self, doc):
-        super(Calc, self).start(doc)
 
     def capitalize(self):
         app = self._app

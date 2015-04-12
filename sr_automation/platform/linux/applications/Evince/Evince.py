@@ -1,9 +1,18 @@
-import Application
 import time
 
-class Evince(Application._Editor):
+class Evince(object):
     def __init__(self, linux):
-        super(Evince, self).__init__(linux, 'evince')
+        self._linux = linux
+    
+    def start(self):
+        self._dogtail = self._linux.ui.dogtail
+        self._process = self._linux.cmd("evince")
+        time.sleep(9)
+        self._app = self._dogtail.tree.root.application("evince")
+
+    def stop(self):
+        if self._process.is_running():
+            self._process.terminate()
     
     def open(self, file):
         '''file has to be in /root '''
@@ -31,4 +40,21 @@ class Evince(Application._Editor):
             app.child('Save').doubleClick()
             if app.isChild('Replace'):
                 app.child('Replace').click()
+
+if __name__ == "__main__":
+    from sr_automation.platform.sunriver.Sunriver import Sunriver
+    sunriver = Sunriver()
+    sunriver.desktop.start()
+    sunriver.linux.start()
+    
+    evince = Evince(sunriver.linux)
+    evince.start()
+    import IPython
+    IPython.embed()
+    evince.stop()
+
+    sunriver.linux.stop()
+    sunriver.desktop.stop()
+
+
 
