@@ -5,7 +5,7 @@ import slash.log
 import IPython
 import time
 
-class AndroidDraftsTests(MailBaseTest):
+class AndroidTrashTests(MailBaseTest):
 
 
     @slash.hooks.session_start.register
