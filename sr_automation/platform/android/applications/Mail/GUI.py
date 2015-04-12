@@ -146,15 +146,41 @@ class AndroidMailGUI(object):
             self.d(description = 'Mark unread').click()
         self.d.press.back()
 
-    def add_star(self):
-        self.mark_first_message()
-        self.d(descriptionContains="options").click()
+    def add_star(self, contains=None):
+        if contains != None:
+            self.mark_message(contains)
+            self.d(descriptionContains="options").click()
+        else:
+            i = 0
+            while not self.d(descriptionContains = 'delete').exists:
+                self.d(resourceId="android:id/list").child(index=str(i)).long_click()
+            self.d(descriptionContains="options").click()
+            while not self.d(text='Add star').exists:
+                i += 1
+                self.d.press.back()
+                self.d.press.back()
+                while not self.d(descriptionContains = 'delete').exists:
+                    self.d(resourceId="android:id/list").child(index=str(i)).long_click()
+                self.d(descriptionContains="options").click()
         self.d(text="Add star").click()
         self.d.press.back()
 
-    def remove_star(self):
-        self.mark_first_message()
-        self.d(descriptionContains="options").click()
+    def remove_star(self, contains=None):
+        if contains != None:
+            self.mark_message(contains)
+            self.d(descriptionContains="options").click()
+        else:
+            i = 0
+            while not self.d(descriptionContains = 'delete').exists:
+                self.d(resourceId="android:id/list").child(index=str(i)).long_click()
+            self.d(descriptionContains="options").click()
+            while not self.d(text='Remove star').exists:
+                i += 1
+                self.d.press.back()
+                self.d.press.back()
+                while not self.d(descriptionContains = 'delete').exists:
+                    self.d(resourceId="android:id/list").child(index=str(i)).long_click()
+                self.d(descriptionContains="options").click()
         self.d(text="Remove star").click()
         self.d.press.back()
 
@@ -298,4 +324,3 @@ if __name__ == "__main__":
     android   = Android(device_id)
     gui       = AndroidMailGUI(android)
     gui.open_email_app()
-
