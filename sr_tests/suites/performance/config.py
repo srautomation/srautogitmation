@@ -8,11 +8,18 @@ slash.config.sr.paths = Bunch( resources=os.environ.get("SR_RESOURCES", "/tmp/sr
                              )
 
 slash.config.sr.files = Bunch( pdf="example.pdf"
-                             , doc="Alice.odt"
+                             , odt="example.odf"
                              , docx="example.docx"
-                             , large="large.file"
-                             , picture="example.jpg"
-                             , langs="example.txt"
+                             , large="example.large"
+                             , jpg="example.jpg"
+                             , xlsx="example.xlsx"
+                             , ppt="example.ppt"
+                             , txt="example.txt"
+                             , avi="example.avi"
+                             , mp3="example.mp3"
+                             , wav="example.wav"
+                             , track1="track1.mp3"
+                             , track2="track2.mp3"
                              )
 
 slash.config.sr.thresholds = Bunch( cpu_max=0.9

@@ -57,7 +57,7 @@ class BasicTests(PerformanceBaseTest):
             writer = Writer.Writer(self.linux)
             writer.start()
             time.sleep(9)
-            writer.open(DOC)
+            writer.open(self.config.sr.files.docx)
             time.sleep(5)
             writer.set_bold()
             time.sleep(2)
@@ -67,11 +67,8 @@ class BasicTests(PerformanceBaseTest):
 
     def test_calc_open_spreadsheet(self):
         with self.measure():
-            SPREADSHEET = 'DoctorWho.xlsx'
-            self.prep_resource(SPREADSHEET)
             calc = Calc.Calc(self.linux)
-            calc.start(os.path.join(slash.config.root.paths.resources_remote,
-                SPREADSHEET))
+            calc.start(self.resources.path(self.config.sr.files.xlsx))
             time.sleep(9)
             calc.capitalize()
             time.sleep(20)
@@ -79,12 +76,10 @@ class BasicTests(PerformanceBaseTest):
 
     def test_impress_start_presentation(self):
         with self.measure():
-            PRESENTATION = 'humor-business.ppt'
-            self.prep_resource(PRESENTATION)
             impress = Impress.Impress(self.linux)
             impress.start()
             time.sleep(7)
-            impress.open(PRESENTATION)
+            impress.open(self.config.sr.files.ppt)
             time.sleep(10)
             impress.start_slideshow(10)
             time.sleep(4)
@@ -93,13 +88,11 @@ class BasicTests(PerformanceBaseTest):
     
     def test_leafpad_open_file(self):
         with self.measure():
-            TXT = 'example.txt'
-            self.prep_resource(TXT)
             leafpad = Leafpad.Leafpad(self.linux)
             leafpad.start()
             leafpad.write_text('lets open a text file')
             time.sleep(4)
-            leafpad.open(TXT)
+            leafpad.open(self.config.sr.files.txt)
             time.sleep(5)
             leafpad.word_wrap()
             time.sleep(20)
@@ -107,12 +100,10 @@ class BasicTests(PerformanceBaseTest):
     
     def test_evince_open_pdf_save_as(self):
         with self.measure():
-            PDF = 'example_pdf.pdf'
-            self.prep_resource(PDF)
             evince = Evince.Evince(self.linux)
             evince.start()
             time.sleep(2)
-            evince.open(PDF)
+            evince.open(self.config.sr.files.pdf)
             time.sleep(3)
             evince.save_copy('myNewCopy')
             time.sleep(20)
@@ -132,12 +123,10 @@ class BasicTests(PerformanceBaseTest):
 
     def test_totem_play_movie(self):
         with self.measure():
-            MOVIE = 'movie.avi'
-            self.prep_resource(MOVIE)
             totem = Totem.Totem(self.linux)
             totem.start()
             time.sleep(9)
-            totem.open(MOVIE)
+            totem.open(self.config.sr.files.avi)
             time.sleep(10)
             totem.toggle_play_pause()
             time.sleep(20)
@@ -145,8 +134,6 @@ class BasicTests(PerformanceBaseTest):
 
     def test_lxmusic_play_music(self):
         with self.measure():
-            TRACK = 'vivaldi.mp3'
-            self.prep_resource(TRACK)
             lxmusic = Lxmusic.Lxmusic(self.linux)
             lxmusic.start()
             time.sleep(4)
@@ -154,7 +141,7 @@ class BasicTests(PerformanceBaseTest):
             time.sleep(10)
             lxmusic.pause()
             time.sleep(3)
-            lxmusic.play(TRACK)
+            lxmusic.play(self.config.sr.files.mp3)
             time.sleep(10)
             lxmusic.pause()
             time.sleep(20)
@@ -162,11 +149,9 @@ class BasicTests(PerformanceBaseTest):
 
     def test_gpicview_browse_photos(self):
         with self.measure():
-            PHOTO = 'image.jpg'
-            self.prep_resource(PHOTO)
             gpicview = Gpicview.Gpicview(self.linux)
             gpicview.start()
-            gpicview.open(PHOTO)
+            gpicview.open(self.config.sr.jpg)
             time.sleep(4)
             gpicview.next_photo()
             time.sleep(4)
