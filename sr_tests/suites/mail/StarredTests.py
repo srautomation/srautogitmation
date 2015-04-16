@@ -22,14 +22,12 @@ class StarredTests(MailBaseTest):
         self.choose_folder('inbox')
 
     def test_star_in_android(self):
-        if slash.g.sunriver.desktop.is_desktop_running():
-            slash.g.sunriver.switch_to_android.switch()
+        slash.g.sunriver.switch_to_android.switch()
         slash.g.mail.androidGUI.choose_folder('inbox')
         slash.g.mail.androidGUI.add_star()
 
     def test_unstar_in_android(self):
-        if slash.g.sunriver.desktop.is_desktop_running():
-            slash.g.sunriver.switch_to_android.switch()
+        slash.g.sunriver.switch_to_android.switch()
         slash.g.mail.androidGUI.choose_folder('inbox')
         slash.g.mail.androidGUI.remove_star()
 

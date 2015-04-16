@@ -26,8 +26,7 @@ class AndroidTrashTests(MailBaseTest):
 
     def before(self):
         super(AndroidDraftsTests, self).before()
-        if self.sunriver.desktop.is_desktop_running():
-            self.sunriver.switch_to_android.switch()
+        self.sunriver.switch_to_android.switch()
         self.choose_folder('trash')
         self.load()
         self.trash_count = len(self.messages.android)

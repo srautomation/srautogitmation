@@ -10,9 +10,10 @@ class AndroidSendTests(BaseSendTests):
     def start_android_gui():
         slash.g.mail.androidGUI = AndroidMailGUI(slash.g.sunriver.android)
 
+    def before(self):
+        slash.g.sunriver.switch_to_android.switch()
+
     def send_mail(self, to, subject, body, attachments = []):
         #self.choose_email('srusertest@gmail.com')
-        if slash.g.sunriver.desktop.is_desktop_running():
-            slash.g.sunriver.switch_to_android.switch()
         slash.g.mail.androidGUI.send(to, subject, body, attachments)
         #slash.should.be(sentSuccessfully, True)

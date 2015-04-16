@@ -24,8 +24,7 @@ class AndroidDraftsTests(MailBaseTest):
 
     def before(self):
         super(AndroidDraftsTests, self).before()
-        if slash.g.sunriver.desktop.is_desktop_running():
-            slash.g.sunriver.switch_to_android.switch()
+        slash.g.sunriver.switch_to_android.switch()
         self.choose_folder('drafts')
         self.load()
         self.drafts_counts = len(self.messages.android)

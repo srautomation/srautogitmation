@@ -16,7 +16,7 @@ class Sunriver(object):
         self._android = Android(self._device_id)
         self._desktop = DesktopInYourPocket(self._android)
         self._linux = Sunriver.connect(Chroot(self._android), NetInterfaces(self._android))
-        self._switch_to_android =  SwitchToAndroid(self._linux)
+        self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
     
     @property
     def android(self):

@@ -10,8 +10,7 @@ class AndroidLoadTests(BaseLoadTests):
 
     def before(self):
         super(BaseLoadTests, self).before()
-        if slash.g.sunriver.desktop.is_desktop_running():
-            slash.g.sunriver.switch_to_android.switch()
+        slash.g.sunriver.switch_to_android.switch()
 
     def send_mail(self, to, subject, body):
         slash.g.mail.androidGUI.send(to, subject, body)

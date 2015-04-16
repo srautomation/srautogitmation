@@ -26,7 +26,8 @@ class DesktopInYourPocket(object):
         self.click_menu(pattern=DesktopInYourPocket.BUTTON_STOP)
 
     def switch_to_desktop(self):
-        self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
+        if not self.is_desktop_running():
+            self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
 
     def is_desktop_running(self):
         output = self._android.cmd("shell getprop sunriver.active").stdout.read().strip()
