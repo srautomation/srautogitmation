@@ -101,10 +101,15 @@ class MailBaseTest(BaseTest):
         if tag_index != -1:
             address = address[tag_index + 1:address.find('>')]
         return address.encode('utf8')
+
+    def clean_subject(self, subject):
+        if subject == None:
+            return ''
+        return subject
     
     def compare_subject(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
-                if a.subject.encode('utf8') != decode_header(l.subject)[0][0].replace("\r\n", "")]
+                if a.subject.encode('utf8') != decode_header(self.clean_subject(l.subject))[0][0].replace("\r\n", "")]
 
     def compare_date(self):
         return [i for (i, (a, l)) in enumerate(zip(self.messages.android, self.messages.linux))
