@@ -130,7 +130,10 @@ class LinuxMail(object):
         msg = MIMEMultipart()
         from_ = self._email
         msg['From'] = from_
-        msg['To'] = to #COMMASPACE.join(to)
+        if isinstance(to, basestring):
+            msg['To'] = to #COMMASPACE.join(to)
+        else:
+            msg['To'] = COMMASPACE.join(to) 
         msg['Subject'] = subject
         msg['Date'] = formatdate(localtime = True)
         msg.attach(MIMEText(body))
