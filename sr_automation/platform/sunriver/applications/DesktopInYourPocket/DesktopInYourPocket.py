@@ -20,14 +20,18 @@ class DesktopInYourPocket(object):
         self._android.ui(textContains=pattern).click.wait()
 
     def start(self):
-        self.click_menu(pattern=DesktopInYourPocket.BUTTON_START)
+        #self.click_menu(pattern=DesktopInYourPocket.BUTTON_START)
+        self._android.cmd('shell /data/srctl start')
 
     def stop(self):
-        self.click_menu(pattern=DesktopInYourPocket.BUTTON_STOP)
+        #self.click_menu(pattern=DesktopInYourPocket.BUTTON_STOP)
+        self._android.cmd('shell /data/srctl stop')
 
     def switch_to_desktop(self):
         if not self.is_desktop_running():
-            self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
+            #self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
+            log.info('Switching to desktop')
+            self._android.cmd('shell /data/srctl switch desktop')
 
     def is_desktop_running(self):
         output = self._android.cmd("shell getprop sunriver.active").stdout.read().strip()
@@ -43,6 +47,6 @@ if __name__ == "__main__":
     android   = Android(device_id)
     desktop   = DesktopInYourPocket(android)
     desktop.start()
-    time.sleep(3)
+    time.sleep(8)
     desktop.stop()
 

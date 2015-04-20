@@ -20,4 +20,5 @@ class SwitchBaseTest(BaseTest):
 
     def test_switch(self):
         slash.g.sunriver.switch_to_android.switch()
+        time.sleep(5)
 
