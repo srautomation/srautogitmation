@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import pytz
 from bunch import Bunch
+import time
 
 class AndroidCalendar(object):
     PATH_ANDROID_DB = "/data/data/com.android.providers.calendar/databases/calendar.db"
@@ -67,8 +68,17 @@ class AndroidCalendar(object):
 
         class Events(Base):
             __table__ = Table("Events", self._metadata_db,
+                    Column("_id", Integer, primary_key=True),
                     Column("calendar_id", Integer, ForeignKey("Calendars._id")),
-                    autoload = True)
+                    Column("title", String),
+                    Column("eventLocation", String),
+                    Column("description", String),
+                    Column("dtstart", Integer),
+                    Column("dtend", Integer),
+                    Column("eventTimezone", String),
+                    Column("organizer", String),
+                    )
+            calendars = relationship("Calendars")
         self.Events = Events
 
         class EventsRawTimes(Base):
@@ -94,7 +104,17 @@ class AndroidCalendar(object):
         return self._session_db.query(obj)
 
     def events(self):
-        pass
+        _events = self._session_db.query(self.Events).join(self.Events.calendars) #.filter(self.Mailbox.displayName == self._folder, self.Account.emailAddress == self._email)
+        events = [Bunch(
+            _id         = e._id,
+            title       = e.title,
+            description = e.description,
+            organizer   = e.organizer,
+            start       = time.gmtime(e.dtstart / 1000),
+            end         = time.gmtime([e.dtend, 0][e.dtend is None]   / 1000),
+            )
+            for e in _events]
+        return events
 
 
 if __name__ == "__main__":
@@ -104,4 +124,4 @@ if __name__ == "__main__":
     android   = Android(device_id)
     calendar  = AndroidCalendar(android)
     calendar.load()
-    print calendar
+    print calendar.events()
