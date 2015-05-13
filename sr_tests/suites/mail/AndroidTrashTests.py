@@ -2,7 +2,6 @@ from Base import MailBaseTest
 from sr_automation.platform.android.applications.Mail.GUI import AndroidMailGUI
 import slash
 import slash.log
-import IPython
 import time
 
 class AndroidTrashTests(MailBaseTest):
@@ -13,6 +12,7 @@ class AndroidTrashTests(MailBaseTest):
         slash.g.mail.androidGUI = AndroidMailGUI(slash.g.sunriver.android)
 
     def after(self):
+        time.sleep(2)
         if self.mail.folder != 'trash':
             self.choose_folder('trash')
             self.load()
@@ -22,10 +22,10 @@ class AndroidTrashTests(MailBaseTest):
             slash.should.be(len(self.messages.android), self.trash_count - self.number_to_delete)
         slash.logger.info("trash count OK")
         self.compare_all()
-        super(AndroidDraftsTests, self).after()
+        super(AndroidTrashTests, self).after()
 
     def before(self):
-        super(AndroidDraftsTests, self).before()
+        super(AndroidTrashTests, self).before()
         self.sunriver.switch_to_android.switch()
         self.choose_folder('trash')
         self.load()
