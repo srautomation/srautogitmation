@@ -22,6 +22,7 @@ class Linux(object):
             self._rpyc.close()
 
     def start(self):
+        self._shell.wait_process_by_short_name("Xorg")
         self._ui = UI(self._shell)
         self._ui.start()
 

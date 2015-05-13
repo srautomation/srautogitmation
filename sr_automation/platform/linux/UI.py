@@ -10,7 +10,6 @@ class UI(object):
 
     def _start_at_spi(self):
         log.info("Starting AT-SPI")
-        self._shell.wait_process_by_short_name("Xorg")
         assert 0 == self._shell.shell("gsettings set org.gnome.desktop.interface toolkit-accessibility true", infrastructure=True).wait()
         assert 0 == self._shell.shell("gconftool-2 -s -t boolean /desktop/gnome/interface/accessibility true", infrastructure=True).wait()
         if not self._shell.is_running("at-spi-bus-launcher"):
