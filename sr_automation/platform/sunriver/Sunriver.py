@@ -17,6 +17,17 @@ class Sunriver(object):
         self._desktop = DesktopInYourPocket(self._android)
         self._linux = Sunriver.connect(Chroot(self._android), NetInterfaces(self._android))
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
+        self.start()
+
+    def start(self):
+        self._desktop.start()
+        self._linux.start()
+
+    def stop(self):
+        self._switch_to_android.switch()
+        self._linux.stop()
+        self._desktop.stop()
+        self.android.ui.press.home()
     
     @property
     def android(self):
@@ -67,8 +78,10 @@ class Sunriver(object):
                        , "python-gobject-2"
                        , "statgrab"
                        , "wmctrl"
+                       , "lsof"
                        , "libxml2-dev"
                        , "libxslt1-dev"
+                       , "gcc"
                        ]
         PIP_PACKAGES = [ "rpyc"
                        , "psutil"
@@ -76,15 +89,15 @@ class Sunriver(object):
                        , "chromedriver"
                        , "Skype4py"
                        , "pyuserinput"
-                       , "python-xlib"
                        , "lxml"
                        , "caldav"
                        , "pycarddav"
                        , "icalendar"
                        ]
+
         commands = "\n".join([ "apt-get -y install {}".format(" ".join(APT_PACKAGES))
                              , "pip install {}".format(" ".join(PIP_PACKAGES))
-                             , "git clone https://github.com/lorquas/dogtail; cd dogtail; python setup.py install; cd .. ;"
+                             , "git config --global http.sslVerify false; git clone https://git.fedorahosted.org/git/dogtail.git; cd dogtail; python setup.py install; cd .. ;"
                              , "ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0;", # TODO: validate
                              ])
         process = chroot.run(commands)

@@ -13,8 +13,6 @@ def start_sunriver():
     log.info("Starting Sunriver")
     slash.g.sunriver = Sunriver()
     log.info("Starting Desktop")
-    slash.g.sunriver.desktop.start()
-    slash.g.sunriver.linux.start()
     sync_resources()
 
 def sync_resources():
@@ -30,9 +28,7 @@ def sync_resources():
 @slash.hooks.result_summary.register
 def stop_sunriver():
     log.info("Stopping Desktop")
-    slash.g.sunriver.switch_to_android.switch()
-    slash.g.sunriver.linux.stop()
-    slash.g.sunriver.desktop.stop()
+    slash.g.sunriver.stop()
 
 class BaseTest(slash.Test):
     def before(self):
