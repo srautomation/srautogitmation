@@ -10,11 +10,13 @@ class SwitchToAndroid(object):
     def switch(self):
         if self._desktop.is_desktop_running():
             log.info('Switching to android')
-            mouse = self._linux.ui.pymouse
-            scx, scy = mouse.screen_size()
-            mouse.click(scx - 20, 20)
-            time.sleep(1)
-            mouse.click(7 * scx / 12, 7 * scy / 12)
+            #mouse = self._linux.ui.pymouse
+            #scx, scy = mouse.screen_size()
+            #mouse.click(scx - 20, 20)
+            #time.sleep(1)
+            #mouse.click(7 * scx / 12, 7 * scy / 12)
+            self._linux.ui.dogtail.rawinput.keyCombo('<Alt><Down>')
+            time.sleep(5)
 
 if __name__ == "__main__":
     from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket
