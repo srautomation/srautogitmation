@@ -15,12 +15,8 @@ class LinuxMail(object):
         self._imap_module = self._linux._rpyc.modules.imaplib
         self._smtp_module = self._linux._rpyc.modules.smtplib
 
-        while (0 == len(self._linux.cmd('netstat -na | grep ":143 " | grep LISTEN').stdout.read())):
-            time.sleep(0.5)
         self._imap = self._imap_module.IMAP4("localhost")
 
-        while (0 == len(self._linux.cmd('netstat -na | grep ":25 " | grep LISTEN').stdout.read())):
-            time.sleep(0.5)
         self._smtp = self._smtp_module.SMTP("localhost")
 
         self._key = self._read_key()
@@ -170,7 +166,7 @@ if __name__ == "__main__":
         IPython.embed()
 
         imap.stop()
-        sunriver.desktop.stop()
+        sunriver.stop()
 
     @baker.command
     def send(account_email, to, subject, body):
@@ -193,7 +189,7 @@ if __name__ == "__main__":
                  )
 
         imap.stop()
-        sunriver.desktop.stop()
+        sunriver.stop()
 
     baker.run()
 
