@@ -67,15 +67,19 @@ class Sunriver(object):
                        , "python-gobject-2"
                        , "statgrab"
                        , "wmctrl"
+                       , "libxml2-dev"
+                       , "libxslt1-dev"
                        ]
         PIP_PACKAGES = [ "rpyc"
                        , "psutil"
                        , "selenium"
                        , "chromedriver"
                        , "Skype4py"
-                       , "caldav"
                        , "pyuserinput"
                        , "python-xlib"
+                       , "lxml"
+                       , "caldav"
+                       , "icalendar"
                        ]
         commands = "\n".join([ "apt-get -y install {}".format(" ".join(APT_PACKAGES))
                              , "pip install {}".format(" ".join(PIP_PACKAGES))
