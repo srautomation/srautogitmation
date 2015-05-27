@@ -21,6 +21,9 @@ requirements = [
     "baker",
     "SQLAlchemy",
     "IMAPClient",
+    "ipython",
+    "pytz",
+    "loremipsum"
 ]
 
 test_requirements = [
