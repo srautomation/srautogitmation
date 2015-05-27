@@ -11,7 +11,7 @@ class IMAPApp(object):
         self._sunriver = sunriver
 
     def is_running(self):
-        return len(self.USED_PORTS) == int(self._sunriver.linux.cmd('lsof -i :%s|grep LISTEN|grep labuser|wc -l' % ','.join(self.USED_PORTS),shell=True).stdout.read())
+        return len(self.USED_PORTS) == int(self._sunriver.linux.cmd('lsof -i :%s|grep LISTEN|grep messagebus|wc -l' % ','.join(self.USED_PORTS),shell=True).stdout.read())
 
     def start(self):
         if self.is_running():
