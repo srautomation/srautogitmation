@@ -1,4 +1,5 @@
 from logbook import Logger
+from time import sleep
 log = Logger("DesktopInYourPocket")
 
 class DesktopInYourPocket(object):
@@ -32,6 +33,8 @@ class DesktopInYourPocket(object):
             #self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
             log.info('Switching to desktop')
             self._android.cmd('shell /data/srctl switch desktop')
+            sleep(5)
+
 
     def is_desktop_running(self):
         output = self._android.cmd("shell getprop sunriver.active").stdout.read().strip()
