@@ -1,5 +1,4 @@
 import xmlrpclib
-
 from logbook import Logger
 log = Logger("LinuxUI")
 
@@ -22,20 +21,14 @@ class UI(object):
             self._shell.wait_process_by_short_name("at-spi2-registr")
 
     def _start_dogtail(self):
-        self._modules.os.getlogin = lambda: "root"
-        self._modules.os.environ["USER"] = "root"
+        #self._modules.os.getlogin = lambda: "root"
+        #self._modules.os.environ["USER"] = "root"
         self._dogtail = self._modules.dogtail
         log.info("Starting Dogtail")
-
-    def _start_pymouse(self):
-        log.info("Starting PyMouse")
-        self._shell.cmd("touch /root/.Xauthority")
-        self._pymouse = self._modules.pymouse.PyMouse()
 
     def start(self):
         self._start_at_spi()
         self._start_dogtail()
-        self._start_pymouse()
 
     def stop(self):
         pass
@@ -43,10 +36,6 @@ class UI(object):
     @property
     def dogtail(self):
         return self._dogtail
-
-    @property
-    def pymouse(self):
-        return self._pymouse
 
 if __name__ == "__main__":
     import sys

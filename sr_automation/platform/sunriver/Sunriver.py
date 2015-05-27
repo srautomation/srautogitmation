@@ -88,7 +88,6 @@ class Sunriver(object):
                        , "selenium"
                        , "chromedriver"
                        , "Skype4py"
-                       , "pyuserinput"
                        , "lxml"
                        , "caldav"
                        , "pycarddav"
