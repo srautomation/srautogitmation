@@ -35,12 +35,13 @@ class AndroidTrashTests(MailBaseTest):
         self.number_to_delete = 1
         self.choose_folder('inbox')
         slash.g.mail.androidGUI.choose_folder('inbox')
+        self.load()
         slash.g.mail.androidGUI.delete_message()
 
     def test_2_delete_ten_messages_in_android(self):
         self.number_to_delete = 10
-        slash.g.mail.androidGUI.choose_folder('inbox')
         self.choose_folder('inbox')
+        slash.g.mail.androidGUI.choose_folder('inbox')
         self.load()
         if len(self.messages.android) < self.number_to_delete:
             self.number_to_delete = len(self.messages.android)
