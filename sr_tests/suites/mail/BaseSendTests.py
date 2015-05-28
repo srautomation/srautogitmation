@@ -12,6 +12,9 @@ class BaseSendTests(MailBaseTest):
     def send_mail(self):
         raise NotImplemented
 
+    def before(self):
+        super(BaseSendTests, self).before()
+
     def after(self):
         self.choose_folder('sent')
         self.load()

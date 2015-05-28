@@ -11,7 +11,11 @@ class AndroidSendTests(BaseSendTests):
         slash.g.mail.androidGUI = AndroidMailGUI(slash.g.sunriver.android)
 
     def before(self):
+        super(AndroidSendTests, self).before()
         slash.g.sunriver.switch_to_android.switch()
+
+    def after(self):
+        super(AndroidSendTests, self).before()
 
     def send_mail(self, to, subject, body, attachments = []):
         #self.choose_email('srusertest@gmail.com')
