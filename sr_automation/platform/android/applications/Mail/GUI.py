@@ -129,6 +129,9 @@ class AndroidMailGUI(object):
                 self.d(resourceId="android:id/list").child(index="0").long_click()
             else:
                 self.find_message(contains).long_click()
+            self.d.wait.idle()
+            if self.d(descriptionContains='Navigate up').exists:
+                self.d(descriptionContains='Navigate up').click()
 
     def delete_message(self, contains=None):
         self.mark_message(contains)
