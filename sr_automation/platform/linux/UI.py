@@ -13,11 +13,11 @@ class UI(object):
         assert 0 == self._shell.shell("gconftool-2 -s -t boolean /desktop/gnome/interface/accessibility true", infrastructure=True).wait()
         if not self._shell.is_running("at-spi-bus-launcher"):
             log.info("Starting at-spi-bus-launcher")
-            self._process_at_spi_bus_launcher = self._shell.cmd("/usr/lib/at-spi2-core/at-spi-bus-launcher", infrastructure=True)
+            self._process_at_spi_bus_launcher = self._shell.cmd('su labuser -c "/usr/lib/at-spi2-core/at-spi-bus-launcher"', infrastructure=True)
             self._shell.wait_process_by_short_name("at-spi-bus-laun")
         if not self._shell.is_running("at-spi2-registryd"):
             log.info("Starting at-spi2-registryd")
-            self._process_at_spi_registryd = self._shell.cmd("/usr/lib/at-spi2-core/at-spi2-registryd", infrastructure=True)
+            self._process_at_spi_registryd = self._shell.cmd('su labuser -c "/usr/lib/at-spi2-core/at-spi2-registryd"', infrastructure=True)
             self._shell.wait_process_by_short_name("at-spi2-registr")
 
     def _start_dogtail(self):
