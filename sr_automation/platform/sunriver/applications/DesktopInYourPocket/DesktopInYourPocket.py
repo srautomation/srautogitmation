@@ -33,7 +33,7 @@ class DesktopInYourPocket(object):
             #self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
             log.info('Switching to desktop')
             self._android.cmd('shell /data/srctl switch desktop')
-            sleep(5)
+            sleep(8)
 
 
     def is_desktop_running(self):
