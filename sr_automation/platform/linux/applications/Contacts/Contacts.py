@@ -7,6 +7,32 @@ import vobject
 # r.tree.xpath("//D:href/text()", namespaces=r.tree.nsmap)
 # contacts._caldav.request(LinuxContacts.BASE_URL.format(contacts._key) + 'ev1')
 
+# In [76]: r[0].contents
+# Out[76]: 
+# {u'adr': [<ADR{u'TYPE': [u'work']}\n,  >, <ADR{u'TYPE': [u'home']}\n,  >],
+# u'bday': [<BDAY{}>],
+# u'categories': [<CATEGORIES{}['']>],
+# u'custom1': [<CUSTOM1{}>],
+# u'custom2': [<CUSTOM2{}>],
+# u'custom3': [<CUSTOM3{}>],
+# u'custom4': [<CUSTOM4{}>],
+# u'email': [<EMAIL{u'TYPE': [u'work']}ohad@wizery.com>],
+# u'fn': [<FN{}Ohad Ben-Cohen>],
+# u'n': [<N{} Ohad  Ben-Cohen >],
+# u'nickname': [<NICKNAME{}>],
+# u'note': [<NOTE{}>],
+# u'org': [<ORG{}['']>],
+# u'tel': [<TEL{u'TYPE': [u'work']}>,
+# <TEL{u'TYPE': [u'home']}>,
+# <TEL{u'TYPE': [u'cell']}>,
+# <TEL{u'TYPE': [u'fax']}>,
+# <TEL{u'TYPE': [u'pager']}>],
+# u'title': [<TITLE{}>],
+# u'url': [<URL{u'TYPE': [u'work']}>, <URL{u'TYPE': [u'home']}>],
+# u'version': [<VERSION{}3.0>],
+# u'x-aim': [<X-AIM{}>]}
+
+
 
 class LinuxContacts(object):
     BASE_URL = "http://127.0.0.1:85/carddav/{}/1/"
@@ -29,6 +55,13 @@ class LinuxContacts(object):
         evs = [e for e in evs if len(e) > 0]
         evs = [self._caldav.request(LinuxContacts.BASE_URL.format(self._key) + ev) for ev in evs]
         evs = [vobject.readOne(ev.raw) for ev in evs]
+        
+        contacts = [Bunch(_id   = c._id,
+                           name  = c.display_name,
+                           phone = phones.get(c._id, ""),
+                          )
+                    for ev in evs
+                    ]
         return evs
 
 if __name__ == "__main__":

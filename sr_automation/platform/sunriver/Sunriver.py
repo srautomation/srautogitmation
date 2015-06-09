@@ -79,6 +79,7 @@ class Sunriver(object):
                        , "python-xlib"
                        , "lxml"
                        , "caldav"
+                       , "pycarddav"
                        , "icalendar"
                        ]
         commands = "\n".join([ "apt-get -y install {}".format(" ".join(APT_PACKAGES))
