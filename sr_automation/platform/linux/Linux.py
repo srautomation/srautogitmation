@@ -29,6 +29,7 @@ class Linux(object):
 
     def stop(self):
         self._ui.stop()
+        self.cmd('pkill rpyc', infrastructure=True)
 
     @property
     def modules(self):
