@@ -22,15 +22,19 @@ class BaseLoadTests(MailBaseTest):
 
     def test_sending_load(self):
         for i in range(self.sending_load):
+            slash.logger.info("cycle #%s" % (i + 1))
             self.send_mail(self.mail_conf.receivers,
                            loremipsum.get_sentence().encode('utf8'),
                            ' '.join(loremipsum.get_sentences(5)).encode('utf8'))
 
     def test_send_and_delete(self):
         for i in range(10):
+            slash.logger.info("cycle #%s" % (i + 1))
+            slash.logger.info('sending emails')
             for j in range(4):
                 self.send_mail(self.mail_conf.receivers,
                                loremipsum.get_sentence().encode('utf8'),
                                ' '.join(loremipsum.get_sentences(5)).encode('utf8'))
+            slash.logger.info('deleting emails from sent folder')
             for j in range(3):
                 self.delete_from_sent()
