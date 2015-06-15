@@ -44,7 +44,7 @@ class Shell(object):
         return self.cmd(cmdline, shell=True, env=env, infrastructure=infrastructure)
 
     def is_running(self, name):
-        process_list = [process for process in self._psutil.get_process_list() if process.is_running() == True]
+        process_list = [process for process in self._psutil.process_iter() if process.is_running() == True]
         processes_names = [process.name() for process in process_list if process.is_running()]
         if name in processes_names:
             return True
