@@ -12,21 +12,27 @@ class AndroidCalendarGUI(object):
 ###############################
 #     Calendar app actions    #
 ###############################
-    def create_event(self, name=None, location=None, time_start=None, time_end=None):
+    def create_event(self, name=None, location=None, allDay = None):
         self.open_settings_menu()
         self.d(text='New event').click()
-        self.edit_event_screen(name, location, time_start, time_end)
+        self.edit_event_screen(name, location, allDay)
 
-    def change_event(self, name=None, location=None, time_start=None, time_end=None):
+    def change_event(self, name=None, location=None, allDay = None):
         self.choose_event()
         self.d(resourceId="com.android.calendar:id/info_action_edit").click()
-        self.edit_event_screen(name, location, time_start, time_end)
+        self.edit_event_screen(name, location, allDay)
 
-    def edit_event_screen(self, name=None, location=None, time_start=None, time_end=None):
-        self.d(resourceId="com.android.calendar:id/title").set_text('')
-        self.d(resourceId="com.android.calendar:id/location").set_text('')
-        self.d(resourceId="com.android.calendar:id/title").set_text(name)
-        self.d(resourceId="com.android.calendar:id/location").set_text(location)
+    def edit_event_screen(self, name, location, allDay):
+        if name != None:
+            self.d(resourceId="com.android.calendar:id/title").set_text('')
+            self.d(resourceId="com.android.calendar:id/title").set_text(name)
+            self.d.press.back()
+        if location != None:
+            self.d(resourceId="com.android.calendar:id/location").set_text('')
+            self.d(resourceId="com.android.calendar:id/location").set_text(location)
+            self.d.press.back()
+        if allDay != None and self.is_all_day() != allDay:
+            self.d(resourceId="com.android.calendar:id/is_all_day").click()
         self.d(resourceId="com.android.calendar:id/action_done").click()
 
     def choose_event(self):
@@ -83,6 +89,11 @@ class AndroidCalendarGUI(object):
         self.d(text="Settings").click()
         self.d(textContains=email).click()
 
+    def is_all_day(self):
+        all_day_line = 'content-desc="All day event" checkable="true" checked="true"'
+        if all_day_line in self.d.dump():
+            return True
+        return False
 
 if __name__ == "__main__":
     import sys; sys.path.append("../..")
@@ -91,4 +102,5 @@ if __name__ == "__main__":
     device_id = Android.devices().keys()[0]
     android   = Android(device_id)
     gui       = AndroidCalendarGUI(android)
-    gui.change_event('new','there')
+    gui.create_event(name='new', location='there')
+    gui.change_event(allDay=True, name='lorem')
