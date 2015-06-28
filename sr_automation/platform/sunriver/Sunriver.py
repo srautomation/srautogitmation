@@ -15,7 +15,7 @@ class Sunriver(object):
         self._device_id = Android.devices().keys()[0]
         self._android = Android(self._device_id)
         self._desktop = DesktopInYourPocket(self._android)
-        self._linux = Sunriver.connect(Chroot(self._android), NetInterfaces(self._android))
+        self._linux = self.connect(Chroot(self._android), NetInterfaces(self._android))
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
         self.start()
 
@@ -45,8 +45,30 @@ class Sunriver(object):
     def switch_to_android(self):
         return self._switch_to_android
 
-    @classmethod
-    def connect(cls, chroot, interfaces):
+    def connect(self, chroot, interfaces):
+        try:
+            iface = interfaces["rndis0"]
+            log.info('rndis connected')
+        except KeyError, e:
+           # iface = interfaces["wlan0"]
+            log.info('rndis not found, connecting...')
+            self.android.cmd("shell service call connectivity 34 i32 0").wait()
+            time.sleep(4)
+            self.android.cmd("shell chmod 644 /sys/module/g_android/parameters/host_addr").wait()
+            time.sleep(2)
+            self.android.cmd("shell 'echo 00:01:02:03:04:05 > /sys/module/g_android/parameters/host_addr'").wait()
+            time.sleep(2)
+            self.android.cmd("shell chmod 644 /sys/module/g_android/parameters/dev_addr").wait()
+            time.sleep(2)
+            self.android.cmd("shell 'echo 00:01:02:03:04:06 > /sys/module/g_android/parameters/dev_addr'").wait()
+            time.sleep(2)
+            self.android.cmd("shell service call connectivity 34 i32 1").wait()
+            time.sleep(4)
+            self.android.cmd("wait-for-device").wait()
+            time.sleep(2)
+            self.android.cmd("shell ifconfig rndis0 up 10.42.0.2 netmask 255.255.255.0").wait()
+            time.sleep(2)
+            iface = interfaces["rndis0"]
         log.info("Starting RPyC")
         rpyc_process = chroot.run("rpyc_classic.py", shell=False)
         rpyc_user_process = chroot.run('su labuser -c "rpyc_classic.py -p 18813"', shell=False)
@@ -55,10 +77,6 @@ class Sunriver(object):
         while (0 == len(android.cmd('shell "netstat | grep :18812 | grep LISTEN"').stdout.read()) and
               0 == len(android.cmd('shell "netstat | grep :18813 | grep LISTEN"').stdout.read())) :
             time.sleep(0.5)
-        try:
-            iface = interfaces["rndis0"]
-        except KeyError, e:
-            iface = interfaces["wlan0"]
         log.info("Connecting RPyC: %r" % iface.ip)
         rpyc_user_connection = rpyc.classic.connect(iface.ip,'18813')
         rpyc_connection = rpyc.classic.connect(iface.ip)
