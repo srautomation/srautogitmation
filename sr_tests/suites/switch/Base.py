@@ -14,7 +14,9 @@ class SwitchBaseTest(BaseTest):
         for i in range(self.times_to_switch):
             slash.logger.info('Cycle #%s' % (i+1))
             slash.g.sunriver.switch_to_android.switch()
+            slash.should.be(self.sunriver.desktop.is_desktop_running(), False)
             slash.g.sunriver.desktop.switch_to_desktop()
-
+            slash.should.be(self.sunriver.desktop.is_desktop_running(), True)
+            
     def test_switch(self):
         slash.g.sunriver.switch_to_android.switch()
