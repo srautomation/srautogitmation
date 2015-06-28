@@ -24,8 +24,8 @@ class LinuxMailGUI(object):
 if __name__ == "__main__":
     from sr_automation.platform.sunriver.Sunriver import Sunriver
     sunriver = Sunriver()
-    sunriver.desktop.start()
-    sunriver.linux.start()
+    #sunriver.desktop.start()
+    #sunriver.linux.start()
     mail_gui = LinuxMailGUI(sunriver.linux)
     mail_gui.start_icedove()
     import IPython

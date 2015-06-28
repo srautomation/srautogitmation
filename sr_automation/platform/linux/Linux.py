@@ -7,10 +7,12 @@ from logbook import Logger
 log = Logger("Linux")
 
 class Linux(object):
-    def __init__(self, modules, rpyc=None):
+    def __init__(self, modules, rpyc=None, modules_user=None, rpyc_user=None):
         self._modules = modules
+        self._modules_user = modules_user
         self._rpyc = rpyc
-        self._shell = Shell(self._modules, self._rpyc)
+        self._rpyc_user = rpyc_user
+        self._shell = Shell(self._modules, self._rpyc, self._modules_user)
         if self._rpyc is not None:
             self._ip = self.cmd("netstat -na | grep ':18812.*ESTABLISHED' | head -1 | tr ':' ' ' | awk {'print $4'}", shell=True).stdout.read().strip()
         else:

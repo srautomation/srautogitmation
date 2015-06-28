@@ -13,8 +13,9 @@ class Shell(object):
             "GTK_MODULES":     "gail:atk-bridge",
             "XDG_RUNTIME_DIR": "/tmp/"}
 
-    def __init__(self, modules, rpyc=None):
+    def __init__(self, modules, rpyc=None, modules_user=None):
         self._modules = modules
+        self._modules_user = modules_user
         self._rpyc = rpyc
         self._os = self._modules.os
         self._psutil = self._modules.psutil

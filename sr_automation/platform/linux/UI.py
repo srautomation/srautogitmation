@@ -6,6 +6,7 @@ class UI(object):
     def __init__(self, shell):
         self._shell = shell
         self._modules = shell._modules
+        self._modules_user = shell._modules_user
 
     def _start_at_spi(self):
         log.info("Starting AT-SPI")
@@ -23,7 +24,7 @@ class UI(object):
     def _start_dogtail(self):
         #self._modules.os.getlogin = lambda: "root"
         #self._modules.os.environ["USER"] = "root"
-        self._dogtail = self._modules.dogtail
+        self._dogtail = self._modules_user.dogtail
         log.info("Starting Dogtail")
 
     def start(self):

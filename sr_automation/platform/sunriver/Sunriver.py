@@ -49,17 +49,20 @@ class Sunriver(object):
     def connect(cls, chroot, interfaces):
         log.info("Starting RPyC")
         rpyc_process = chroot.run("rpyc_classic.py", shell=False)
+        rpyc_user_process = chroot.run('su labuser -c "rpyc_classic.py -p 18813"', shell=False)
         log.info("Waiting RPyC")
         android = chroot._android
-        while (0 == len(android.cmd('shell "netstat | grep :18812 | grep LISTEN"').stdout.read())):
+        while (0 == len(android.cmd('shell "netstat | grep :18812 | grep LISTEN"').stdout.read()) and
+              0 == len(android.cmd('shell "netstat | grep :18813 | grep LISTEN"').stdout.read())) :
             time.sleep(0.5)
         try:
             iface = interfaces["rndis0"]
         except KeyError, e:
             iface = interfaces["wlan0"]
         log.info("Connecting RPyC: %r" % iface.ip)
+        rpyc_user_connection = rpyc.classic.connect(iface.ip,'18813')
         rpyc_connection = rpyc.classic.connect(iface.ip)
-        return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection)
+        return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection, modules_user=rpyc_user_connection.modules, rpyc_user=rpyc_user_connection)
 
     @classmethod
     def install(cls, chroot):
