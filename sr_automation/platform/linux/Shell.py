@@ -5,7 +5,7 @@ from logbook import Logger
 log = Logger("LinuxShell")
 
 class Shell(object):
-    WAIT_DELAY = 0.001
+    WAIT_DELAY = 1
     DEFAULT_ENVIRONMENT = {
             "PATH":            "/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin",
             "USER":            "root",
