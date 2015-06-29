@@ -17,6 +17,3 @@ class SwitchBaseTest(BaseTest):
             slash.should.be(self.sunriver.desktop.is_desktop_running(), False)
             slash.g.sunriver.desktop.switch_to_desktop()
             slash.should.be(self.sunriver.desktop.is_desktop_running(), True)
-            
-    def test_switch(self):
-        slash.g.sunriver.switch_to_android.switch()
