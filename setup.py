@@ -23,7 +23,8 @@ requirements = [
     "IMAPClient",
     "ipython",
     "pytz",
-    "loremipsum"
+    "loremipsum",
+    "vobject"
 ]
 
 test_requirements = [
