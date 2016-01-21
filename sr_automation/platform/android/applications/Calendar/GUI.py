@@ -17,6 +17,13 @@ class AndroidCalendarGUI(object):
         self.d(text='New event').click()
         self.edit_event_screen(name, location, allDay)
 
+    def delete_random_event(self):
+        self.main_view()
+        time.sleep(2)
+        self.d(resourceId = "android:id/content").click()
+        self.d(resourceId="com.android.calendar:id/info_action_delete").click()
+        self.d(text='OK').click()
+    
     def change_event(self, name=None, location=None, allDay = None):
         self.choose_event()
         self.d(resourceId="com.android.calendar:id/info_action_edit").click()
@@ -26,11 +33,11 @@ class AndroidCalendarGUI(object):
         if name != None:
             self.d(resourceId="com.android.calendar:id/title").set_text('')
             self.d(resourceId="com.android.calendar:id/title").set_text(name)
-            self.d.press.back()
+            #self.d.press.back()
         if location != None:
             self.d(resourceId="com.android.calendar:id/location").set_text('')
             self.d(resourceId="com.android.calendar:id/location").set_text(location)
-            self.d.press.back()
+            #self.d.press.back()
         if allDay != None and self.is_all_day() != allDay:
             self.d(resourceId="com.android.calendar:id/is_all_day").click()
         self.d(resourceId="com.android.calendar:id/action_done").click()
@@ -99,8 +106,10 @@ if __name__ == "__main__":
     import sys; sys.path.append("../..")
     import loremipsum
     from Android import Android
+    import IPython
     device_id = Android.devices().keys()[0]
     android   = Android(device_id)
     gui       = AndroidCalendarGUI(android)
     gui.create_event(name='new', location='there')
     gui.change_event(allDay=True, name='lorem')
+    IPython.embed()

@@ -83,7 +83,7 @@ def install_dut():
     device_id = Android.devices().keys()[0]
     android = Android(device_id)
     chroot  = Chroot(android)
-    Sunriver.install(chroot)
+    Sunriver.install()
 
 @baker.command
 def run(config, *args, **kw):

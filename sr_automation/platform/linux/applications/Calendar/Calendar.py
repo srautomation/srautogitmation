@@ -2,6 +2,7 @@ import time
 from dateutil import parser
 from bunch import Bunch
 from icalendar import Calendar, Event
+import IPython
 
 class LinuxCalendar(object):
     BASE_URL = "http://127.0.0.1:85/caldav/{}/1/"
@@ -26,7 +27,7 @@ class LinuxCalendar(object):
         for event in _events:
             _id = event["UID"].encode('utf-8')
             title = event["SUMMARY"].encode('utf-8')
-            description = event["DESCRIPTION"].encode('utf-8')
+            #description = event["DESCRIPTION"].encode('utf-8')
             dtstart = event["DTSTART"].dt
 
             if "ORGANIZER" in event.viewkeys():
@@ -43,7 +44,7 @@ class LinuxCalendar(object):
 
             events.append(Bunch(_id = _id,
                                 title = title,
-                                description = description,
+                                #description = description,
                                 organizer = organizer,
                                 dtstart = dtstart.utctimetuple(),
                                 dtend   = dtend.utctimetuple(),
@@ -72,6 +73,15 @@ if __name__ == "__main__":
 
         imap.stop()
         sunriver.desktop.stop()
+
+    @baker.command
+    def load():
+        from sr_automation.platform.sunriver.Sunriver import Sunriver
+        from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
+        sunriver = Sunriver()
+        cal=LinuxCalendar(sunriver.linux)
+        ev=cal.events()
+        print ev
 
     baker.run()
 

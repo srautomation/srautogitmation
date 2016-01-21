@@ -16,7 +16,6 @@ class SwitchToAndroid(object):
             #time.sleep(1)
             #mouse.click(7 * scx / 12, 7 * scy / 12)
             self._linux.ui.dogtail.rawinput.keyCombo('<Alt><Down>')
-            time.sleep(8)
 
 if __name__ == "__main__":
     from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket

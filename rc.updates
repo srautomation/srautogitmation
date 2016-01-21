@@ -1,0 +1,41 @@
+#!/bin/sh 
+
+sudo apt-get update
+sudo apt-get -y install ssh
+sudo apt-get -y install git
+sudo apt-get -y install at-spi2-core
+sudo apt-get -y install libatk-bridge2.0-0
+sudo apt-get -y install libatk-adaptor
+sudo apt-get -y install gconf2
+sudo apt-get -y install python-dev
+sudo apt-get -y install python-pip
+sudo apt-get -y install python-pyatspi2
+sudo apt-get -y install python-gtk3
+sudo apt-get -y install python-gtk3-dev
+sudo apt-get -y install python-pil
+sudo apt-get -y install python-gobject
+sudo apt-get -y install python-gobject-2
+sudo apt-get -y install statgrab
+sudo apt-get -y install wmctrl
+sudo apt-get -y install lsof
+sudo apt-get -y install libxml2-dev
+sudo apt-get -y install libxslt1-dev
+sudo apt-get -y install gcc
+
+sudo pip install rpyc
+sudo pip install psutil
+sudo pip install selenium
+sudo pip install chromedriver_installer
+sudo pip install Skype4py
+sudo pip install lxml
+sudo pip install caldav
+sudo pip install pycarddav
+sudo pip install icalendar
+
+sudo git config --global http.sslVerify false
+sudo git clone https://git.fedorahosted.org/git/dogtail.git
+cd dogtail
+sudo python setup.py install
+cd .. 
+sudo ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0
+

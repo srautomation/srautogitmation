@@ -24,15 +24,14 @@ class AndroidMailGUI(object):
 
     def write_mail(self, to, subject, body, attachments = []):
         self.main_view()
-        self.d(resourceId = 'com.android.email:id/compose').click()
+        self.d(resourceId = 'com.android.email:id/compose_button').click()
         self.d.wait.idle()
-        if isinstance(to, basestring):
-            self.d(resourceId = 'com.android.email:id/to_content').set_text(to)
-        else:
-            self.d(resourceId = 'com.android.email:id/to_content').set_text(','.join(to))
+        #if isinstance(to, basestring):
+        self.d(resourceId = 'com.android.email:id/to').set_text(to)
+        #else:
+         #   self.d(resourceId = 'com.android.email:id/to').set_text(','.join(to))
         self.d(resourceId = 'com.android.email:id/subject').set_text(subject)
-        body_textbox = self.d(resourceId="com.android.email:id/body")
-        body_textbox.set_text(body)
+        self.d(resourceId="com.android.email:id/body").set_text(body)
 
     def save_draft(self):
         self.d.press.menu()
@@ -218,14 +217,14 @@ class AndroidMailGUI(object):
 #####################################
     def main_view(self):
         self.open_email_app()
-        if self.d(text = 'Settings', resourceId = 'android:id/title').exists:
-            self.d.press.menu()
-        while self.d(descriptionContains = 'Navigate up').exists:
-            self.d(descriptionContains = 'Navigate up').click()
-            self.d.wait.update()
-        if self.d(resourceId = 'android:id/action_mode_close_button').exists:
-            self.d(resourceId = 'android:id/action_mode_close_button').click()
-        self.close_drawer()
+###     if self.d(text = 'Settings', resourceId = 'android:id/title').exists:
+###         self.d.press.menu()
+###     while self.d(descriptionContains = 'Navigate up').exists:
+###         self.d(descriptionContains = 'Navigate up').click()
+###         self.d.wait.update()
+###     if self.d(resourceId = 'android:id/action_mode_close_button').exists:
+###         self.d(resourceId = 'android:id/action_mode_close_button').click()
+###     self.close_drawer()
 
     def open_email_app(self):
         if not self.d(packageName = 'com.android.email').exists:
@@ -240,17 +239,17 @@ class AndroidMailGUI(object):
 
     def choose_folder(self, folder):
         self.main_view()
-        if not self.d(textContains = folder, resourceId = 'android:id/action_bar_title'):
-            self.open_drawer()
-            if self.d(textContains = folder, resourceId = 'com.android.email:id/name').exists:
-                self.d(textContains = folder, resourceId = 'com.android.email:id/name').click.wait()
-                return True
-            self.d(resourceId = 'android:id/list', className = 'android.widget.ListView').swipe.up()
-            if self.d(textContains = folder, resourceId = 'com.android.email:id/name').exists:
-                self.d(textContains = folder, resourceId = 'com.android.email:id/name').click.wait()
-                return True
-            return False
-        return True
+        self.open_drawer()
+
+   ####     if self.d(textContains = folder, resourceId = 'com.android.email:id/name').exists:
+   ####         self.d(textContains = folder, resourceId = 'com.android.email:id/name').click.wait()
+   ####         return True
+   ####     self.d(resourceId = 'android:id/list', className = 'android.widget.ListView').swipe.up()
+        if self.d(textContains = folder, resourceId = 'com.android.email:id/name').exists:
+            self.d(textContains = folder, resourceId = 'com.android.email:id/name').click.wait()
+   ####         return True
+   ####     return False
+   #### return True
 
     def choose_account(self, account):
         self.main_view()
@@ -287,8 +286,8 @@ class AndroidMailGUI(object):
         return False
 
     def open_drawer(self):
-        if self.d(descriptionContains = 'close nav').exists:
-            self.d(descriptionContains = 'close nav').click()
+        if self.d(className = "android.widget.ImageButton").exists:
+            self.d(className = "android.widget.ImageButton").click()
 
     def close_drawer(self):
         if self.d(descriptionContains = 'open nav').exists:

@@ -3,12 +3,12 @@ from logbook import Logger
 log = Logger("Chroot")
 
 class Chroot(object):
-    MOUNTS = [ Bunch(type="ext4",    dev="/dev/block/mmcblk1p1", path="/data/debian")
-             , Bunch(type="proc",    dev="proc",                 path="/data/debian/proc")
-             , Bunch(type="sysfs",   dev="sysfs",                path="/data/debian/sys")
-             , Bunch(options="bind", dev="/dev",                 path="/data/debian/dev")
-             , Bunch(type="devpts",  dev="devpts",               path="/data/debian/dev/pts")
-             , Bunch(type="tmpfs",   dev="/dev/shm",             path="/data/debian/dev/shm")
+    MOUNTS = [ Bunch(type="ext4",    dev="/dev/block/mmcblk1p1", path="/data/sunriver/fs/limited")
+             , Bunch(type="proc",    dev="proc",                 path="/data/sunriver/fs/limited/proc")
+             , Bunch(type="sysfs",   dev="sysfs",                path="/data/sunriver/fs/limited/sys")
+             , Bunch(options="bind", dev="/dev",                 path="/data/sunriver/fs/limited/dev")
+             , Bunch(type="devpts",  dev="devpts",               path="/data/sunriver/fs/limited/dev/pts")
+             , Bunch(type="tmpfs",   dev="/dev/shm",             path="/data/sunriver/fs/limited/dev/shm")
             ]
     ENV = { "USER": "root"
           , "DISPLAY": ":0"
@@ -60,4 +60,7 @@ if __name__ == "__main__":
     device_id  = Android.devices().keys()[0]
     android    = Android(device_id)
     chroot     = Chroot(android)
-    print chroot.run("ls -la").stdout.read()
+    rpyc_process = chroot.run("rpyc_classic.py", shell=False)
+    rpyc_user_process = chroot.run('su labuser -c "rpyc_classic.py -p 18813"', shell=False)
+    print rpyc_user_process
+    #print chroot.run("ls -la").stdout.read()

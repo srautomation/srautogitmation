@@ -11,7 +11,7 @@ class Resources(object):
         return os.path.join(Resources.PATH, filename)
 
     def path_android(self, filename):
-        return "/data/debian{}".format(self.path(filename))
+        return "/data/sunriver/fs/limited{}".format(self.path(filename))
 
     def push(self, local_path):
         filename = os.path.split(local_path)[1]

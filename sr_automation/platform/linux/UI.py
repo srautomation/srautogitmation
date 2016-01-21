@@ -1,4 +1,5 @@
 import xmlrpclib
+import IPython
 from logbook import Logger
 log = Logger("LinuxUI")
 
@@ -15,19 +16,25 @@ class UI(object):
         if not self._shell.is_running("at-spi-bus-launcher"):
             log.info("Starting at-spi-bus-launcher")
             self._process_at_spi_bus_launcher = self._shell.cmd('su labuser -c "/usr/lib/at-spi2-core/at-spi-bus-launcher"', infrastructure=True)
-            self._shell.wait_process_by_short_name("at-spi-bus-laun")
+            #self._shell.wait_process_by_short_name("at-spi-bus-laun")
         if not self._shell.is_running("at-spi2-registryd"):
             log.info("Starting at-spi2-registryd")
             self._process_at_spi_registryd = self._shell.cmd('su labuser -c "/usr/lib/at-spi2-core/at-spi2-registryd"', infrastructure=True)
-            self._shell.wait_process_by_short_name("at-spi2-registr")
+          # self._shell.wait_process_by_short_name("at-spi2-registr")
 
     def _start_dogtail(self):
         #self._modules.os.getlogin = lambda: "root"
         #self._modules.os.environ["USER"] = "root"
-        self._dogtail = self._modules_user.dogtail
+        #self._dogtail = self._modules_user.dogtail
+        self._dogtail = self._modules.dogtail
         log.info("Starting Dogtail")
 
+    def _start_selenium(self):
+        self._selenium_webdriver = self._modules['selenium.webdriver']
+        log.info("Starting Selenium.webdriver")
+
     def start(self):
+	self._start_selenium()
         self._start_at_spi()
         self._start_dogtail()
 
@@ -37,6 +44,11 @@ class UI(object):
     @property
     def dogtail(self):
         return self._dogtail
+
+    @property
+    def webdriver(self):
+        return self._selenium_webdriver
+
 
 if __name__ == "__main__":
     import sys
@@ -51,21 +63,12 @@ if __name__ == "__main__":
     from DesktopInYourPocket import DesktopInYourPocket
     from Linux import Linux
     from Shell import Shell
-
-    device_id  = Android.devices().keys()[0]
-    android    = Android(device_id)
-    desktop    = DesktopInYourPocket(android)
-    desktop.start()
-
-    chroot     = Chroot(android)
-    interfaces = NetInterfaces(android)
-    linux = Sunriver.connect(chroot, interfaces)
-    shell = Shell(linux.modules, linux._rpyc)
-    ui    = UI(shell)
-    ui.start()
-
-    shell.cmd("leafpad")
-    time.sleep(2)
-    leafpad = ui.dogtail.tree.root.child("(Untitled)")
-    print leafpad
+    
+    #interfaces = NetInterfaces(android)
+    #linux = Sunriver.connect(chroot, interfaces)
+    #shell = Shell(linux.modules, linux._rpyc)
+    #ui    = UI(shell)
+    #ui.start()
+    sunriver = Sunriver()
+    IPython.embed()
 

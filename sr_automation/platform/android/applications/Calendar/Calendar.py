@@ -5,6 +5,8 @@ from datetime import datetime
 import pytz
 from bunch import Bunch
 import time
+import IPython
+
 
 class AndroidCalendar(object):
     PATH_ANDROID_DB = "/data/data/com.android.providers.calendar/databases/calendar.db"
@@ -125,3 +127,4 @@ if __name__ == "__main__":
     calendar  = AndroidCalendar(android)
     calendar.load()
     print calendar.events()
+    IPython.embed()

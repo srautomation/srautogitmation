@@ -13,8 +13,8 @@ slash.config.sr.files = Bunch( pdf="example.pdf"
                              , langs="example.txt"
                              )
 
-slash.config.sr.mail = Bunch( sender="srusertest@gmail.com"
-                            , receivers=["srusertest2@gmail.com"]
+slash.config.sr.mail = Bunch( sender="srusertest2@gmail.com"
+                            , receivers="srusertest@gmail.com"
                             , subject="subject"
                             , body="body"
                             , inlinepic='<img src="{}">'.format(slash.config.sr.files.picture)

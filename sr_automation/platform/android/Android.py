@@ -7,9 +7,9 @@ log = Logger("Android")
 
 class Android(object):
     SL4A_PORT = 23456
-    def __init__(self, device_id):
-        self._device_id = device_id
-        self._ui = uiautomator.Device(serial = self._device_id)
+    def __init__(self, device_ip):
+        self._device_ip = device_ip
+        self._ui = uiautomator.Device(serial = self._device_ip)
         self._adb = self._ui.server.adb
         self.adb.cmd("root").wait()
         RETRIES = 3
@@ -61,7 +61,10 @@ class Android(object):
         return self.adb.cmd(cmdline)
 
 if __name__ == "__main__":
-    device_id  = Android.devices().keys()[0]
-    android    = Android(device_id)
+    import IPython
+    device_ip  = Android.devices().keys()[0]
+   # android    = Android(device_id)
+    ui = uiautomator.Device(serial=device_ip)
+    IPython.embed()
     print device_id
-    print android.cmd("shell ls").stdout.read()
+   # print android.cmd("shell ls").stdout.read()

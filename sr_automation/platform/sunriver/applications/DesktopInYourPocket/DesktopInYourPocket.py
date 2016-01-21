@@ -1,11 +1,14 @@
 from logbook import Logger
 from time import sleep
 log = Logger("DesktopInYourPocket")
+import IPython
 
 class DesktopInYourPocket(object):
     APP_PACKAGE = "com.intel.desktopinyourpocket"
-    APP_TITLE = "Intel's Desktop In Your Pocket"
-    BUTTON_START = "Start Desktop"
+    #APP_TITLE = "Intel's Desktop In Your Pocket"
+    APP_TITLE = "Big Screen"
+    #BUTTON_START = "Start Desktop"
+    BUTTON_START = "Re_Launch Big Screen"
     BUTTON_STOP  = "Kill Desktop"
     BUTTON_SWITCH_TO_DESKTOP = "Switch To Desktop"
     def __init__(self, android):
@@ -21,33 +24,54 @@ class DesktopInYourPocket(object):
         self._android.ui(textContains=pattern).click.wait()
 
     def openApp(self):
-        if not self._android.ui(packageName="com.intel.desktopinyourpocket").exists:
+        #if not self._android.ui(packageName="com.intel.desktopinyourpocket").exists:
+        if not self._android.ui(text ="Big Screen").exists:
             self._android.ui.press.home()
             self._android.ui(description='Apps').click()
-            self._android.ui(text="Intel's Desktop In Your Pocket").click()
-        
-
+            sleep(2)
+            if not self._android.ui(text="Big Screen").exists:
+                self._android.ui(scrollable=True).scroll.horiz.backward(steps=100)
+            self._android.ui(text="Big Screen").click()
+                    
     def start(self):
-        #self.click_menu(pattern=DesktopInYourPocket.BUTTON_START)
-        #self._android.cmd('shell /data/srctl start')
         self.openApp()
-        self._android.ui(text="Start Desktop").click()
+	sleep(4)
+        if self._android.ui(text = 'Get Started').exists: #incase of first time use
+            self._android.ui(text = 'Get Started').click()
+            self._android.ui(text = 'Next').wait.exists
+            self._android.ui(text = 'Next').click()
+            self._android.ui(text = 'Next').wait.exists
+            self._android.ui(text = 'Next').click()
+            self._android.ui(text = 'Next').wait.exists
+            self._android.ui(text = 'Next').click()
+            self._android.ui(text = 'Start Big Screen Experience').wait.exists
+            self._android.ui(text = 'Start Big Screen Experience').click()
+            sleep(2)
+	    if self._android.ui(resourceId="com.intel.sunriver.ftt:id/show_again_checkbox").exists:
+	    	self._android.ui(resourceId="com.intel.sunriver.ftt:id/show_again_checkbox").click()
+            	sleep(2)
+            	self._android.ui(resourceId='com.intel.sunriver.ftt:id/bt_devices_not_connected_dialog_ok').click()
+    	    	sleep(2)
+	    self._android.ui(text = "OK").wait.exists
+	    self._android.ui(text = "OK").click()
+        else:
+            try:
+		self._android.ui(text='Re-Launch Big Screen').wait.exists
+                self._android.ui(text='Re-Launch Big Screen').click()
+                if not self._android.ui(index='3').click():
+                    self._android.ui(resourceId='com.intel.sunriver.ftt:id/bt_devices_not_connected_dialog_ok').click()
+            except:
+                print 'Could Not launch Sunriver'
 
     def stop(self):
-        #self.click_menu(pattern=DesktopInYourPocket.BUTTON_STOP)
-        #self._android.cmd('shell /data/srctl stop')
-        self.openApp()
-        self._android.ui(text="Shutdown Desktop").click()
-       
+        self._android.cmd('shell /system/sunriver/srctl stop')
+
     def switch_to_desktop(self):
         if not self.is_desktop_running():
             #self.click_menu(pattern=DesktopInYourPocket.BUTTON_SWITCH_TO_DESKTOP)
             log.info('Switching to desktop')
             #self._android.cmd('shell /data/srctl switch desktop')
-            self.openApp()
-            self._android.ui(text="Switch to Desktop").click()
-            sleep(8)
-
+            self.start()
 
     def is_desktop_running(self):
         output = self._android.cmd("shell getprop sunriver.active").stdout.read().strip()
@@ -57,7 +81,8 @@ class DesktopInYourPocket(object):
 
 if __name__ == "__main__":
     from sr_automation.platform.android.Android import Android
-    device_id = Android.devices().keys()[0]
-    android   = Android(device_id)
+    device_ip = Android.devices().keys()[0]
+    print device_ip
+    android   = Android(device_ip)
     desktop   = DesktopInYourPocket(android)
-    desktop.stop()
+    desktop.start() 

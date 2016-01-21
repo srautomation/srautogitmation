@@ -20,7 +20,7 @@ class LinuxMail(object):
         self._smtp = self._smtp_module.SMTP("localhost")
 
         self._key = self._read_key()
-        self._email = None
+        self._email = None 
         self._password = None
         self._folder = None
         self._count = None
@@ -38,19 +38,19 @@ class LinuxMail(object):
         self._email = email
         self._password = password
         self._auth_token = self._auth_string(email, password)
-        def authentication_callback(response):
-            return self._auth_token
-        result, _unused = self._imap.authenticate("PLAIN", authentication_callback)
-        self._assert_result(result)
-        result = self._smtp.docmd("AUTH PLAIN {}".format(self._auth_token.encode("base64")))
-        assert "Logged in" == result[1]
+       # def authentication_callback(response):
+       #     return self._auth_token
+       # result, _unused = self._imap.authenticate("PLAIN", authentication_callback)
+       # self._assert_result(result)
+       # result = self._smtp.docmd("AUTH PLAIN {}".format(self._auth_token.encode("base64")))
+       # assert "Logged in" == result[1]
 
         ########################################
         # This is due to a bug in smtplib
         # that sends an extra newline in docmd
-        self._smtp.getreply()
+       # self._smtp.getreply()
 
-        return self
+       # return self
 
     def is_logged_in(self):
         return self._imap.state != 'NONAUTH'
