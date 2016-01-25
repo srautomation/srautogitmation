@@ -67,10 +67,11 @@ class Sunriver(object):
 		proc = subprocess.Popen(["adb shell ifconfig wlan0 | cut -d 'm' -f1 | cut -d ' ' -f3"], stdout=subprocess.PIPE, shell=True)
                 (device_ip, err) = proc.communicate()
                 print device_ip
+        os.system("adb shell svc power stayon true")#stay awake on phone
 	device_ip = device_ip.strip()
         log.info("Starting RPyC")
 	#need to edit keys in order to enter automatically
-	ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py -p 18813 > /dev/null > /tmp/mylogfile 2>&1 &'"%device_ip
+	ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%device_ip
         self._desktop.start()
 	log.info("Loading Desktop")
 	for i in range(4):
@@ -81,8 +82,8 @@ class Sunriver(object):
         flag=0
         while(flag==0):
             try:
-                rpyc_user_connection = rpyc.classic.connect(device_ip,'18813')
-                rpyc_connection = rpyc.classic.connect(device_ip,'18813')
+                rpyc_user_connection = rpyc.classic.connect(device_ip)
+                rpyc_connection = rpyc.classic.connect(device_ip)
                 flag=1
             except:
                 log.info('rpyc connection refused')

@@ -33,7 +33,7 @@ sudo pip install pycarddav
 sudo pip install icalendar
 
 sudo git config --global http.sslVerify false
-sudo git clone https://git.fedorahosted.org/git/dogtail.git
+sudo git clone --branch DOGTAIL_0_9_0 https://git.fedorahosted.org/git/dogtail.git
 cd dogtail
 sudo python setup.py install
 cd .. 
