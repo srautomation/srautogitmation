@@ -24,10 +24,13 @@ class AppLaunchTest(LauncherBaseTest):
         for i in range(slash.g.stress_run):
             slash.logger.info("cycle #%s" % (i + 1))
 	    self.folders_open()
+            self.close_app()
+            time.sleep(3)
+            self.open_app_sidepanel(stimes=1)
 	    self.open_contextual()
-	    self.open_search('Chro')
 	    time.sleep(7)
-	    self.open_app_sidpanel()
+	    self.open_search('Chro')
+	    self.open_app_sidepanel()
    	    slash.g.cycle +=1
 	self.compare_cycle(slash.g.cycle, slash.g.stress_run)
 	

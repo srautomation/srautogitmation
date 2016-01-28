@@ -22,30 +22,43 @@ class LauncherBaseTest(BaseTest):
 	if value != None:
 		slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(value)
 
-    def open_app_sidpanel(self, stimes = 3):
+    def open_app_sidepanel(self, stimes = 3):
 	log.info('Testing SidePanel Notification Popups')
 	for i in range(stimes):
 		slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>l')
 		slash.g.sunriver.linux.ui.dogtail.rawinput.click(330,330)
+                time.sleep(4)
+    
+    def close_app(self):
+        log.info('close')
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(50,120, button=3)
+        time.sleep(3)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(130,70)
 
     def open_contextual(self):
 	log.info('Testing contexual menu')
 	log.info('iconify')
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(50,120, button=3)
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(50,120, button=3)
 	time.sleep(3)
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(120, 320)
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(120, 320)
+        time.sleep(3)
+        #
 	log.info('raise')	
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(50,120, button=3)
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(50,120, button=3)
 	time.sleep(3)
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(120,140)
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(120,140)
+        time.sleep(3)
+        #
 	log.info('maximize')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(50,120, button=3)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(50,120, button=3)
 	time.sleep(3)
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(120,240)
-	log.info('close')
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(50,120, button=3)
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(120,240)
 	time.sleep(3)
-	slash.g.sunriver.linux.ui.dogtail.rawinput.click(130,70)
+        #
+        log.info('close')
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(50,120, button=3)
+	time.sleep(3)
+	slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(130,70)
 
     def open_folders(self, folder_name):
 	if folder_name == 'Files':

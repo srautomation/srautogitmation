@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-try:
+try:# pip needed to download setuptools(may need update)
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
@@ -20,7 +20,7 @@ requirements = [
     "Skype4py",
     "baker",
     "SQLAlchemy",
-    "IMAPClient",
+    "IMAPClient",#IMAPClient need to be version 0.13, other version won't work
     "ipython",
     "pytz",
     "loremipsum",

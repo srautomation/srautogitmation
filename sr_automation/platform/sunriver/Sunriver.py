@@ -12,12 +12,19 @@ log = Logger("Sunriver")
 from bunch import Bunch
 import os
 import subprocess
+from sr_tools import helpers
 
 class Sunriver(object):
     def __init__(self):
-        self._device_id = Android.devices().keys()[0]
+        try:
+            helpers.latest_wifi_adb_connection('read')
+            self._device_id = Android.devices().keys()[0]
+        except:
+            print 'please connect android device for its key'
+            helpers.wait_usb_connection()
+            self._device_id = Android.devices().keys()[0]
         self._android = Android(self._device_id)
-        self._desktop = DesktopInYourPocket(self._android)
+        #self._desktop = DesktopInYourPocket(self._android)
         #self._linux = self.connect(Chroot(self._android), NetInterfaces(self._android))
 	self._linux = self.connect(NetInterfaces(self._android))
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
@@ -47,54 +54,41 @@ class Sunriver(object):
     def switch_to_android(self):
         return self._switch_to_android
 
-	# need to establish ssh connection after ping from android
-	# then run rpyc server on desktop
-	# then run automation
-  # def connect(self, chroot, interfaces):
     def connect(self, interfaces):
-	proc = subprocess.Popen(["adb devices"], stdout=subprocess.PIPE, shell=True)
-	wifi = str(proc.communicate())
-	if wifi.find('192.168.1') == -1:
-        	os.system("adb tcpip 5555")
-		time.sleep(5)
-		proc = subprocess.Popen(["adb shell ifconfig wlan0 | cut -d 'm' -f1 | cut -d ' ' -f3"], stdout=subprocess.PIPE, shell=True)
-		(device_ip, err) = proc.communicate()
-		print device_ip
-		time.sleep(5)
-		os.system("adb connect %s"%device_ip)
-		print "You should now disconnect your device"
-	else:
-		proc = subprocess.Popen(["adb shell ifconfig wlan0 | cut -d 'm' -f1 | cut -d ' ' -f3"], stdout=subprocess.PIPE, shell=True)
-                (device_ip, err) = proc.communicate()
-                print device_ip
-        os.system("adb shell svc power stayon true")#stay awake on phone
-	device_ip = device_ip.strip()
+        devices = helpers.adb_devices()
+	deviceip = helpers.device_ip(devices.ip)
+        print deviceip
+        helpers.adb_over_wifi(deviceip)
+        helpers.wait_for_MHL_connection()
+        self._device_id = Android.devices().keys()[0]
+        self._android = Android(self._device_id)
+        self._desktop = DesktopInYourPocket(self._android)
         log.info("Starting RPyC")
-	#need to edit keys in order to enter automatically
-	ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%device_ip
-        self._desktop.start()
-	log.info("Loading Desktop")
-	for i in range(4):
-		print i
-		time.sleep(1)	
+	ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%deviceip
+        if not self._desktop.is_desktop_running():#checks if desktop is not already running
+            self._desktop.start()
+	    log.info("Loading Desktop")
+	    for i in range(4):
+	        print i
+	        time.sleep(1)
+        else:
+            print 'Desktop is already running'
 	os.system(ssh_command)
-	log.info("Connecting RPyC: %r" % device_ip)
+	log.info("Connecting RPyC: %r" % deviceip)
         flag=0
         while(flag==0):
             try:
-                rpyc_user_connection = rpyc.classic.connect(device_ip)
-                rpyc_connection = rpyc.classic.connect(device_ip)
+                rpyc_user_connection = rpyc.classic.connect(deviceip)
+                rpyc_connection = rpyc.classic.connect(deviceip)
                 flag=1
             except:
-                log.info('rpyc connection refused')
+                log.info('rpyc connection refused - retrying rpyc')
                 time.sleep(3)
-                log.info('retrying rpyc')
                 flag=0
         print 'Connected!'
         return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection, modules_user=rpyc_user_connection.modules, rpyc_user=rpyc_user_connection)
 
 
-   #def install(cls, chroot):
     @classmethod
     def install(cls):
 	os.system('adb remount')
@@ -104,56 +98,12 @@ class Sunriver(object):
 	for i in range(20):
 		print i
 		time.sleep(1)
+        os.system("adb shell svc power stayon true")#stay awake on phone
 	os.system('adb root')
 	time.sleep(5)
 	os.system('adb push ~/sr_automation/rc.updates /data/sunriver/fs/limited/etc/rc.d/rc.updates')
 	os.system('adb shell chmod 777 /data/sunriver/fs/limited/etc/rc.d/rc.updates')
 
-#      APT_PACKAGES = [ "git"
- #                     , "at-spi2-core"
-#                      , "libatk-bridge2.0-0"
-#                      , "libatk-adaptor"
-#                      , "gconf2"
-#                      , "python-dev"
-#                      , "python-pip"
-#                      , "python-pyatspi2"
-#                      , "python-gtk3"
-#                      , "python-gtk3-dev"
-#                      , "python-pil"
-#                      , "python-gobject"
-#                      , "python-gobject-2"
-#                      , "statgrab"
-#                      , "wmctrl"
-#                      , "lsof"
-#                      , "libxml2-dev"
-#                      , "libxslt1-dev"
-#                      , "gcc"
-#                      ]
-#       PIP_PACKAGES = [ "rpyc"
-#                      , "psutil"
-#                      , "selenium"
-#                      , "chromedriver_installer"
-#                      , "Skype4py"
-#                      , "lxml"
-#                      , "caldav"
-#                      , "pycarddav"
-#                      , "icalendar"
-#                      ]
-
-#       commands = [  "apt-get update"
-#       	    , "apt-get -y install {}".format(" ".join(APT_PACKAGES))
-#                   , "pip install {}".format(" ".join(PIP_PACKAGES))
-#                   , "git config --global http.sslVerify false; git clone https://git.fedorahosted.org/git/dogtail.git; cd dogtail; python setup.py install; cd .. ;"
-#                   , "ln -s /usr/lib/i386-linux-gnu/gtk-2.0/ /usr/lib/gtk-2.0;", # TODO: validate
-#                   ]
-
-#       for command in commands:
-#           process = chroot.run(command)
-#           while True:
-#           	line = process.stdout.readline()
-#           	if not line: break
-#           	print line,
-#           process.wait()
 
 if __name__ == "__main__":
     import baker
