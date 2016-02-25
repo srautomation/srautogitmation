@@ -1,5 +1,6 @@
 import time
 
+
 class _Application(object):
     def __init__(self, linux, start_cmd, stop_cmd = None, dogtail_id = None, title = None):
         self._linux = linux
@@ -7,7 +8,7 @@ class _Application(object):
         self._start_cmd = start_cmd
         self._stop_cmd = stop_cmd
         self._process = None
-        self._shell = False # TODO: handle cases of _shell=True with process group
+        self._shell = True # TODO: handle cases of _shell=True with process group
         self._title = title # title of window, used for grab_focus()
         if dogtail_id:
             self._dogtail_id = dogtail_id # id used for dogtail.tree.root.application()
@@ -34,9 +35,9 @@ class _Application(object):
                     self._process.kill()
 
     def _open(self, file):
-        """ 
+        """
         Opens file when inside the windows manager's open dialog.
-        File should be the absolute path. 
+        File should be the absolute path.
         """
         dialog = self._app.child(name = 'Open', roleName = 'dialog')
         if not dialog.child('Location:').showing:
@@ -47,14 +48,15 @@ class _Application(object):
         dialog.child(roleName = 'text').text = file # we want the first text box
         time.sleep(3)
         dialog.child(name = 'Open', roleName = 'push button').click()
-    
+
     def _find_children(self, app, name = None, roleName = None):
         children = app.findChildren(self._dogtail.predicate.GenericPredicate(name, roleName))
-        return [(i.name, i.roleName) for i in children]
+        return children
+        #return [(i.name, i.roleName) for i in children]
 
     def grab_focus(self, title = None):
         '''
-        Grabs focus of windows with title. 
+        Grabs focus of windows with title.
         Title is a case-insensitive substring of the app window title.
         If title is provided it updates Application's self._title,
         otherwise self._title is used.
@@ -65,6 +67,21 @@ class _Application(object):
             rc = self._linux.cmd('wmctrl -a %s' % self._title, shell = True).wait()
             if rc != 0:
                 raise ValueError("wmctrl couldn't focus window with title: %s" % self._title)
+
+    def click_at_xy(self, location):
+        self.dogtail.rawinput.click(location[0], location[1])
+
+    @property
+    def dogtail(self):
+        return self._dogtail
+
+    def goto(self, menu_button):
+        self.app.child(name=menu_button).click()
+
+    @property
+    def app(self):
+        return self._app
+
 
 class _Editor(_Application):
     def start(self, doc = ''):
