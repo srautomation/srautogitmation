@@ -16,6 +16,7 @@ class Linux(object):
         if self._rpyc is not None:
             self._ip = self.cmd("netstat -na | grep ':18812.*ESTABLISHED' | head -1 | tr ':' ' ' | awk {'print $4'}", shell=True).stdout.read().strip()
         else:
+            print "entered default ip location"
             self._ip = "127.0.0.1"
 
 

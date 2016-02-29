@@ -20,11 +20,11 @@ class LinuxMail(object):
         self._smtp = self._smtp_module.SMTP("localhost")
 
         self._key = self._read_key()
-        self._email = None 
-        self._password = None
+        self._email = "sunriver1993@gmail.com"
+        self._password = "12srusertest"
         self._folder = None
         self._count = None
-    
+
     def _read_key(self):
         return self._linux.shell.shell("cat /run/imapsmtp/key").stdout.read().strip()
 
@@ -95,7 +95,7 @@ class LinuxMail(object):
             self._flags = {int(x[2]): self.flags_string_to_bunch(x[3]) for x in _tmp}
 
             # for now, fetch all TODO: think about it
-            uids_text = ','.join(map(str, self._flags.keys())) 
+            uids_text = ','.join(map(str, self._flags.keys()))
             result, data = self._imap.uid("fetch", uids_text, "(UID BODY[])") #)BODY.PEEK[HEADER.FIELDS (From To Cc Bcc Subject Date Message-ID Priority X-Priority References Newsgroups In-Reply-To Content-Type Reply-To)]")
             self._assert_result(result)
             # dict indexed by uid
@@ -129,7 +129,7 @@ class LinuxMail(object):
         if isinstance(to, basestring):
             msg['To'] = to #COMMASPACE.join(to)
         else:
-            msg['To'] = COMMASPACE.join(to) 
+            msg['To'] = COMMASPACE.join(to)
         msg['Subject'] = subject
         msg['Date'] = formatdate(localtime = True)
         msg.attach(MIMEText(body))
@@ -152,14 +152,14 @@ if __name__ == "__main__":
         from sr_automation.platform.sunriver.Sunriver import Sunriver
         from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
         sunriver = Sunriver()
-        sunriver.desktop.start()
         imap = IMAPApp(sunriver)
         imap.start()
 
         mail = LinuxMail(sunriver.linux)
         t = TimeIt()
         with t.measure():
-            mail.choose_email(account_email).choose_folder("inbox").load()
+            mail.choose_email(account_email)
+            # mail.choose_folder("inbox").load()
         print t.measured
 
         import IPython
@@ -177,12 +177,11 @@ if __name__ == "__main__":
         from sr_automation.platform.sunriver.Sunriver import Sunriver
         from sr_automation.platform.sunriver.applications.IMAPApp.IMAPApp import IMAPApp
         sunriver = Sunriver()
-        sunriver.desktop.start()
         imap = IMAPApp(sunriver)
         imap.start()
 
         mail = LinuxMail(sunriver.linux)
-        mail.choose_email(account_email).choose_folder("inbox")
+        mail.choose_email(account_email)
         mail.send( to = to
                  , subject = subject
                  , body = body

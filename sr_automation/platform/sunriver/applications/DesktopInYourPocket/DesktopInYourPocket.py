@@ -24,7 +24,6 @@ class DesktopInYourPocket(object):
         self._android.ui(textContains=pattern).click.wait()
 
     def openApp(self):
-        #if not self._android.ui(packageName="com.intel.desktopinyourpocket").exists:
         if not self._android.ui(text ="Big Screen").exists:
             self._android.ui.press.home()
             self._android.ui(description='Apps').click()
@@ -32,7 +31,26 @@ class DesktopInYourPocket(object):
             if not self._android.ui(text="Big Screen").exists:
                 self._android.ui(scrollable=True).scroll.horiz.backward(steps=100)
             self._android.ui(text="Big Screen").click()
-                    
+        else:
+            self._android.ui(text="Big Screen").click()
+
+    def openSpecificApp(self, appName):
+        self._android.ui.press.home()
+        time.sleep(2)
+        self._android.ui(description='Apps').click()
+        time.sleep(2)
+        if self._android.ui(text=appName).exists:
+            self._android.ui(text=appName).click()
+        elif self._android.ui(text="Calculator").exists:
+            while not self._android.ui(text=appName).exists:
+                self._android.ui(scrollable=True).scroll.horiz.forward(steps=100)
+            self._android.ui(text=appName).click()
+        else:
+            while not self._android.ui(text="Calculator").exists:
+                self._android.ui(scrollable=True).scroll.horiz.backward(steps=100)
+            self.openSpecificApp(appName)
+
+
     def start(self):
         self.openApp()
 	sleep(4)

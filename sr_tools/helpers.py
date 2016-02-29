@@ -61,9 +61,9 @@ def device_ip(device_id):
     try:
         if len(device_id) != 0:
             if device_id_is_ip(device_id[0]):
-                return device_id[0].split(":")[0] 
+                return device_id[0].split(":")[0]
         text = subprocess.Popen(["adb", "shell", "netcfg | grep wlan0"], stdout=subprocess.PIPE).stdout.read()
-        ip = re.compile("^\s*wlan0\s+UP\s+(.+)/.*$").findall(text)[0] 
+        ip = re.compile("^\s*wlan0\s+UP\s+(.+)/.*$").findall(text)[0]
         return ip
     except:
         print "connect phone to usb for ip inspection"
@@ -89,7 +89,16 @@ def adb_over_wifi(deviceip):
             wait_usb_disconnection()
         else:
             print 'adb over wifi connected'
-        
+
+def ssh_connect(ip):
+    os.system('adb push /home/automation/sr_automation/sshd_config /data/sunriver/fs/limited/etc/ssh/')
+    os.system('adb reboot')
+    os.system('adb wait-for-device')
+    print 'connect bluetooth device to DUT - and load sunriver ALT-UP'
+    for i in range(10): print i; time.sleep(1)
+    os.system('ssh-add')
+    os.system('ssh-keygen -f "/home/automation/.ssh/known_hosts" -R [%s]:2222'%ip)
+    os.system('ssh-copy-id -p 2222 BigScreen@%s'%ip)
 
 class chdir:
     def __init__(self, path):

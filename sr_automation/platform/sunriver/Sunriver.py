@@ -1,18 +1,14 @@
 from sr_automation.platform.android.Android import Android
-from sr_automation.platform.android.NetInterfaces import NetInterfaces
 from sr_automation.platform.linux.Linux import Linux
 from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket
 from sr_automation.platform.sunriver.applications.SwitchToAndroid.SwitchToAndroid import SwitchToAndroid
-from Chroot import Chroot
 import rpyc
 import time
-from selenium import webdriver
 from logbook import Logger
 log = Logger("Sunriver")
-from bunch import Bunch
 import os
+from sr_tools import helpers #package containing helping functions
 import subprocess
-from sr_tools import helpers
 
 class Sunriver(object):
     def __init__(self):
@@ -20,24 +16,21 @@ class Sunriver(object):
             helpers.latest_wifi_adb_connection('read')
             self._device_id = Android.devices().keys()[0]
         except:
-            print 'please connect android device for its key'
+            log.warn('please connect android device to usb for adb connection')
             helpers.wait_usb_connection()
             self._device_id = Android.devices().keys()[0]
         self._android = Android(self._device_id)
-        #self._desktop = DesktopInYourPocket(self._android)
-        #self._linux = self.connect(Chroot(self._android), NetInterfaces(self._android))
-	self._linux = self.connect(NetInterfaces(self._android))
+        self._linux = self.connect()
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
         self.start()
 
     def start(self):
-        #self._desktop.start()
         self._linux.start()
 
     def stop(self):
         self._switch_to_android.switch()
         self.android.ui.press.home()
-    
+
     @property
     def android(self):
         return self._android
@@ -54,55 +47,57 @@ class Sunriver(object):
     def switch_to_android(self):
         return self._switch_to_android
 
-    def connect(self, interfaces):
+    def start_desktop(self, desktop):
+        if not desktop.is_desktop_running():#checks if desktop is not already running
+            desktop.start()
+            log.warn("Loading Desktop")
+            for i in range(4): print i; time.sleep(1)
+        else:
+            log.info('Desktop is already running')
+
+    def rpyc_connect(self, ip):
+        timef=0
+        while True:
+            try:
+                return rpyc.classic.connect(ip)
+            except:
+                log.warn('RPyC Connection Refused - Retrying RPyC')
+                time.sleep(3)
+                timef+=1
+                if timef == 5:
+                    helpers.ssh_connect(ip)
+
+    def connect(self):
         devices = helpers.adb_devices()
-	deviceip = helpers.device_ip(devices.ip)
+        deviceip = helpers.device_ip(devices.ip)
         print deviceip
         helpers.adb_over_wifi(deviceip)
         helpers.wait_for_MHL_connection()
         self._device_id = Android.devices().keys()[0]
         self._android = Android(self._device_id)
         self._desktop = DesktopInYourPocket(self._android)
-        log.info("Starting RPyC")
-	ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%deviceip
-        if not self._desktop.is_desktop_running():#checks if desktop is not already running
-            self._desktop.start()
-	    log.info("Loading Desktop")
-	    for i in range(4):
-	        print i
-	        time.sleep(1)
-        else:
-            print 'Desktop is already running'
-	os.system(ssh_command)
-	log.info("Connecting RPyC: %r" % deviceip)
-        flag=0
-        while(flag==0):
-            try:
-                rpyc_user_connection = rpyc.classic.connect(deviceip)
-                rpyc_connection = rpyc.classic.connect(deviceip)
-                flag=1
-            except:
-                log.info('rpyc connection refused - retrying rpyc')
-                time.sleep(3)
-                flag=0
-        print 'Connected!'
-        return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection, modules_user=rpyc_user_connection.modules, rpyc_user=rpyc_user_connection)
-
+        log.warn("Starting RPyC")
+        ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%deviceip
+        self.start_desktop(self._desktop)
+        os.system(ssh_command)
+        log.info("Connecting RPyC: %r" % deviceip)
+        rpyc_connection = self.rpyc_connect(deviceip)
+        log.warn('Connected!')
+        return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection, modules_user=rpyc_connection.modules, rpyc_user=rpyc_connection)
 
     @classmethod
     def install(cls):
-	os.system('adb remount')
-	os.system('adb disable-verity')
-	os.system('adb reboot')
-	os.system('adb wait-for-device')
-	for i in range(20):
-		print i
-		time.sleep(1)
-        os.system("adb shell svc power stayon true")#stay awake on phone
-	os.system('adb root')
-	time.sleep(5)
-	os.system('adb push ~/sr_automation/rc.updates /data/sunriver/fs/limited/etc/rc.d/rc.updates')
-	os.system('adb shell chmod 777 /data/sunriver/fs/limited/etc/rc.d/rc.updates')
+        os.system('adb remount')
+        os.system('adb disable-verity')
+        os.system('adb reboot')
+        os.system('adb wait-for-device')
+        for i in range(30): print i; time.sleep(1)
+        os.system('adb shell svc power stayon true')#stay awake on phone
+        os.system('adb root')
+        time.sleep(5)
+        print 'Please RUN: adb push ~/Desktop/srautomation-packages.tar.gz /data/sunriver/fs/limited/media/'
+        os.system('adb push ~/Desktop/sr-auto-installation /data/sunriver/fs/limited/home/BigScreen/')
+        os.system('adb shell chmod 777 /data/sunriver/fs/limited/home/BigScreen/sr-auto-installation')
 
 
 if __name__ == "__main__":
@@ -115,7 +110,7 @@ if __name__ == "__main__":
         Sunriver.install()
 
     @baker.command
-    def test():	
+    def test():
     	sunriver = Sunriver()
         print sunriver
 

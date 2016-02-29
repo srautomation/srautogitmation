@@ -35,7 +35,7 @@ def mode_wifi(device_id = None):
         assert device_id in devices.usb
     else:
         device_id = devices.usb[0]
-    
+
     ip = H.device_ip(device_id)
     port = 5555
     Popen(["adb", "tcpip",   "%d" % (port,)]).wait()
@@ -55,7 +55,7 @@ def mode_usb(device_id = None):
         assert device_id in devices.ip
     else:
         device_id = devices.ip[0]
-    
+
     Popen(["adb", "disconnect"]).wait()
     print "Connect USB cable now..."
     H.wait_usb_connection()
@@ -98,7 +98,7 @@ def run(config, *args, **kw):
 def run_suite(suite, config=None, *args, **kw):
     """
     Run Sunriver suite
-    sr_tool run_suite mail Base.py  
+    sr_tool run_suite mail Base.py
     """
     path = os.path.join(_project_root(), "sr_tests", "suites", suite)
     if config is None:

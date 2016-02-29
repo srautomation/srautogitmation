@@ -27,6 +27,10 @@ class Shell(object):
             self._processes     = {}
             self._own_processes = {}
 
+    @property
+    def os_system(self):
+        return self._os.system
+
     def cmd(self, cmdline, shell=False, env=None, infrastructure=False):
         _temp_env = self._os.environ.copy()
         _temp_env.update(Shell.DEFAULT_ENVIRONMENT)
@@ -67,7 +71,7 @@ class Shell(object):
         while not self.is_running_by_short_name(short_name):
             time.sleep(Shell.WAIT_DELAY)
         return True
-    
+
     @property
     def processes(self):
         self._processes = {pid:process for (pid, process) in self._processes.items() if self.is_running(pid)}

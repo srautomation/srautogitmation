@@ -1,21 +1,21 @@
 from sr_automation.platform.linux.applications.dialogs.DialogOpen import DialogOpen
 import time
+from logbook import Logger
+log = Logger("LibreOffice")
+
 
 class Writer(object):
     def __init__(self, linux):
         self._linux = linux
 
-    def start(self):
+    def start(self, option=''):
         self._dogtail = self._linux.ui.dogtail
-        self._process = self._linux.cmd("libreoffice --writer --norestore")
+        self._process = self._dogtail.procedural.run("libreoffice --writer --norestore %s"%option)
         time.sleep(9)
         self._app = self._dogtail.tree.root.application("soffice")
-
+        
     def stop(self):
-        if self._process.is_running():
-            self._linux.cmd("killall oosplash")
-        if self._process.is_running():
-            self._process.terminate()
+        self._linux.cmd("killall oosplash")
 
     def open(self, doc):
         app = self._app
@@ -47,21 +47,10 @@ class Writer(object):
         app = self._app
         app.child(roleName = 'paragraph').text = text
 
-if __name__ == "__main__":
-    from sr_automation.platform.sunriver.Sunriver import Sunriver
-    sunriver = Sunriver()
-    sunriver.desktop.start()
-    sunriver.linux.start()
-    
-    writer = Writer(sunriver.linux)
-    writer.start()
-    writer.open("/etc/sysctl.conf")
-    import IPython
-    IPython.embed()
-    writer.stop()
-
-    sunriver.linux.stop()
-    sunriver.desktop.stop()
-
+    def save_as(self, file_name='file'):
+        app = self._app
+        app.child(name='Save').click()
+        app.child(roleName='dialog').child(roleName='text').text = file_name
+        app.child(roleName='dialog').child(roleName='push button', name='Save').click()
 
 

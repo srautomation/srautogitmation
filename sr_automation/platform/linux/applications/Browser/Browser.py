@@ -10,6 +10,7 @@ class Chromium(object):
         self._webdriver = self._linux.ui.webdriver
 
     def start(self):
+        log.warn('Starting Chromium')
         self._driver = self._webdriver.Chrome(os.path.expanduser('/usr/lib/chromium/chromedriver'))
         time.sleep(4) # Chrome needs time to open
 
