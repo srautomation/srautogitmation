@@ -10,8 +10,6 @@ sudo apt-get -y install gconf2
 sudo apt-get -y install python-dev
 sudo apt-get -y install python-pip
 sudo apt-get -y install python-pyatspi2
-sudo apt-get -y install python-gtk3
-sudo apt-get -y install python-gtk3-dev
 sudo apt-get -y install python-pil
 sudo apt-get -y install python-gobject
 sudo apt-get -y install python-gobject-2

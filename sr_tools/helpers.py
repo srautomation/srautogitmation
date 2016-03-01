@@ -4,6 +4,8 @@ import re
 import time
 import operator
 import os
+from logbook import Logger
+log = Logger("connection functions")
 
 def project_root():
     return os.path.split(os.path.abspath(os.path.join(__file__, "..")))[0]
@@ -35,7 +37,7 @@ def wait_usb_connection():
 def wait_for_MHL_connection():
     mhl = subprocess.Popen(["adb", "shell", "cat /sys/class/switch/hdmi/state"], stdout=subprocess.PIPE).stdout.read()
     while mhl[0] != '1':
-        print 'please connect MHL cable'
+        log.warn('please connect MHL cable')
         time.sleep(2)
         mhl = subprocess.Popen(["adb", "shell", "cat /sys/class/switch/hdmi/state"], stdout=subprocess.PIPE).stdout.read()
 
@@ -66,26 +68,26 @@ def device_ip(device_id):
         ip = re.compile("^\s*wlan0\s+UP\s+(.+)/.*$").findall(text)[0]
         return ip
     except:
-        print "connect phone to usb for ip inspection"
+        log.warn("connect phone to usb for ip inspection")
         wait_usb_connection()
         device_ip(device_id)
 
 def adb_over_wifi(deviceip):
     devices = adb_devices()
     if len(devices.ip) == 0:
-        os.system("adb tcpip 5555")
-        time.sleep(5)
         while len(devices.ip) == 0:
-            print 'trying to connect adb over wifi'
+            os.system("adb tcpip 5555")
+            time.sleep(5)
+            log.info('trying to connect adb over wifi')
             os.system("adb connect %s"%deviceip)
             time.sleep(2)
             devices = adb_devices()
         latest_wifi_adb_connection(deviceip)
-        print 'connection over wifi successful - disconnect device and connect to MHL'
+        log.warn('connection over wifi successful - disconnect device and connect to MHL')
         wait_usb_disconnection()
     else:
         if len(devices.ip) == 1 and len(devices.usb) == 1:
-            print 'adb over wifi connected - disconnect usb'
+            log.warn('adb over wifi connected - disconnect usb')
             wait_usb_disconnection()
         else:
             print 'adb over wifi connected'

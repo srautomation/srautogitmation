@@ -8,6 +8,19 @@ class AndroidMailGUI(object):
         self.y_bottom = self.d.info['displayHeight'] - 10
         self.y_top = 200
 
+       #setting up email acount before automation
+    def sync_email(self, email= 'sunriver1993@gmail.com', password='12srusertest', email_name='test-automation'):
+        self.d(text="Email address").set_text(email)
+        time.sleep(4)
+        self.d(text="Next").click()
+        self.d(resourceId="com.android.email:id/regular_password").set_text(password)
+        self.d(text="Next").click()
+        while self.d(textContains="Validating server settings").exists: pass
+        self.d(text="Next").click()
+        while self.d(textContains="creating account").exists: pass
+        self.d(resourceId="com.android.email:id/account_name").set_text(email_name)
+        self.d(text="Next").click()
+
 #############################
 #      Writing messages     #
 #############################
@@ -19,8 +32,8 @@ class AndroidMailGUI(object):
             self.d(resourceId = 'com.android.email:id/send').click()
             if not body:
                 self.d(text="Send").click()
-            self.choose_folder('outbox')
-            self.wait_outbox_empty()
+            # self.choose_folder('outbox')
+            # self.wait_outbox_empty()
 
     def write_mail(self, to, subject, body, attachments = []):
         self.main_view()
@@ -216,15 +229,16 @@ class AndroidMailGUI(object):
 #      Navigating the maill app     #
 #####################################
     def main_view(self):
-        self.open_email_app()
-###     if self.d(text = 'Settings', resourceId = 'android:id/title').exists:
-###         self.d.press.menu()
+        if self.d(text = 'Clock', resourceId = 'android:id/title').exists:
+            self.open_email_app()
+    # self.d.press.menu()
 ###     while self.d(descriptionContains = 'Navigate up').exists:
 ###         self.d(descriptionContains = 'Navigate up').click()
 ###         self.d.wait.update()
 ###     if self.d(resourceId = 'android:id/action_mode_close_button').exists:
 ###         self.d(resourceId = 'android:id/action_mode_close_button').click()
 ###     self.close_drawer()
+
 
     def open_email_app(self):
         if not self.d(packageName = 'com.android.email').exists:
@@ -235,7 +249,10 @@ class AndroidMailGUI(object):
             if not self.d(text = 'Email').exists:
                 self.d(text = 'Widgets').click()
                 self.d(text = 'Apps').click()
-            self.d(text = 'Email').click()
+        self.d(text = 'Email').click()
+        time.sleep(3)
+        if self.d(text="Email address").exists:
+            self.sync_email()
 
     def choose_folder(self, folder):
         self.main_view()

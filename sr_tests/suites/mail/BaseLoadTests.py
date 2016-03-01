@@ -1,13 +1,14 @@
 from sr_tests.suites.mail.Base import MailBaseTest
 import slash
 import loremipsum
+import time
 
-@slash.abstract_test_class
 class BaseLoadTests(MailBaseTest):
 
     mail_conf = slash.config.sr.mail
     sending_load = 50
 
+    @slash.hooks.session_start.register
     def send_mail(self):
         raise NotImplemented
 
@@ -35,6 +36,7 @@ class BaseLoadTests(MailBaseTest):
                 self.send_mail(self.mail_conf.receivers,
                                loremipsum.get_sentence().encode('utf8'),
                                str(loremipsum.get_sentences(5)).encode('utf8'))
+                time.sleep(3)
             slash.logger.info('deleting emails from sent folder')
             for j in range(3):
                 self.delete_from_sent()

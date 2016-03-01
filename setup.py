@@ -20,7 +20,7 @@ requirements = [
     "Skype4py",
     "baker",
     "SQLAlchemy",
-    "IMAPClient",#IMAPClient need to be version 0.13, other version won't work
+    "IMAPClient",#sudo pip install IMAPClient==0.13 || IMAPClient need to be version 0.13, other version won't work
     "ipython",
     "pytz",
     "loremipsum",

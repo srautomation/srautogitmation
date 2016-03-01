@@ -26,20 +26,22 @@ class SettingsBaseTest(BaseTest):
         slash.g.settings = Settings(slash.g.sunriver.linux)
         slash.g.settings.start()
 
+    '''
     def test_account(self):
         slash.g.settings.account.enter()
         slash.g.settings.account.change_username(self.NEW_USER)
         slash.g.settings.account.change_pass(self.pass_entries)
         slash.g.settings.account.exit()
+    '''
 
-    '''
     def test_language_and_keyboard(self):
-        pass
-    '''
+        slash.g.settings.language_and_keyboard.enter()
+
+
 
     def after(self):
         time.sleep(3)
-        slash.g.settings.stop()
+        #slash.g.settings.stop()
         pass
 
     def compare_cycle(self,cycle_number, cycle):

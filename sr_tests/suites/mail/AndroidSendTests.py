@@ -2,7 +2,6 @@ from BaseSendTests import BaseSendTests
 from sr_automation.platform.android.applications.Mail.GUI import AndroidMailGUI
 import slash
 import slash.log
-import IPython
 
 class AndroidSendTests(BaseSendTests):
 

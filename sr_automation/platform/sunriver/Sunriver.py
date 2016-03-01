@@ -12,10 +12,10 @@ import subprocess
 
 class Sunriver(object):
     def __init__(self):
-        try:
-            helpers.latest_wifi_adb_connection('read')
+        helpers.latest_wifi_adb_connection('read')
+        if Android.devices().keys() > 0:
             self._device_id = Android.devices().keys()[0]
-        except:
+        else:
             log.warn('please connect android device to usb for adb connection')
             helpers.wait_usb_connection()
             self._device_id = Android.devices().keys()[0]
