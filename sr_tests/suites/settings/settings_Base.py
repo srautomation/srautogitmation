@@ -36,6 +36,11 @@ class SettingsBaseTest(BaseTest):
 
     def test_language_and_keyboard(self):
         slash.g.settings.language_and_keyboard.enter()
+        slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
+        time.sleep(3)
+        slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
+
+
 
 
 

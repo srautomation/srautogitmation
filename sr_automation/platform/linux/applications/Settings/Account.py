@@ -1,4 +1,4 @@
-
+#TODO: ACCount needs to inherite from Settings_submenu
 
 class Account(object):
 
@@ -8,7 +8,6 @@ class Account(object):
     SUBMIT_PASSWORD_BUTTON = "Submit Changes"
     CANCEL_BUTTON = "Cancel"
     SAVE_BUTTON = "Save"
-    EXIT_BUTTON_LOCATION = (80, 80)
 
     def __init__(self, settings):
         self._settings = settings
@@ -37,5 +36,5 @@ class Account(object):
         return self._settings._find_children(pass_entries_location, roleName="text")
 
     def exit(self):
-        self._settings.click_at_xy(self.EXIT_BUTTON_LOCATION)
+        self._settings.return_from_submenu()
 

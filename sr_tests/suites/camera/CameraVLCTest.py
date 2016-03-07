@@ -11,7 +11,8 @@ class CameraVLCTest(CameraBaseTest):
         log.info('starting camera test')
 
     def test_camera(self):
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control>h')
+        if not self.check_vnc_open():
+            slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control>h')
         self.open_camera()
         self.start_stop_recording()
         time.sleep(15)

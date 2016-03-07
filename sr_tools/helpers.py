@@ -72,7 +72,7 @@ def device_ip(device_id):
         wait_usb_connection()
         device_ip(device_id)
 
-def adb_over_wifi(deviceip):
+def adb_over_wifi(deviceip):#Need to inspect option in which no wifi is detected on phone - should appear as None
     devices = adb_devices()
     if len(devices.ip) == 0:
         while len(devices.ip) == 0:
@@ -90,7 +90,7 @@ def adb_over_wifi(deviceip):
             log.warn('adb over wifi connected - disconnect usb')
             wait_usb_disconnection()
         else:
-            print 'adb over wifi connected'
+            log.warn('adb over already wifi connected')
 
 def ssh_connect(ip):
     os.system('adb push /home/automation/sr_automation/sshd_config /data/sunriver/fs/limited/etc/ssh/')

@@ -1,20 +1,24 @@
+from sr_automation.platform.linux.applications.Settings.Settings_submenu import Settings_submenu
 
-class Language_and_keyboard(object):
+
+class Language_and_keyboard(Settings_submenu):
 
     KEYBOARD_SUBMENU = (500, 200)
     ADD_REMOVE_BUTTON = "Add / Remove Language"
-    ADD_REMOVE_ARABIC = ()
+    LANGUAGE_AKAN = (840, 290)
+    APPLY_CHANGES = "Apply Changes"
+
     def __init__(self, settings):
-        self._settings = settings
+        super(Language_and_keyboard, self).__init__(settings, self.KEYBOARD_SUBMENU)
 
-    def enter(self):
-        self._app = self._settings.app
-        self._settings.click_at_xy(self.KEYBOARD_SUBMENU)
+    def add_remove_keyboard_language(self):
+        self._open_supported_language_menu()
+        self._settings.click_at_xy(self.LANGUAGE_AKAN)
+        self._app.child(name=self.APPLY_CHANGES).click()
 
-    def add_keyboard_language(self):
+    def _open_supported_language_menu(self):
         self._app.child(name=self.ADD_REMOVE_BUTTON).click()
 
 
-    def remove_keyboard_language(self):
-        pass
+
 

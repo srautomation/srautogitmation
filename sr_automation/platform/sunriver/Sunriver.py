@@ -13,7 +13,7 @@ import subprocess
 class Sunriver(object):
     def __init__(self):
         helpers.latest_wifi_adb_connection('read')
-        if Android.devices().keys() > 0:
+        if len(Android.devices().keys()) > 0:
             self._device_id = Android.devices().keys()[0]
         else:
             log.warn('please connect android device to usb for adb connection')
@@ -87,6 +87,7 @@ class Sunriver(object):
 
     @classmethod
     def install(cls):
+        os.system('adb root')
         os.system('adb remount')
         os.system('adb disable-verity')
         os.system('adb reboot')
@@ -95,8 +96,8 @@ class Sunriver(object):
         os.system('adb shell svc power stayon true')#stay awake on phone
         os.system('adb root')
         time.sleep(5)
-        print 'Please RUN: adb push ~/Desktop/srautomation-packages.tar.gz /data/sunriver/fs/limited/media/'
-        os.system('adb push ~/Desktop/sr-auto-installation /data/sunriver/fs/limited/home/BigScreen/')
+        print 'RUN: adb push ~/sr_automation/srautomation-packages.tar.gz /data/sunriver/fs/limited/media/'
+        os.system('adb push ~/sr_automation/sr-auto-installation /data/sunriver/fs/limited/home/BigScreen/')
         os.system('adb shell chmod 777 /data/sunriver/fs/limited/home/BigScreen/sr-auto-installation')
 
 

@@ -39,6 +39,14 @@ class Chromium(object):
     def youtube_fullscreen(self):
         self._driver.find_element_by_class_name('ytp-fullscreen-button').click()
 
+    def skip_add(self):
+        time.sleep(3)#lets add load
+        try:
+            if self._driver.find_element_by_class_name('videoAdUiSkipButton'):
+                self._driver.find_element_by_class_name('videoAdUiSkipButton').click()
+        except:
+            pass
+
     def escape(self):
         self._webdriver.common.keys.Keys.ESCAPE    
  

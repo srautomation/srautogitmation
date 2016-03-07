@@ -6,7 +6,7 @@ import slash
 import os
 
 from logbook import Logger
-log = Logger("Search and App Launcher")
+log = Logger("Camera Test")
 
 class CameraBaseTest(BaseTest):
    
@@ -20,6 +20,9 @@ class CameraBaseTest(BaseTest):
     def start_stop_recording(self):
     	log.info('Start/Stop Playing video')
         os.system("adb shell 'input keyevent 27'")
+    
+    def check_vnc_open(self):
+        return slash.g.sunriver.linux.shell.is_running_by_short_name('xsrvnc')#checks if vnc is open on sunriver
 
     def open_vlc(self):
         slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --fullscreen "/home/BigScreen/Android/DCIM/Camera/"&')
@@ -30,9 +33,8 @@ class CameraBaseTest(BaseTest):
             time.sleep(3)
         for i in range(6):
             os.system("adb shell 'input keyevent 25'")
-        slash.g.sunriver.stop()
-        slash.g.sunriver.start()
-
+        #slash.g.sunriver.stop()
+        #slash.g.sunriver.start()
 
     def compare_cycle(self,cycle_number, cycle):
         slash.should.be(cycle_number, cycle)

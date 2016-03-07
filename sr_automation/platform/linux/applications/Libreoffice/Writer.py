@@ -52,5 +52,7 @@ class Writer(object):
         app.child(name='Save').click()
         app.child(roleName='dialog').child(roleName='text').text = file_name
         app.child(roleName='dialog').child(roleName='push button', name='Save').click()
-
-
+       
+    def choose_slide(self,slide_number=1):
+        app = self._app
+        app.child(name='Slide %s'%slide_number).click()

@@ -9,6 +9,7 @@ class Settings(_Application):
     APP_NAME = "sunriversettings"
     KILL_APP = "killall " + APP_NAME
     ACCOUNT_SUBMENU = "Account"
+    BACK_BUTTON_LOCATION = (80, 80)
 
     def __init__(self, linux):
         super(Settings, self).__init__(linux, start_cmd=self.APP_NAME, stop_cmd=self.KILL_APP, dogtail_id=self.APP_NAME)
@@ -26,6 +27,9 @@ class Settings(_Application):
     @property
     def language_and_keyboard(self):
         return self._language_and_keyboard
+
+    def return_from_submenu(self):
+        self.click_at_xy(self.BACK_BUTTON_LOCATION)
 
 
 if __name__ == "__main__":
