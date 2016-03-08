@@ -38,8 +38,6 @@ sudo mv /media/sshd_config /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 sudo /etc/init.d/ssh restart
 
-device_wlan=$(ip addr | grep inet | grep wlan0 | awk -F" " '{print $2}'| sed -e 's/\/.*$//')
-
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
@@ -48,12 +46,12 @@ function box_out()
   local s="$*"
   tput setaf 3
   echo " -${s//?/-}------------------------------------------------------------------------------
-| Follow exactly as commanded below **IP's of automation PC and phone might need adjustments
+| Follow exactly as commanded below **IP's of automation PC and phone might need adjustments				
 | $(tput setaf 4)$s$(tput setaf 3)run command:"ssh automation@192.168.1.16"
 | ${s//?/ }enter password:enter Yes
 | ${s//?/ }enter password:"123qwe"
-| ${s//?/ }on the tunnel that opens --> RUN:ssh-keygen -f "/home/automation/.ssh/known_hosts" -R [${device_wlan}]:2222
-| ${s//?/ }ssh-copy-id -p 2222 BigScreen@${device_wlan}
+| ${s//?/ }on the tunnel that opens --> RUN:ssh-keygen -f "/home/automation/.ssh/known_hosts" -R [192.168.1.7]:2222
+| ${s//?/ }ssh-copy-id -p 2222 BigScreen@192.168.1.7
 | ${s//?/ }enter YES
  -${s//?/-}------------------------------------------------------------------------------
 "
@@ -61,3 +59,4 @@ function box_out()
 }
 
 box_out
+

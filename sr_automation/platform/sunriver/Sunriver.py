@@ -7,20 +7,20 @@ import time
 from logbook import Logger
 log = Logger("Sunriver")
 import os
-from sr_tools import helpers #package containing helping functions
+from sr_tools import helpers #package containing connection functions
 import subprocess
 
 class Sunriver(object):
     def __init__(self):
-        helpers.latest_wifi_adb_connection('read')
-        if len(Android.devices().keys()) > 0:
+        helpers.latest_wifi_adb_connection('read')#reads txt file that contains the last ip device connected to pc.
+        if len(Android.devices().keys()) > 0:#checks if any device is already connected to pc.
             self._device_id = Android.devices().keys()[0]
         else:
             log.warn('please connect android device to usb for adb connection')
-            helpers.wait_usb_connection()
+            helpers.wait_usb_connection() 
             self._device_id = Android.devices().keys()[0]
-        self._android = Android(self._device_id)
-        self._linux = self.connect()
+        self._android = Android(self._device_id)#runs android Object
+        self._linux = self.connect()#starts connection to linux side of DUT, starts desktop aswell if needed.
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
         self.start()
 
@@ -55,7 +55,7 @@ class Sunriver(object):
         else:
             log.info('Desktop is already running')
 
-    def rpyc_connect(self, ip):
+    def rpyc_connect(self, ip):#soul purpose of the function is to make RPyC connection persistant
         timef=0
         while True:
             try:
@@ -68,37 +68,39 @@ class Sunriver(object):
                     helpers.ssh_connect(ip)
 
     def connect(self):
-        devices = helpers.adb_devices()
-        deviceip = helpers.device_ip(devices.ip)
+        devices = helpers.adb_devices()#device paramater receives all the adb connections of the PC(ip,usb).
+        deviceip = helpers.device_ip(devices.ip)#stores the ip connection of DUT if available(could be empty).
         print deviceip
-        helpers.adb_over_wifi(deviceip)
-        helpers.wait_for_MHL_connection()
+        helpers.adb_over_wifi(deviceip)#checks adb over wifi connection, and sets one if not available.
+        helpers.wait_for_MHL_connection()#waits until DUT is connected to to an MHL cable
         self._device_id = Android.devices().keys()[0]
-        self._android = Android(self._device_id)
-        self._desktop = DesktopInYourPocket(self._android)
+        self._android = Android(self._device_id)#resets android object now surely using adb over WIFI
+        self._desktop = DesktopInYourPocket(self._android)#objects containing automatic android control functions
         log.warn("Starting RPyC")
         ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%deviceip
-        self.start_desktop(self._desktop)
-        os.system(ssh_command)
+        self.start_desktop(self._desktop)#checks if starting desktop is needed
+        os.system(ssh_command)#running ssh command that starts RPyC server on DUT side.
         log.info("Connecting RPyC: %r" % deviceip)
-        rpyc_connection = self.rpyc_connect(deviceip)
+        rpyc_connection = self.rpyc_connect(deviceip)#stores RPyC connection making it available to use device modules from pc
         log.warn('Connected!')
         return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection, modules_user=rpyc_connection.modules, rpyc_user=rpyc_connection)
 
     @classmethod
     def install(cls):
+        #disables verity on device to make file transfer to device possible
         os.system('adb root')
         os.system('adb remount')
         os.system('adb disable-verity')
-        os.system('adb reboot')
+        os.system('adb reboot')#disable-verity needs reboot
         os.system('adb wait-for-device')
         for i in range(30): print i; time.sleep(1)
         os.system('adb shell svc power stayon true')#stay awake on phone
         os.system('adb root')
         time.sleep(5)
+        #problem transerfering srautomation-packages.tar.gz using os.system - may make adb connection offline 
         print 'RUN: adb push ~/sr_automation/srautomation-packages.tar.gz /data/sunriver/fs/limited/media/'
-        os.system('adb push ~/sr_automation/sr-auto-installation /data/sunriver/fs/limited/home/BigScreen/')
-        os.system('adb shell chmod 777 /data/sunriver/fs/limited/home/BigScreen/sr-auto-installation')
+        os.system('adb push ~/sr_automation/sr-auto-installation /data/sunriver/fs/limited/home/BigScreen/')#transfering installation script to dut.
+        os.system('adb shell chmod 777 /data/sunriver/fs/limited/home/BigScreen/sr-auto-installation')#changing file permissions.
 
 
 if __name__ == "__main__":

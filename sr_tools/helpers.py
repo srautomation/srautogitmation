@@ -7,6 +7,11 @@ import os
 from logbook import Logger
 log = Logger("connection functions")
 
+#path locations
+dut_latest_ip='/usr/local/bin/dut_latest_ip.txt'
+adb_devices_string="adb devices"
+usb_count="lsusb | wc -l"
+
 def project_root():
     return os.path.split(os.path.abspath(os.path.join(__file__, "..")))[0]
 
@@ -41,14 +46,17 @@ def wait_for_MHL_connection():
         time.sleep(2)
         mhl = subprocess.Popen(["adb", "shell", "cat /sys/class/switch/hdmi/state"], stdout=subprocess.PIPE).stdout.read()
 
+def adb_connection(ip):
+    os.system('adb connect %s'%ip)
+    time.sleep(2)
+
 def latest_wifi_adb_connection(read_write):
     if read_write == 'read':
-        ip_file = open('/home/automation/sr_automation/sr_tools/dut_latest_ip.txt', 'r')
+        ip_file = open(dut_latest_ip, 'r')
         ip = ip_file.read().strip()
-        os.system("adb connect %s"%ip)
-        time.sleep(3)
+        adb_connection(ip)
     else:
-        ip_file = open('/home/automation/sr_automation/sr_tools/dut_latest_ip.txt', 'w')
+        ip_file = open(dut_latest_ip, 'w')
         ip = ip_file.write(read_write)
     ip_file.close()
 
@@ -79,8 +87,7 @@ def adb_over_wifi(deviceip):#Need to inspect option in which no wifi is detected
             os.system("adb tcpip 5555")
             time.sleep(5)
             log.info('trying to connect adb over wifi')
-            os.system("adb connect %s"%deviceip)
-            time.sleep(2)
+            adb_connection(deviceip)
             devices = adb_devices()
         latest_wifi_adb_connection(deviceip)
         log.warn('connection over wifi successful - disconnect device and connect to MHL')

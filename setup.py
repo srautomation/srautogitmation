@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+import os 
 try:# pip needed to download setuptools(may need update)
     from setuptools import setup, find_packages
 except ImportError:
@@ -10,6 +10,9 @@ except ImportError:
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
+working_dir = os.getcwd()
+dut_latest_ip = os.system('ln -s %s/sr_tools/dut_latest_ip.txt /usr/local/bin/dut_latest_ip.txt'%working_dir)
+
 
 requirements = [
     "rpyc",
