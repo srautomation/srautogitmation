@@ -8,6 +8,7 @@ log = Logger("ACCOUNT")
 
 
 class AccountBaseTest(BaseTest):
+    NEW_USER = "test_user"
 
     def before(self):
         super(AccountBaseTest, self).before()
@@ -18,9 +19,9 @@ class AccountBaseTest(BaseTest):
         slash.g.account = Account()
         slash.g.account.start()
 
-    def test_account(self):
-        time.sleep(5)
-        slash.g.account.change_pass('yaniv')
+    def test_changeUsername(self):
+        slash.g.settings.account.enter()
+        slash.g.settings.account.set_username(self.NEW_USER)
 
     def after(self):
         slash.g.account.stop()

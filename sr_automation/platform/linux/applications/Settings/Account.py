@@ -24,10 +24,13 @@ class Account(object):
             pass_entries[i].text = _pass_entries[i]
         self._app.child(name=self.SUBMIT_PASSWORD_BUTTON).click()
 
-    def change_username(self, name=DEFAULT_NAME):
+    def set_username(self, name=DEFAULT_NAME):
         self._app.child(roleName="text").text = name
         self._app.child(name=self.SAVE_BUTTON).click()
-
+    
+    def get_username(self):
+        return self._app.child(roleName="text").text
+        
     def upload_pic(self):
         pass
 

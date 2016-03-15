@@ -103,6 +103,21 @@ class Sunriver(object):
         os.system('adb shell chmod 777 /data/sunriver/fs/limited/home/BigScreen/sr-auto-installation')#changing file permissions.
 
 
+        
+        #=======================================================================
+        # print "try to copy zip file"
+        # from subprocess import check_output, CalledProcessError
+        # try:     
+        #     #adb_output = check_output(["adb", "push", "/home/labuser/sr_automation/srautomation-packages.tar.gz" ,"/data/sunriver/fs/limited/media/"])
+        #     proc = subprocess.Popen(cmd,shell=True)
+        #     print "succeed copy zip file"
+        # except CalledProcessError as e:
+        #     print e.message
+        #=======================================================================
+       
+        
+
+
 if __name__ == "__main__":
     import baker
 

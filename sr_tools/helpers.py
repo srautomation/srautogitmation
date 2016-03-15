@@ -15,6 +15,13 @@ usb_count="lsusb | wc -l"
 def project_root():
     return os.path.split(os.path.abspath(os.path.join(__file__, "..")))[0]
 
+def find_file_location(filename,path):
+    for root, dirs, files in os.walk(path):
+        if filename in files:
+            return os.path.join(root, filename)
+
+
+
 def device_id_is_ip(device_id):
     return ":" in device_id
 
@@ -51,6 +58,10 @@ def adb_connection(ip):
     time.sleep(2)
 
 def latest_wifi_adb_connection(read_write):
+    IP_FILE_NAME = "dut_latest_ip.txt"
+    PATH = "/"
+    ip_file_path = find_file_location(IP_FILE_NAME, PATH) 
+    print ip_file_path
     if read_write == 'read':
         ip_file = open(dut_latest_ip, 'r')
         ip = ip_file.read().strip()
@@ -100,7 +111,7 @@ def adb_over_wifi(deviceip):#Need to inspect option in which no wifi is detected
             log.warn('adb over already wifi connected')
 
 def ssh_connect(ip):
-    os.system('adb push /home/automation/sr_automation/sshd_config /data/sunriver/fs/limited/etc/ssh/')
+    os.system('adb push /home/labuser/sr_automation/sshd_config /data/sunriver/fs/limited/etc/ssh/')
     os.system('adb reboot')
     os.system('adb wait-for-device')
     print 'connect bluetooth device to DUT - and load sunriver ALT-UP'
