@@ -1,5 +1,6 @@
 #TODO: ACCount needs to inherite from Settings_submenu
-
+from gi.overrides.keysyms import slash
+import time
 class Account(object):
 
     ACCOUNT_SUBMENU = "Account"
@@ -23,6 +24,9 @@ class Account(object):
             pass_entries[i].click()
             pass_entries[i].text = _pass_entries[i]
         self._app.child(name=self.SUBMIT_PASSWORD_BUTTON).click()
+        time.sleep(3)
+        assert len(self._settings._find_children(self._app, name="Dialog")) == 0, "wrong old password" #wrong password dialog opened
+            
 
     def set_username(self, name=DEFAULT_NAME):
         self._app.child(roleName="text").text = name

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+SCRIPT_PATH=`dirname $SCRIPT`
+
+
+sudo $SCRIPT_PATH/setup.py build
+sudo $SCRIPT_PATH/setup.py install
+
+sr_tool run_suite $1 $2

@@ -18,16 +18,19 @@ class SettingsBaseTest(BaseTest):
     VERIFY_PASS = NEW_PASS
     HINT = "1@password"
     pass_entries = [OLD_PASS, NEW_PASS, VERIFY_PASS, HINT]
-    flag = False
+    initialized = False
+    
+    #-------------------------------------------- def __init__(self,*args,**kv):
+        #----------------------------------------------- BaseTest.__init__(self)
+            
     
     def before(self):
-        if not self.flag :
+        if not self.initialized :
             super(SettingsBaseTest, self).before()
             SettingsBaseTest.start_settings()
-            self.flag = True 
-       
-        
-
+            self.initialized = True 
+            
+    
     @staticmethod
     def start_settings():
         slash.g.settings = Settings(slash.g.sunriver.linux)
@@ -44,13 +47,15 @@ class SettingsBaseTest(BaseTest):
     def test_account_changePass(self):
         slash.g.settings.account.enter()
         slash.g.settings.account.change_pass(self.pass_entries)
+        slash.g.settings.
+        if len()
         self.checkPassword()
         slash.g.settings.account.exit()
          
     def checkPassword(self):
         time.sleep(2)
         cmd = "echo %s | sudo -S python -c \"import spwd ;print spwd.getspnam(\'%s\')[1]\" " % (self.NEW_PASS,self.PRIVILAGE_USER)
-        output = slash.g.settings._linux.shell._os.popen(cmd).read().rstrip()
+        output = slash.g.settings._linux.shell.runCommandWithReturnValue(cmd)
         assert crypt.crypt(self.NEW_PASS,output) == output
     
     
@@ -79,7 +84,6 @@ class SettingsBaseTest(BaseTest):
 
     def compare_cycle(self,cycle_number, cycle):
         slash.should.be(cycle_number, cycle)
-
 
 
 if __name__ == "__main__":
