@@ -1,10 +1,15 @@
 from sr_automation.platform.linux.applications.dialogs.DialogOpen import DialogOpen
 import time
+from enum import Enum
+
+class WriteMethod:
+    String , Raw =range(2)
 
 class Leafpad(object):
+     
     def __init__(self, linux):
         self._linux = linux
-
+        
     def start(self):
         self._dogtail = self._linux.ui.dogtail
         self._process = self._linux.cmd("leafpad")
@@ -15,11 +20,20 @@ class Leafpad(object):
         if self._process.is_running():
             self._process.terminate()
 
-    def write_text(self, text):
+    def write_text(self, text,input_type=WriteMethod.String):
         app = self._app
         textBox = app.child(roleName = 'text')
         textBox.grabFocus()
-        textBox.text = text
+        if input_type == WriteMethod.String :
+            textBox.text = text
+        elif input_type == WriteMethod.Raw :
+            self._dogtail.rawinput.typeText(text)
+    
+    def read_text(self):
+        app = self._app
+        textBox = app.child(roleName = 'text')
+        textBox.grabFocus()
+        return textBox.text 
 
     def open(self, file):
         ''' file has to be in /root '''
