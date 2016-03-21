@@ -9,8 +9,6 @@ log = Logger("connection functions")
 
 #path locations
 dut_latest_ip='/usr/local/bin/dut_latest_ip.txt'
-adb_devices_string="adb devices"
-usb_count="lsusb | wc -l"
 
 def project_root():
     return os.path.split(os.path.abspath(os.path.join(__file__, "..")))[0]
@@ -55,7 +53,7 @@ def wait_for_MHL_connection():
 
 def adb_connection(ip):
     os.system('adb connect %s'%ip)
-    time.sleep(2)
+    time.sleep(3)
 
 def latest_wifi_adb_connection(read_write):
     IP_FILE_NAME = "dut_latest_ip.txt"
@@ -80,7 +78,7 @@ def adb_devices():
 
 def device_ip(device_id):
     try:
-        if len(device_id) != 0:
+        if len(device_id) != 0 and device_id != 'None':
             if device_id_is_ip(device_id[0]):
                 return device_id[0].split(":")[0]
         text = subprocess.Popen(["adb", "shell", "netcfg | grep wlan0"], stdout=subprocess.PIPE).stdout.read()

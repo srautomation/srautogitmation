@@ -2,6 +2,7 @@ from sr_automation.platform.android.Android import Android
 from sr_automation.platform.linux.Linux import Linux
 from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket
 from sr_automation.platform.sunriver.applications.SwitchToAndroid.SwitchToAndroid import SwitchToAndroid
+from sr_automation.platform.sunriver.applications.isVNC.VNCInYourPocket import VNCInYourPocket
 import rpyc
 import time
 from logbook import Logger
@@ -12,6 +13,7 @@ import subprocess
 
 class Sunriver(object):
     def __init__(self):
+        os.system('adb devices')#line here for testing certain times device doesnt connect
         helpers.latest_wifi_adb_connection('read')#reads txt file that contains the last ip device connected to pc.
         if len(Android.devices().keys()) > 0:#checks if any device is already connected to pc.
             self._device_id = Android.devices().keys()[0]
@@ -22,6 +24,7 @@ class Sunriver(object):
         self._android = Android(self._device_id)#runs android Object
         self._linux = self.connect()#starts connection to linux side of DUT, starts desktop aswell if needed.
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
+        self._vnc_control_pocket = VNCInYourPocket(self._linux)#VLC control app
         self.start()
 
     def start(self):
@@ -42,7 +45,11 @@ class Sunriver(object):
     @property
     def desktop(self):
         return self._desktop
-
+    
+    @property
+    def vnc(self):
+        return self._vnc_control_pocket
+    
     @property
     def switch_to_android(self):
         return self._switch_to_android

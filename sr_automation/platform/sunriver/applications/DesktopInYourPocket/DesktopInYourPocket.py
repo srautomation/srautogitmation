@@ -2,6 +2,8 @@ from logbook import Logger
 from time import sleep
 log = Logger("DesktopInYourPocket")
 import IPython
+import time
+import os
 
 class DesktopInYourPocket(object):
     APP_PACKAGE = "com.intel.desktopinyourpocket"
@@ -24,6 +26,9 @@ class DesktopInYourPocket(object):
         self._android.ui(textContains=pattern).click.wait()
 
     def openApp(self):
+        if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:
+            os.system("adb shell input keyevent 82")
+            os.system("adb shell input keyevent 82")
         if not self._android.ui(text ="Big Screen").exists:
             self._android.ui.press.home()
             self._android.ui(description='Apps').click()
