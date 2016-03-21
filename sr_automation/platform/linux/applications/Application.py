@@ -16,6 +16,11 @@ class _Application(object):
             self._dogtail_id = start_cmd
         self._app = None    # holds the accessibility object
 
+    def start_dogtail_app(self, app_name):
+        self._dogtail.procedural.run(app_name)
+        time.sleep(9)
+        self._app = self._dogtail.tree.root.application(self._dogtail_id)
+    
     def start(self):
         cmd = self._start_cmd
         if not self._shell: # if shell = False, cmd has to be split
@@ -81,7 +86,6 @@ class _Application(object):
     @property
     def app(self):
         return self._app
-
 
 class _Editor(_Application):
     def start(self, doc = ''):
