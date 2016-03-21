@@ -8,7 +8,7 @@ import time
 class SanityMailTest(BaseSendTests):
 
     @slash.hooks.session_start.register
-    def start_android_gui()
+    def start_android_gui():
         slash.g.mail.androidGUI = AndroidMailGUI(slash.g.sunriver.android)
 
     def start_linux_gui():
