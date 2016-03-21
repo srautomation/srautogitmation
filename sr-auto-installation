@@ -26,6 +26,7 @@ sudo pip install python_dateutil-2.4.2-py2.py3-none-any.whl
 sudo pip install setuptools-20.0-py2.py3-none-any.whl
 sudo pip install icalendar-3.9.2.tar.gz
 sudo pip install Skype4Py-1.0.35.zip
+sudo pip install enum34-1.1.2.tar.gz
 
 sudo git config --global http.sslVerify false
 sudo git clone --branch DOGTAIL_0_9_0 https://git.fedorahosted.org/git/dogtail.git
