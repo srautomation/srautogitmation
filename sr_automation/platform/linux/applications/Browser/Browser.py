@@ -23,21 +23,26 @@ class Chromium(object):
 
     def youtube_settings(self):
         self._driver.find_element_by_id('settings_button').click()
-  
+        time.sleep(4)
+
     def open_youtube_video(self, videoURL):
         self._driver.get("http://www.youtube.com/%s"%videoURL)
 
     def open_url(self, url):
         self._driver.get(url)
-    
+        time.sleep(5)
+
     def play_video(self):
         self._driver.execute_script('document.getElementsByTagName("video")[0].play()')
+        time.sleep(5)
 
     def pause_video(self):
         self._driver.execute_script('document.getElementsByTagName("video")[0].pause()')
+        time.sleep(5)
 
     def youtube_fullscreen(self):
         self._driver.find_element_by_class_name('ytp-fullscreen-button').click()
+        time.sleep(8)#show a little bigscreen
 
     def skip_add(self):
         time.sleep(3)#lets add load
@@ -56,6 +61,7 @@ class Chromium(object):
 
     def switch_tab(self):
         self._dogtail.rawinput.keyCombo('<Ctrl>PageUp')
+        time.sleep(5)
 
 if __name__ == "__main__":
     from sr_automation.platform.sunriver.Sunriver import Sunriver
