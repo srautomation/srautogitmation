@@ -1,6 +1,7 @@
 import time
 from sr_automation.platform.linux.applications.Settings.Account import Account
 from sr_automation.platform.linux.applications.Settings.Language_and_Keyboard import Language_and_keyboard
+from sr_automation.platform.linux.applications.Settings.Sound import Sound
 from sr_automation.platform.linux.applications.Application import _Application
 
 
@@ -15,6 +16,7 @@ class Settings(_Application):
         super(Settings, self).__init__(linux, start_cmd=self.APP_NAME, stop_cmd=self.KILL_APP, dogtail_id=self.APP_NAME)
         self._account = Account(self)
         self._language_and_keyboard = Language_and_keyboard(self)
+        self._sound = Sound(self)
 
     @property
     def Settings(self):
@@ -23,7 +25,11 @@ class Settings(_Application):
     @property
     def account(self):
         return self._account
-
+    
+    @property
+    def sound(self):
+        return self._sound
+    
     @property
     def language_and_keyboard(self):
         return self._language_and_keyboard

@@ -37,20 +37,18 @@ class SettingsBaseTest(BaseTest):
         slash.g.settings.start()
 
     
-    def test_account_changeUser(self):
-        slash.g.settings.account.enter()
-        slash.g.settings.account.set_username(self.NEW_USER)
-        assert slash.g.settings.account.get_username() == self.NEW_USER
-        slash.g.settings.account.exit()
+    #---------------------------------------- def test_account_changeUser(self):
+        #-------------------------------------- slash.g.settings.account.enter()
+        #------------------ slash.g.settings.account.set_username(self.NEW_USER)
+        #------- assert slash.g.settings.account.get_username() == self.NEW_USER
+        #--------------------------------------- slash.g.settings.account.exit()
 
 
-    def test_account_changePass(self):
-        slash.g.settings.account.enter()
-        slash.g.settings.account.change_pass(self.pass_entries)
-        slash.g.settings.
-        if len()
-        self.checkPassword()
-        slash.g.settings.account.exit()
+    #---------------------------------------- def test_account_changePass(self):
+        #-------------------------------------- slash.g.settings.account.enter()
+        #--------------- slash.g.settings.account.change_pass(self.pass_entries)
+        #-------------------------------------------------- self.checkPassword()
+        #--------------------------------------- slash.g.settings.account.exit()
          
     def checkPassword(self):
         time.sleep(2)
@@ -59,13 +57,13 @@ class SettingsBaseTest(BaseTest):
         assert crypt.crypt(self.NEW_PASS,output) == output
     
     
-    def test_language_and_keyboard(self):
-        slash.g.settings.language_and_keyboard.enter()
-        slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
-        time.sleep(5)
-        self.checklanguage()
-        slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
-        slash.g.settings.language_and_keyboard.exit()
+    #------------------------------------- def test_language_and_keyboard(self):
+        #------------------------ slash.g.settings.language_and_keyboard.enter()
+        #- slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
+        #--------------------------------------------------------- time.sleep(5)
+        #-------------------------------------------------- self.checklanguage()
+        #- slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
+        #------------------------- slash.g.settings.language_and_keyboard.exit()
 
     def checklanguage(self):
         text = "aba"
@@ -76,6 +74,14 @@ class SettingsBaseTest(BaseTest):
         leafpad.write_text(text,WriteMethod.Raw) #write in arabic 
         print leafpad.read_text()
         assert leafpad.read_text() == text_in_arabic
+        
+    def test_sound_level_change(self):
+        slash.g.settings.sound.enter()
+        slash.g.settings.sound.change_output_volume_level(0)
+        time.sleep(1)
+        slash.g.settings.sound.change_output_volume_level(100)
+        slash.g.settings.sound.exit()
+
     
     def after(self):
         time.sleep(3)
