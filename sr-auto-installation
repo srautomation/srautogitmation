@@ -49,7 +49,7 @@ function box_out()
   tput setaf 3
   echo " -${s//?/-}------------------------------------------------------------------------------
 | Follow exactly as commanded below **IP's of automation PC and phone might need adjustments
-| $(tput setaf 4)$s$(tput setaf 3)run command:"ssh automation@192.168.1.16"
+| $(tput setaf 4)$s$(tput setaf 3)run command:"ssh automation@192.168.1.1"
 | ${s//?/ }enter password:enter Yes
 | ${s//?/ }enter password:"123qwe"
 | ${s//?/ }on the tunnel that opens --> RUN:ssh-keygen -f "/home/automation/.ssh/known_hosts" -R [${device_wlan}]:2222
