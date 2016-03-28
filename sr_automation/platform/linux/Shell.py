@@ -55,6 +55,13 @@ class Shell(object):
             return True
         return False
 
+    def runCommandWithReturnValue(self,cmd,env=None):
+        _temp_env = self._os.environ.copy()
+        _temp_env.update(Shell.DEFAULT_ENVIRONMENT)
+        if env is not None:
+            _temp_env.update(env)
+        return self._os.popen(cmd).read().rstrip()
+    
     def wait_process(self, name):
         while True:
             if self.is_running(name):

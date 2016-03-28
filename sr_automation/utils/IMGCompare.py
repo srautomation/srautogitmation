@@ -26,3 +26,9 @@ class IMGCompare(object):
         elif screenshotName == 'Search.png':
             regionBsearch = imgB.crop((80, 68, w-100, h-118))
             return regionBsearch.histogram() == baseline_histogram
+    
+    def open_image(self,path):
+        return Image.open(path)
+    
+    def compare_image(self, imageA,imageB):
+        assert imageA.histogram() == imageB.histogram()
