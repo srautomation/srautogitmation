@@ -1,7 +1,6 @@
 from logbook import Logger
 from time import sleep
 log = Logger("DesktopInYourPocket")
-import IPython
 import time
 import os
 
@@ -28,7 +27,7 @@ class DesktopInYourPocket(object):
     def open_lockscreen(self):
 	if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:
             os.system("adb shell input keyevent 82")
-            os.system("adb shell input keyevent 82")
+    	    os.system("adb shell input keyevent 82")
 
     def openApp(self):
         self.open_lockscreen()

@@ -10,7 +10,7 @@ class Writer(object):
 
     def start(self, option=''):
         self._dogtail = self._linux.ui.dogtail
-        self._process = self._dogtail.procedural.run("libreoffice --writer --norestore %s"%option)
+        self._process = self._dogtail.procedural.run("libreoffice --writer --norestore %s"%option)#opens without restore window
         time.sleep(9)
         self._app = self._dogtail.tree.root.application("soffice")
         
@@ -49,6 +49,7 @@ class Writer(object):
 
     def save_as(self, file_name='file'):
         app = self._app
+        #Do to bug on first libreoffice load, sunriver save popup does not fit screen. Might cause save to file. 
         app.child(name='Save').click()
         app.child(roleName='dialog').child(roleName='text').text = file_name
         app.child(roleName='dialog').child(roleName='push button', name='Save').click()

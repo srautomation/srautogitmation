@@ -5,11 +5,11 @@ from sr_automation.platform.sunriver.applications.SwitchToAndroid.SwitchToAndroi
 from sr_automation.platform.sunriver.applications.isVNC.VNCInYourPocket import VNCInYourPocket
 import rpyc
 import time
+import socket
 from logbook import Logger
 log = Logger("Sunriver")
 import os
 from sr_tools import helpers #package containing connection functions
-import subprocess
 
 class Sunriver(object):
     def __init__(self):
@@ -24,7 +24,7 @@ class Sunriver(object):
         self._android = Android(self._device_id)#runs android Object
         self._linux = self.connect()#starts connection to linux side of DUT, starts desktop aswell if needed.
         self._switch_to_android =  SwitchToAndroid(self._linux, self._desktop)
-        self._vnc_control_pocket = VNCInYourPocket(self._linux)#VLC control app
+        self._vnc_control_pocket = VNCInYourPocket(self._linux)#VNC control app
         self.start()
 
     def start(self):
@@ -62,8 +62,7 @@ class Sunriver(object):
         else:
             log.info('Desktop is already running')
 
-    def rpyc_connect(self, ip):#soul purpose of the function is to make RPyC connection persistant
-        timef=0
+    def rpyc_connect(self, ip, timef=0):#soul purpose of the function is to make RPyC connection persistant
         while True:
             try:
                 return rpyc.classic.connect(ip)
@@ -71,13 +70,12 @@ class Sunriver(object):
                 log.warn('RPyC Connection Refused - Retrying RPyC')
                 time.sleep(3)
                 timef+=1
-                if timef == 5:
-                    helpers.ssh_connect(ip)
+                if timef == 8:
+                    helpers.ssh_connect(ip)#if connection fails 5 time, ssh settings are reset.
 
     def connect(self):
         devices = helpers.adb_devices()#device paramater receives all the adb connections of the PC(ip,usb).
         deviceip = helpers.device_ip(devices.ip)#stores the ip connection of DUT if available(could be empty).
-        print deviceip
         helpers.adb_over_wifi(deviceip)#checks adb over wifi connection, and sets one if not available.
         helpers.wait_for_MHL_connection()#waits until DUT is connected to to an MHL cable
         self._device_id = Android.devices().keys()[0]
@@ -94,6 +92,17 @@ class Sunriver(object):
 
     @classmethod
     def install(cls):
+        local_ip = ([(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
+        placeholderFile = open('/home/automation/sr_automation/sr-auto-installation-placeholder','r')
+        installationFile = open('/home/automation/sr_automation/sr-auto-installation','w')
+        for line in placeholderFile:
+            if 'placeholder' in line:
+                newline = line.replace('placeholder',local_ip)
+            else:
+                newline = line
+            installationFile.write(newline) 
+        placeholderFile.close()
+        installationFile.close()
         #disables verity on device to make file transfer to device possible
         os.system('adb root')
         os.system('adb remount')

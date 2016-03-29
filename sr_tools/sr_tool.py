@@ -1,10 +1,8 @@
 import baker
-import re
 import time
 import os
-from bunch import Bunch
 import helpers as H
-from subprocess import Popen, PIPE
+from subprocess import Popen
 
 @baker.command
 def devices():
