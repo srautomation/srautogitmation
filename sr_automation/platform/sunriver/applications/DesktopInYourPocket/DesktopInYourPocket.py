@@ -25,11 +25,14 @@ class DesktopInYourPocket(object):
         self._android.ui.press.menu()
         self._android.ui(textContains=pattern).click.wait()
 
+    def open_lockscreen(self):
+	if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:
+            os.system("adb shell input keyevent 82")
+            os.system("adb shell input keyevent 82")
+
     def openApp(self):
-        if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:
-            os.system("adb shell input keyevent 82")
-            os.system("adb shell input keyevent 82")
-        if not self._android.ui(text ="Big Screen").exists:
+        self.open_lockscreen()
+	if not self._android.ui(text ="Big Screen").exists:
             self._android.ui.press.home()
             self._android.ui(description='Apps').click()
             sleep(2)
@@ -40,6 +43,7 @@ class DesktopInYourPocket(object):
             self._android.ui(text="Big Screen").click()
 
     def openSpecificApp(self, appName):
+	self.open_lockscreen()
         self._android.ui.press.home()
         time.sleep(2)
         self._android.ui(description='Apps').click()

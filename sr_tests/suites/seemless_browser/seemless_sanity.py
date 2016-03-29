@@ -20,7 +20,7 @@ class SeemlessSanity(SeemlessBrowserTest):
                 slash.g.sunriver.android.ui(text="No thanks").wait.exists
                 slash.g.sunriver.android.ui(text="No thanks").click()
             if slash.g.sunriver.android.ui(text="Search or type URL").exists:
-                slash.g.sunriver.android.ui(").click()
+                slash.g.sunriver.android.ui(text="Search or type URL").click()
         slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").click()
         slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").set_text('www.youtube.com/watch?v=YQHsXMglC9A')
         slash.g.sunriver.android.ui.press('Enter')

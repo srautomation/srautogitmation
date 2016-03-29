@@ -8,12 +8,12 @@ from sr_automation.platform.linux.applications.Application import _Application
 class Settings(_Application):
 
     APP_NAME = "sunriversettings"
-    KILL_APP = "killall " + APP_NAME
+    KILL_APP = "killall -9 " + APP_NAME
     ACCOUNT_SUBMENU = "Account"
     BACK_BUTTON_LOCATION = (80, 80)
 
     def __init__(self, linux):
-        super(Settings, self).__init__(linux, start_cmd=self.APP_NAME, stop_cmd=self.KILL_APP, dogtail_id=self.APP_NAME)
+        super(Settings, self).__init__(linux, start_cmd=self.APP_NAME,stop_cmd =self.KILL_APP,dogtail_id=self.APP_NAME)
         self._account = Account(self)
         self._language_and_keyboard = Language_and_keyboard(self)
         self._sound = Sound(self)
