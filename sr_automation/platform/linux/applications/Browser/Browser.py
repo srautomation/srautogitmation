@@ -44,20 +44,23 @@ class Chromium(object):
         self._driver.find_element_by_class_name('ytp-fullscreen-button').click()
         time.sleep(8)#show a little bigscreen
 
-    def skip_add(self):
-        time.sleep(3)#lets add load
+    def skip_add(self, counter=0):
         try:
-            if self._driver.find_element_by_class_name('videoAdUiSkipButton'):
-                self._driver.find_element_by_class_name('videoAdUiSkipButton').click()
+            counter+=1
+            if counter < 7:
+                if self._driver.find_element_by_class_name('videoAdUiSkipButton'):
+                    log.info('Skipping Add')
+                    self._driver.find_element_by_class_name('videoAdUiSkipButton').click()
         except:
-            pass
+            log.info('Unable to find Skip Add trying again')
+            self.skip_add(counter)
 
     def escape(self):
         self._webdriver.common.keys.Keys.ESCAPE    
  
     def new_tab(self, window='_blank'):
-        self._driver.execute_script("window.open(window);")
-        time.sleep(5) # let the tab time to open
+        self._driver.execute_script("window.open(%s);"%window)
+        time.sleep(16) # let the tab time to open
 
     def switch_tab(self):
         self._dogtail.rawinput.keyCombo('<Ctrl>PageUp')
