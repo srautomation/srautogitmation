@@ -6,60 +6,71 @@ from sr_tests.suites.seemless_browser.Base import SeemlessBrowserTest
 
 class SeemlessSanity(SeemlessBrowserTest):
     
-    slash.g.counter = 0
-
+    video_url = 'https://www.youtube.com/watch?v=YQHsXMglC9A'
+    appName = 'Chrome'
+    first_url = 'data:,'
+    second_url = 'http://www.cnn.com'
+    second_url_name = 'cnn'
+    third_url = 'http://www.nba.com'
+    third_url_name = 'nba'
+    android_chrome_url = 'https://m.youtube.com/watch?v=YQHsXMglC9A'
+    site_name = 'youtube'
+    screenshot_name = 'chromeShot.png'
+    
     def before(self):
         super(SeemlessSanity, self).before()
 
     def start_chrome_android(self):
+        androidUI = slash.g.sunriver.android.ui
         slash.g.sunriver.vnc.OpenVnc()
-        slash.g.sunriver.desktop.openSpecificApp('Chrome')
-        while not slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").exists:
-            if slash.g.sunriver.android.ui(text="Accept & continue").exists:
-                slash.g.sunriver.android.ui(text="Accept & continue").click()
-                slash.g.sunriver.android.ui(text="No thanks").wait.exists
-                slash.g.sunriver.android.ui(text="No thanks").click()
-            if slash.g.sunriver.android.ui(text="Search or type URL").exists:
-                slash.g.sunriver.android.ui(").click()
-        slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").click()
-        slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").set_text('www.youtube.com/watch?v=YQHsXMglC9A')
-        slash.g.sunriver.android.ui.press('Enter')
-
+        slash.g.sunriver.desktop.openSpecificApp(self.appName)
+        while not androidUI(resourceId="com.android.chrome:id/url_bar").exists:
+            if androidUI(text="Accept & continue").exists:
+                androidUI(text="Accept & continue").click()
+                androidUI(text="No thanks").wait.exists
+                androidUI(text="No thanks").click()
+            if androidUI(text="Search or type URL").exists:
+                androidUI(text="Search or type URL").click()
+        androidUI(resourceId="com.android.chrome:id/url_bar").click()
+        androidUI(resourceId="com.android.chrome:id/url_bar").set_text(self.video_url)
+        androidUI.press('Enter')
+        time.sleep(4)
+        self.compare_chrome_android(self.android_chrome_url)
 
     def test_chromium(self):
+        keycombo = slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo
         self.start_chrome_android()
         log.info("Testing Chromium")
         slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").click()
         time.sleep(5)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Ctrl>c')
+        keycombo('<Ctrl>c')
         self.start_chrome()
+        chromium = slash.g.chromium
+        self.compare_url(self.first_url, chromium._driver.current_url)#checks if chrome has loaded
         #slash.g.chromium.open_youtube_video("watch?v=YQHsXMglC9A")
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Ctrl>l')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Ctrl>a')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<BackSpace>')
+        keycombo('<Ctrl>l')
+        keycombo('<Ctrl>a')
+        keycombo('<BackSpace>')
         time.sleep(2)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Menu>')
+        keycombo('<Menu>')
         time.sleep(2)
-        for i in range(5):
-            slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Down>')
-            time.sleep(1)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('Enter')
-        log.info('pasted video')
-        time.sleep(25) # allow video loading
-        slash.g.chromium.skip_add()
-        slash.g.sunriver.linux.ui.dogtail.utils.screenshot(file='chromeShot.png', timeStamp=False)
-        slash.g.chromium.pause_video()
-        slash.g.chromium.play_video()
-        slash.g.chromium.youtube_fullscreen()
-        slash.g.chromium.escape()
-        slash.g.chromium._driver.execute_script("window.open('http://www.cnn.com');")
-        time.sleep(12) # let the website upload
-        slash.g.chromium._driver.execute_script("window.open('http://www.nba.com');")
-        time.sleep(12) # let the website upload
-        for i in range(4):
-            time.sleep(2)
-            slash.g.chromium.switch_tab()
-        slash.g.chromium.stop()
+        for i in range(5): keycombo('<Down>'); time.sleep(1)
+        keycombo('Enter')
+        time.sleep(5)
+        keycombo('Escape')
+        self.compare_url(self.site_name, chromium._driver.current_url)#checks if url is copied successfully from phone
+        chromium.skip_add()
+        slash.g.sunriver.linux.ui.dogtail.utils.screenshot(file=self.screenshot_name, timeStamp=False)
+        chromium.pause_video()
+        chromium.play_video()
+        chromium.youtube_fullscreen()
+        chromium.escape()
+        chromium.new_tab(self.second_url)#opens cnn url
+        self.compare_url(self.second_url_name, chromium._driver.current_url)
+        chromium.new_tab(self.third_url)#opens nba url
+        self.compare_url(self.third_url_name, chromium._driver.current_url)
+        for i in range(4): time.sleep(2); chromium.switch_tab()
+        chromium.stop()
 
     def test_libre(self):
         self.start_libre_with_screenshot()

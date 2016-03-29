@@ -22,3 +22,16 @@ class SeemlessBrowserTest(BaseTest):
 
     def compare_cycle(self,cycle_number, cycle):
         slash.should.be(cycle_number, cycle)
+
+    def compare_url(self, urlA, urlB):
+        if urlA in urlB:
+            log.info('correct')
+        else:
+            log.info('not the expected url')
+        
+    def compare_chrome_android(self, url):
+        if slash.g.sunriver.android.ui(text=url).exists:
+            assert 1 == 1 #needs to be changed to something realistic
+        else:
+            slash.add_error('The URLS are not the same')
+        

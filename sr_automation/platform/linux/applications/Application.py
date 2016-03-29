@@ -19,7 +19,7 @@ class _Application(object):
     def start_dogtail_app(self, app_name):
         self._dogtail.procedural.run(app_name)
         time.sleep(9)
-        self._app = self._dogtail.tree.root.application(self._dogtail_id)
+        self._app = self._dogtail.tree.root.application(self._start_cmd)
     
     def start(self):
         cmd = self._start_cmd
