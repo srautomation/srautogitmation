@@ -1,4 +1,5 @@
 from sr_automation.platform.linux.applications.Settings.Settings_submenu import Settings_submenu
+import time
 
 class Sound(Settings_submenu):
     
@@ -11,4 +12,6 @@ class Sound(Settings_submenu):
         super(Sound, self).__init__(settings, self.SOUND_SUBMENU)
 
     def change_output_volume_level(self, _value):
-        self._app.child(name=self.OUTPUT_LABEL).parent.parent.child(roleName="slider").value = _value*1000
+        updated_value = _value*1000
+        self._app.child(name=self.OUTPUT_LABEL).parent.parent.child(roleName="slider").value = updated_value
+        time.sleep(3)

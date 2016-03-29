@@ -1,6 +1,5 @@
 from sr_automation.platform.linux.applications.dialogs.DialogOpen import DialogOpen
 import time
-from enum import Enum
 
 class WriteMethod:
     String , Raw =range(2)

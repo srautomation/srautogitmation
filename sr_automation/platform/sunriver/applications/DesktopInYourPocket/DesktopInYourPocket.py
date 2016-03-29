@@ -24,11 +24,14 @@ class DesktopInYourPocket(object):
         self._android.ui.press.menu()
         self._android.ui(textContains=pattern).click.wait()
 
-    def openApp(self):
-        if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:#checks to see if home button exists
-            os.system("adb shell input keyevent 82")#inputed twice - once for opening screen, and on for closing menu
+    def open_lockscreen(self):
+	if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:
             os.system("adb shell input keyevent 82")
-        if not self._android.ui(text ="Big Screen").exists:
+    	    os.system("adb shell input keyevent 82")
+
+    def openApp(self):
+        self.open_lockscreen()
+	if not self._android.ui(text ="Big Screen").exists:
             self._android.ui.press.home()
             self._android.ui(description='Apps').click()
             sleep(2)
@@ -39,9 +42,7 @@ class DesktopInYourPocket(object):
             self._android.ui(text="Big Screen").click()
 
     def openSpecificApp(self, appName):
-        if not self._android.ui(resourceId="com.android.launcher:id/cell3").exists:#checks to see if home button exists
-            os.system("adb shell input keyevent 82")#inputed twice - once for opening screen, and on for closing menu
-            os.system("adb shell input keyevent 82")
+	self.open_lockscreen()
         self._android.ui.press.home()
         time.sleep(2)
         self._android.ui(description='Apps').click()

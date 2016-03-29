@@ -86,6 +86,10 @@ class _Application(object):
     @property
     def app(self):
         return self._app
+    
+    @property
+    def linux(self):
+        return self._linux
 
 class _Editor(_Application):
     def start(self, doc = ''):
