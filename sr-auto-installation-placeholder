@@ -26,6 +26,7 @@ sudo pip install python_dateutil-2.4.2-py2.py3-none-any.whl
 sudo pip install setuptools-20.0-py2.py3-none-any.whl
 sudo pip install icalendar-3.9.2.tar.gz
 sudo pip install Skype4Py-1.0.35.zip
+sudo pip install enum34-1.1.2.tar.gz
 
 sudo git config --global http.sslVerify false
 sudo git clone --branch DOGTAIL_0_9_0 https://git.fedorahosted.org/git/dogtail.git
@@ -49,10 +50,10 @@ function box_out()
   tput setaf 3
   echo " -${s//?/-}------------------------------------------------------------------------------
 | Follow exactly as commanded below **IP's of automation PC and phone might need adjustments
-| $(tput setaf 4)$s$(tput setaf 3)run command:"ssh automation@placeholder"
+| $(tput setaf 4)$s$(tput setaf 3)run command:"ssh username@placeholder"
 | ${s//?/ }enter password:enter Yes
 | ${s//?/ }enter password:"123qwe"
-| ${s//?/ }on the tunnel that opens --> RUN:ssh-keygen -f "/home/automation/.ssh/known_hosts" -R [${device_wlan}]:2222
+| ${s//?/ }on the tunnel that opens --> RUN:ssh-keygen -f "/home/username/.ssh/known_hosts" -R [${device_wlan}]:2222
 | ${s//?/ }ssh-copy-id -p 2222 BigScreen@${device_wlan}
 | ${s//?/ }enter YES
  -${s//?/-}------------------------------------------------------------------------------
