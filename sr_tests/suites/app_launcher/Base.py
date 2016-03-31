@@ -115,21 +115,5 @@ class LauncherBaseTest(BaseTest):
         y = location.max_location[0] + 15
         slash.g.sunriver.linux.ui.dogtail.rawinput.click(x,y)
     
-    #TODO: move it to the appropriate class
-    def convert_app_name_to_pid(self, i_appName):
-        cmd = "ps -ef | grep -i "+i_appName+" |grep -v grep |awk '{print $2}'"
-        appPid = slash.g.sunriver.linux.shell.runCommandWithReturnValue(cmd)
-        log.info(i_appName+"'s PID is "+appPid)
-        return int(appPid)
-
-    #TODO: move it to the appropriate class
-    def check_app_by_pid(self, i_appPid):
-        try:
-            slash.g.sunriver.linux.ui.dogtail.procedural.os.kill(i_appPid, 0)
-        except OSError:
-            return False
-        else:
-            return True
-
     def compare_cycle(self,cycle_number, cycle):
         slash.should.be(cycle_number, cycle)
