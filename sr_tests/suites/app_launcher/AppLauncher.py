@@ -2,6 +2,7 @@ import slash
 from Base import LauncherBaseTest
 import time
 from logbook import Logger
+from sr_automation.utils.ProcessManager import ProcessManager
 log = Logger("StressBaseInsideTest")
 
 class AppLaunchTest(LauncherBaseTest):
@@ -14,8 +15,8 @@ class AppLaunchTest(LauncherBaseTest):
 
     def open_app_from_launcher(self, i_appName):
         self.open_from_applauncher_by_icon_name(i_appName)
-        appPid = self.convert_app_name_to_pid(i_appName)
-        appOpened = self.check_app_by_pid(appPid)
+        appPid = ProcessManager.convert_app_name_to_pid(i_appName)
+        appOpened = ProcessManager.check_app_by_pid(appPid)
         slash.should.be(appOpened, True)
 
     def test_launcher(self):
