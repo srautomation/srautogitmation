@@ -22,11 +22,11 @@ class LauncherBaseTest(BaseTest):
         log.info('Opening Launcher')
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>l')
 
-    def open_search(self, value= None):
-	log.info('Opening search')
+    def open_search(self, i_value=None):
+	log.info('Opening Search')
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>f')
-	if value != None:
-		slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(value)
+	if i_value != None:
+		slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(i_value)
     
     def search_chromium(self):
         log.info('Searching Chromium application')
@@ -40,14 +40,27 @@ class LauncherBaseTest(BaseTest):
             found = True
         return found
 
-    def close_all_apps(self):
+    def assert_and_close_folders(self):
         log.info('Closing all windows')
         closeall = "/home/"+self.m_username+"/sr_automation/automation-screenshots/close-all.png"
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(50,120, button=3)
+        folders = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Folders.png"
+        folders_ss = "Folders_snapshot.png"
+        folders_pos = ImageTools.find_sub_image_in_image(folders_ss, folders)
+        foundFolders = False
+        if folders_pos.max_value > 0.9:
+            foundFolders = True
+        slash.should.be(foundFolders, True)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(folders_pos.max_location[1]+15,folders_pos.max_location[0]+15, button=3)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         time.sleep(3)
         snapshot = "Close_snapshot.png"
         location = ImageTools.find_sub_image_in_image(snapshot, closeall)
         slash.g.sunriver.linux.ui.dogtail.rawinput.click(location.max_location[1]+15,location.max_location[0]+15)
+        folders_pos = ImageTools.find_sub_image_in_image(folders_ss, folders)
+        foundFolders = False
+        if folders_pos.max_value > 0.9:
+            foundFolders = True
+        slash.should.be(foundFolders, False)
 
     def sidebar_manipulation(self, i_x, i_y, i_button=1):
         snapshot = "sidebar_snapshot.png"
