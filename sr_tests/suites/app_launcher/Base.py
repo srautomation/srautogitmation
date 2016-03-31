@@ -9,7 +9,7 @@ import slash
 import signal
 
 from logbook import Logger
-log = Logger("Search and App Launcher")
+log = Logger("Search, App Launcher and Side Panel")
 
 class LauncherBaseTest(BaseTest):
 
@@ -27,7 +27,29 @@ class LauncherBaseTest(BaseTest):
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>f')
 	if i_value != None:
 		slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(i_value)
-    
+   
+    def open_directory_from_desktop(self):
+        log.info('Creating folder on desktop')
+        automation_folder = '/home/BigScreen/Desktop/Folder'
+        slash.g.sunriver.linux.ui.dogtail.procedural.os.mkdir(automation_folder)
+        log.info('Testing Side panel from Desktop')
+        snapshot = "Desktop_snapshot.png"
+        desktop = "/home/"+self.m_username+"/sr_automation/automation-screenshots/FolderIcon.png"
+        sidebar = "/home/"+self.m_username+"/sr_automation/automation-screenshots/SingleFolder.png"
+        folder = ImageTools.find_sub_image_in_image(snapshot, desktop)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.doubleClick(folder.max_location[1]+15, folder.max_location[0]+15)
+        sidebar_snap = ImageTools.find_sub_image_in_image(snapshot, sidebar)
+        returnValue = False
+        if sidebar_snap.max_value > 0.9:
+            returnValue = True
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(sidebar_snap[1]+15, sidebar_snap[0]+15, buttom=3)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
+        time.sleep(3)
+        location = ImageTools.find_sub_image_in_image(snapshot, closeall)
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(location.max_location[1]+15,location.max_location[0]+15)
+        slash.g.sunriver.linux.ui.dogtail.procedural.os.mkdir(automation_folder)
+        return returnValue
+
     def search_chromium(self):
         log.info('Searching Chromium application')
         chromium = "/home/"+self.m_username+"/sr_automation/automation-screenshots/ChromiumSearch.png"
