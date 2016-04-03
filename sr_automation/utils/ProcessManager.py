@@ -10,7 +10,11 @@ class ProcessManager(object):
         cmd = "ps -ef | grep -i "+i_appName+" |grep -v grep |awk '{print $2}'"
         appPid = slash.g.sunriver.linux.shell.runCommandWithReturnValue(cmd)
         log.info(i_appName+"'s PID is "+appPid)
-        return int(appPid)
+        try:
+            returnValue = int(appPid)
+        except ValueError:
+            returnValue = None
+        return returnValue
     
     @staticmethod
     def check_app_by_pid(i_appPid):
