@@ -6,6 +6,7 @@ from sr_automation.platform.sunriver.applications.isVNC.VNCInYourPocket import V
 import rpyc
 import time
 import socket
+import getpass
 from logbook import Logger
 log = Logger("Sunriver")
 import os
@@ -93,11 +94,12 @@ class Sunriver(object):
     @classmethod
     def install(cls):
         local_ip = ([(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
-        placeholderFile = open('/home/automation/sr_automation/sr-auto-installation-placeholder','r')
-        installationFile = open('/home/automation/sr_automation/sr-auto-installation','w')
+        username=getpass.getuser()
+        placeholderFile = open('/home/'+username+'/sr_automation/sr-auto-installation-placeholder','r')
+        installationFile = open('/home/'+username+'/sr_automation/sr-auto-installation','w')
         for line in placeholderFile:
-            if 'placeholder' in line:
-                newline = line.replace('placeholder',local_ip)
+            if 'username' in line:
+                newline = line.replace('placeholder',local_ip).replace('username',username)
             else:
                 newline = line
             installationFile.write(newline) 
