@@ -2,6 +2,8 @@ import time
 import slash
 import cv2
 import numpy
+import Image
+import pytesseract
 from os import system
 from sr_automation.utils.TakeSnapshot import TakeSnapshot
 from logbook import Logger
@@ -47,6 +49,14 @@ class ImageTools(object):
                              crop_dict["x_min"]:crop_dict["x_max"], \
                              crop_dict["z_min"]:crop_dict["z_max"] ]
         return cropped_image
+
+    @staticmethod
+    def ocr_image(image_name, crop_dict):
+        image = cv2.imread(ImageTools.DIST_PATH + image_name)
+        cropped_image = ImageTools.crop_image(image, crop_dict)
+        cropped_path = ImageTools.DIST_PATH + "cropped_image.png"
+        cv2.imwrite(cropped_path, cropped_image)
+        return pytesseract.image_to_string(Image.open(cropped_path)) 
 
 class matchStats(object):
     def __init__(self,max_value,max_location):
