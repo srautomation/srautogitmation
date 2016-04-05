@@ -1,11 +1,11 @@
+import slash
 
 class TakeSnapshot(object):
     
-    def __init__(self,shell):
-        self._shell = shell
-        
-    def take_snapshot(self,path,name):
+    @staticmethod   
+    def take_snapshot(path,name):
+        shell = slash.g.sunriver.linux.shell
         cmd = "gnome-screenshot -f \'%s%s\'" %(path,name)
-        return_value = self._shell.runCommandWithReturnValue(cmd)
-    
+        return_value = shell.runCommandWithReturnValue(cmd)
+        return return_value
     

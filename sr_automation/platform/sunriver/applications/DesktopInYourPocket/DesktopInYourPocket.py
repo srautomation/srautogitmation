@@ -87,7 +87,9 @@ class DesktopInYourPocket(object):
                 if not self._android.ui(index='3').click():
                     self._android.ui(resourceId='com.intel.sunriver.ftt:id/bt_devices_not_connected_dialog_ok').click()
             except:
-                print 'Could Not launch Sunriver'
+                print "Could Not launch Sunriver"
+                #--------------------- log.critical('Could Not launch Sunriver')
+                #------------------ raise Exception("Could Not launch Sunriver")
 
     def stop(self):
         self._android.cmd('shell /system/sunriver/srctl stop')

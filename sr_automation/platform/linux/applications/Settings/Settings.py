@@ -3,7 +3,8 @@ from sr_automation.platform.linux.applications.Settings.Account import Account
 from sr_automation.platform.linux.applications.Settings.Language_and_Keyboard import Language_and_keyboard
 from sr_automation.platform.linux.applications.Settings.Sound import Sound
 from sr_automation.platform.linux.applications.Application import _Application
-
+from sr_automation.platform.linux.applications.Settings.WallpaperAndScreenSaver import WallpaperAndScreenSaver
+import slash
 
 class Settings(_Application):
 
@@ -17,6 +18,8 @@ class Settings(_Application):
         self._account = Account(self)
         self._language_and_keyboard = Language_and_keyboard(self)
         self._sound = Sound(self)
+        self._wallpaperAndScreenSaver = WallpaperAndScreenSaver(self)
+        slash.g.sunriver.currentPass = self._account.DEFUALT_P
 
     @property
     def Settings(self):
@@ -29,6 +32,10 @@ class Settings(_Application):
     @property
     def sound(self):
         return self._sound
+    
+    @property
+    def wallpaperAndScreenSaver(self):
+        return self._wallpaperAndScreenSaver
     
     @property
     def language_and_keyboard(self):

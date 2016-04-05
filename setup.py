@@ -1,18 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sr_tools.config as config
 import os 
 try:# pip needed to download setuptools(may need update)
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
+def ensure_dir(f):
+    d = os.path.dirname(f)
+    if not os.path.exists(d):
+        os.makedirs(d)
 
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 working_dir = os.getcwd()
 dut_latest_ip = os.system('ln -s %s/sr_tools/dut_latest_ip.txt /usr/local/bin/dut_latest_ip.txt'%working_dir)
-icon_path = os.system('ln -s %s/sr_automation/automation-screenshots/ /tmp/automation-screenshots'%working_dir)
+ensure_dir(config.automation_files_dir)
+icon_path = os.system('ln -s %s/automation-screenshots/ %s/automation-screenshots'%(working_dir,config.automation_files_dir))
+
 
 requirements = [
     "rpyc",

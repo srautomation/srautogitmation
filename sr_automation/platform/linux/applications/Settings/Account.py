@@ -3,6 +3,7 @@ from gi.overrides.keysyms import slash
 import time
 class Account(object):
 
+    DEFUALT_P = "1@password"
     ACCOUNT_SUBMENU = "Account"
     DEFAULT_NAME = "Big Screen"
     CHANGE_PASSWORD_BUTTON = "Change Password"
@@ -19,6 +20,7 @@ class Account(object):
 
     def change_pass(self, _pass_entries):
         self._app.child(name=self.CHANGE_PASSWORD_BUTTON).click()
+        assert (self._app.child(name=self.SUBMIT_PASSWORD_BUTTON).sensitive) == False, "submit changes is not greyed-out" # check Submit changes is greyed-out
         pass_entries = self.get_pass_entries_location()
         for i in range(4):
             pass_entries[i].click()

@@ -39,6 +39,7 @@ class BaseTest(Test):
     def before(self):
         self.sunriver = slash.g.sunriver
         self.config   = slash.config
+        self.dogtail = slash.g.sunriver.linux.ui.dogtail
 
     def current_test(self):
         return str(slash.ctx.test)

@@ -26,26 +26,7 @@ class SettingsBaseTest(BaseTest):
         slash.g.settings = Settings(slash.g.sunriver.linux)
         slash.g.settings.start()
 
-   
-    
-    #------------------------------------- def test_language_and_keyboard(self):
-        #------------------------ slash.g.settings.language_and_keyboard.enter()
-        #- slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
-        #--------------------------------------------------------- time.sleep(5)
-        #-------------------------------------------------- self.checklanguage()
-        #- slash.g.settings.language_and_keyboard.add_remove_keyboard_language()
-        #------------------------- slash.g.settings.language_and_keyboard.exit()
 
-    def checklanguage(self):
-        text = "aba"
-        text_in_arabic="شﻻش" 
-        leafpad = Leafpad(slash.g.sunriver.linux)
-        leafpad.start()
-        slash.g.settings.dogtail.rawinput.keyCombo('<Shift><Alt_L>') 
-        leafpad.write_text(text,WriteMethod.Raw) #write in arabic 
-        print leafpad.read_text()
-        assert leafpad.read_text() == text_in_arabic
- 
     def after(self):
         time.sleep(3)
         slash.g.settings.return_from_submenu()

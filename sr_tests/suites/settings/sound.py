@@ -1,3 +1,4 @@
+import sr_tools.config as config
 import time
 from sr_tests.base.Base import BaseTest
 import slash
@@ -11,8 +12,8 @@ log = Logger("SOUND")
 class SoundBaseTest(BaseTest):
     SNAPSHOT_FULL_VOLUME="fullScreen-sound-full-volume.png"
     SNAPSHOT_MUTE = "fullScreen-sound-mute-volume.png"
-    ICON_MUTE_PATH = "/tmp/automation-screenshots/sound-mute.png"
-    ICON_FULL_VOLUME_PATH = "/tmp/automation-screenshots/sound-full-volume.png"
+    ICON_MUTE ="sound-mute.png"
+    ICON_FULL_VOLUME = "sound-full-volume.png"
     initialized = False
     
     
@@ -32,10 +33,10 @@ class SoundBaseTest(BaseTest):
         log.info("test- change volume through settings panel. check if the icon in the top panel updates accordingly")
         time.sleep(2)
         self.sound.change_output_volume_level(0)
-        self.check_volume_icon(self.SNAPSHOT_MUTE,self.ICON_MUTE_PATH)
+        self.check_volume_icon(self.SNAPSHOT_MUTE,config.pictures_dir + self.ICON_MUTE)
         time.sleep(2)
         self.sound.change_output_volume_level(100)
-        self.check_volume_icon(self.SNAPSHOT_FULL_VOLUME,self.ICON_FULL_VOLUME_PATH)
+        self.check_volume_icon(self.SNAPSHOT_FULL_VOLUME,config.pictures_dir + self.ICON_FULL_VOLUME)
     
     def check_volume_icon(self,image_name,subImage_path):
         boundries = self.find_crop_boundries()
