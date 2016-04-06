@@ -3,17 +3,12 @@ from sr_automation.platform.sunriver.Resources import Resources
 
 import os
 import slash
-from slash import Test
-
-from logbook import Logger
-log = Logger("BaseTest")
-
 
 @slash.hooks.session_start.register
 def start_sunriver():
-    log.info("Starting Sunriver ")
+    slash.logger.info("Starting Sunriver ")
     slash.g.sunriver = Sunriver()
-    log.info("Starting Desktop")
+    slash.logger.info("Starting Desktop")
     sync_resources()
 
 def sync_resources():
@@ -28,13 +23,10 @@ def sync_resources():
 
 @slash.hooks.result_summary.register
 def stop_sunriver():
-    log.info("Stopping Desktop")
+    slash.logger.info("Stopping Desktop")
     slash.g.sunriver.stop()
 
-class BaseTest(Test):
-    
-    #------------------------------------------------------- def __init__(self):
-        #--------------------------------------------------- Test.__init__(self)
+class BaseTest(slash.Test):
     
     def before(self):
         self.sunriver = slash.g.sunriver
