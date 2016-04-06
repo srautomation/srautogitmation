@@ -101,7 +101,7 @@ def run_suite(suite, config=None, *args, **kw):
     path = os.path.join(_project_root(), "sr_tests", "suites", suite)
     if config is None:
         config = os.path.join(path, "config.py")
-    command="SLASH_SETTINGS={} slash run -vvv {} {}".format( config
+    command="SLASH_SETTINGS={} slash run -vvv {} {} -l /tmp/testlog.log".format( config
                                                            , " ".join(args)
                                                            , " ".join(["{}={}".format(k,v) for (k,v) in kw.iteritems()])
                                                            )
