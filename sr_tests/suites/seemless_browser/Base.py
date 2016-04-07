@@ -16,7 +16,7 @@ class SeemlessBrowserTest(BaseTest):
         slash.g.chromium.start()
 
     def start_libre_with_screenshot(self):    
-        log.warn("Starting LibreOffice")
+        log.info("Starting LibreOffice")
         slash.g.writer = Writer(slash.g.sunriver.linux)
         slash.g.writer.start(option='/tmp/dogtail-BigScreen/chromeShot.png')
 
