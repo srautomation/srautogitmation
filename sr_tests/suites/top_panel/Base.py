@@ -94,6 +94,8 @@ class PanelBaseTest(BaseTest):
         self.template_verification("Notifications", "Notifications")
 
     def test_phone_app(self):
+        if slash.g.sunriver.vnc.isVNCOpen():
+            slash.g.sunriver.vnc.CloseVnc()
         self.template_verification("Phone_App", "Phone App")
     
     def test_bluetooth(self):
