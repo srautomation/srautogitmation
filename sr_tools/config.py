@@ -9,7 +9,7 @@ sanity_suites = [
                 ('app_launcher','AppLauncher.py'),
                 #mail
                 #('pcmanfm','Base.py'),
-                ('seemless_browser','seemless_sanity.py'),
+                ('seamless_browser','seamless_sanity.py'),
                 ('camera','CameraVLCTest.py')
                 #audio
                 #notification
