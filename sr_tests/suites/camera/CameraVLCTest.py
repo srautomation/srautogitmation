@@ -20,3 +20,4 @@ class CameraVLCTest(CameraBaseTest):
         self.play_video_in_device(video_name, self.m_VideoDuration)
         self.play_video_in_vlc(video_name, self.m_VideoDuration)
         slash.g.sunriver.linux.ui.dogtail.procedural.os.remove(self.m_VideoPath+video_name)
+        slash.g.sunriver.vnc.CloseVnc()
