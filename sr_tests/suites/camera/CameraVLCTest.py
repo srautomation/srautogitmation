@@ -11,8 +11,7 @@ class CameraVLCTest(CameraBaseTest):
     m_VideoPath = "/home/BigScreen/Android/DCIM/Camera/"
 
     def test_camera(self):
-        if not slash.g.sunriver.vnc.isVNCOpen():
-            slash.g.sunriver.vnc.OpenVnc()
+        slash.g.sunriver.vnc.OpenVnc()
         self.open_camera()
         self.record_by_duration(self.m_VideoDuration)
         video_dir = slash.g.sunriver.linux.ui.dogtail.procedural.os.listdir(self.m_VideoPath)
