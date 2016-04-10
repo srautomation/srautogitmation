@@ -7,5 +7,11 @@ sanity_suites = [
                 ('top_panel','Base.py'),
                 ('phone_app','Base.py'),
                 ('app_launcher','AppLauncher.py'),
-                ('seemless_browser','seemless_sanity.py')
+                #mail
+                #('pcmanfm','Base.py'),
+                ('seemless_browser','seemless_sanity.py'),
+                ('camera','CameraVLCTest.py')
+                #audio
+                #notification
+                #settings
                 ]
