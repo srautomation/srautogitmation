@@ -4,12 +4,12 @@ from sr_automation.platform.linux.applications.Browser.Browser import Chromium
 from sr_automation.platform.linux.applications.Libreoffice.Writer import Writer
 import time
 from logbook import Logger
-log = Logger("Seemless Operation and Browser")
+log = Logger("Seamless Operation and Browser")
 
-class SeemlessBrowserTest(BaseTest):
+class SeamlessBrowserTest(BaseTest):
 
     def before(self):
-        super(SeemlessBrowserTest, self).before()
+        super(SeamlessBrowserTest, self).before()
 
     def start_chrome(self):
         slash.g.chromium = Chromium(slash.g.sunriver.linux)
