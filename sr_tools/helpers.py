@@ -1,5 +1,6 @@
 from bunch import Bunch
 import subprocess
+from sr_tools import config
 import re
 import time
 import operator
@@ -109,13 +110,15 @@ def adb_over_wifi(deviceip):#Need to inspect option in which no wifi is detected
             log.warn('adb over  wifi  already connected')
 
 def ssh_connect(ip):
-    os.system('adb push /home/labuser/sr_automation/sshd_config /data/sunriver/fs/limited/etc/ssh/')
+    cmd = "adb push %s/sshd_config %s/etc/ssh/"%(config.working_dir,config.chroot_path)
+    os.system(cmd)
     os.system('adb reboot')
     os.system('adb wait-for-device')
     print 'connect bluetooth device to DUT - and load sunriver ALT-UP'
     for i in range(10): print i; time.sleep(1)
     os.system('ssh-add')
-    os.system('ssh-keygen -f "/home/automation/.ssh/known_hosts" -R [%s]:2222'%ip)
+    cmd = "ssh-keygen -f \"/home/%s/.ssh/known_hosts\" -R [%s]:2222"%(config.username,ip)
+    os.system(cmd)
     os.system('ssh-copy-id -p 2222 BigScreen@%s'%ip)
 
 class chdir:

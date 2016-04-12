@@ -1,39 +1,33 @@
 import sr_tools.config as config
-from sr_tests.base.Base import BaseTest
+from sr_tests.suites.settings.settings_Base import SettingsBaseTest
 import slash
-from sr_automation.platform.linux.applications.Settings.Settings import Settings
 from sr_automation.utils.ImageTools import ImageTools
 from logbook import Logger
-import time
 
 log = Logger("WALLPAPER_AND_SCREENSAVER")
 
 
-class WallpaperAndScreenSaverTest(BaseTest):
+class WallpaperAndScreenSaverTest(SettingsBaseTest):
     BEFORE_SNAPSHOT = "before_screensaver"
     SCREENSAVER_SNAPSHOT ="while_screensaver.png"
     AFTER_SNAPSHOT ="after_screensaver.png"
     SCREENSHOT_FILE = "screensaver.png"
     LOCK_FILE = "lock"
-    initialized = False
     
     def before(self):
-        if not self.initialized:
-            self.initialized = True
-            super(WallpaperAndScreenSaverTest, self).before()
-            self.settings = Settings(slash.g.sunriver.linux)
-            self.wallpaperAndScreenSaver = self.settings.wallpaperAndScreenSaver
+        super(WallpaperAndScreenSaverTest, self).before()
+        self.settings = slash.g.sunriver.settings 
+        self.wallpaperAndScreenSaver = self.settings.wallpaperAndScreenSaver
         self.settings.start()
         self.wallpaperAndScreenSaver.enter()
 
     def test_screenSaver(self):
         log.info("test entering and exiting screensaver")
-        self.wallpaperAndScreenSaver.enter_panel(self.wallpaperAndScreenSaver.SCREEN_SAVER)
-        self.wallpaperAndScreenSaver.change_screenSaver_Start_After(self.wallpaperAndScreenSaver.DURATION["minute"])
+        self.configure_screensaver_and_lockscreen()
         ImageTools.snapShot_and_copy_file(self.BEFORE_SNAPSHOT)
         self.settings.dogtail.utils.doDelay(63)
         ImageTools.snapShot_and_copy_file(self.SCREENSAVER_SNAPSHOT)
-        time.sleep(2)
+        self.settings.dogtail.utils.doDelay(2)
         is_black_screen = ImageTools.check_if_black_screen( config.automation_files_dir +self.SCREENSAVER_SNAPSHOT)
         assert is_black_screen == False , "screensaver didn't work,black screen"
         s = ImageTools.compare_images(config.pictures_dir+self.SCREENSHOT_FILE, config.automation_files_dir +self.SCREENSAVER_SNAPSHOT)
@@ -46,6 +40,24 @@ class WallpaperAndScreenSaverTest(BaseTest):
  
     def wake_up_screen(self):
         self.settings.dogtail.rawinput.keyCombo('<Shift><Shift>')
+    
+    def enable_screensaver(self):
+        state = self.wallpaperAndScreenSaver.check_if_enabled()
+        if state is False:
+            self.wallpaperAndScreenSaver.enable_disable_screenSaver()
+    
+    def dont_require_pass_after_screensaver(self):
+        state = self.wallpaperAndScreenSaver.check_if_require_pass_when_waking_up()
+        if state is True:
+            self.wallpaperAndScreenSaver.enable_disable_pass_when_waking_up()
+            
+    def configure_screensaver_and_lockscreen(self):
+        self.wallpaperAndScreenSaver.enter_panel(self.wallpaperAndScreenSaver.AUTO_LOCK)
+        self.wallpaperAndScreenSaver.change_auto_lock_Start_After(self.wallpaperAndScreenSaver.DURATION["None"])
+        self.wallpaperAndScreenSaver.enter_panel(self.wallpaperAndScreenSaver.SCREEN_SAVER)
+        self.enable_screensaver()
+        self.wallpaperAndScreenSaver.change_screenSaver_Start_After(self.wallpaperAndScreenSaver.DURATION["minute"])
+        self.dont_require_pass_after_screensaver()
            
     def after(self):
         self.settings.stop()

@@ -13,9 +13,11 @@ def ensure_dir(f):
     if not os.path.exists(d):
         os.makedirs(d)
 
+working_dir = os.getcwd()
+open(config.automation_files_dir+'repo_dir.txt','w').write(working_dir)
+
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
-working_dir = os.getcwd()
 dut_latest_ip = os.system('ln -s %s/sr_tools/dut_latest_ip.txt /usr/local/bin/dut_latest_ip.txt'%working_dir)
 ensure_dir(config.automation_files_dir)
 icon_path = os.system('ln -s %s/automation-screenshots/ %s/automation-screenshots'%(working_dir,config.automation_files_dir))

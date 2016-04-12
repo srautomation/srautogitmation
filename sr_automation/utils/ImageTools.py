@@ -26,6 +26,12 @@ class ImageTools(object):
         return err
     
     @staticmethod
+    def snap_and_compare(imageName,comparedImagePath,error,threshold=0.9):
+        ImageTools.snapShot_and_copy_file(imageName)
+        result = ImageTools.compare_images(config.automation_files_dir + imageName, comparedImagePath)
+        assert result > threshold , error
+    
+    @staticmethod
     def compare_images(imageA_path,imageB_path):
         imageA = cv2.imread(imageA_path)
         imageB = cv2.imread(imageB_path)

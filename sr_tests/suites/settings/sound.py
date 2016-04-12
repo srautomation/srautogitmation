@@ -1,28 +1,23 @@
 import sr_tools.config as config
 import time
-from sr_tests.base.Base import BaseTest
+from sr_tests.suites.settings.settings_Base import SettingsBaseTest
 import slash
-from sr_automation.platform.linux.applications.Settings.Settings import Settings
 from sr_automation.utils.ImageTools import ImageTools
 
 from logbook import Logger
 log = Logger("SOUND")
 
-
-class SoundBaseTest(BaseTest):
+class SoundBaseTest(SettingsBaseTest):
     SNAPSHOT_FULL_VOLUME="fullScreen-sound-full-volume.png"
     SNAPSHOT_MUTE = "fullScreen-sound-mute-volume.png"
     ICON_MUTE ="sound-mute.png"
     ICON_FULL_VOLUME = "sound-full-volume.png"
     initialized = False
-    
-    
+        
     def before(self):
-        if not self.initialized:
-            self.initialized = True
-            super(SoundBaseTest, self).before()
-            self.settings = Settings(slash.g.sunriver.linux)
-            self.sound = self.settings.sound
+        super(SoundBaseTest, self).before()
+        self.settings = slash.g.sunriver.settings    
+        self.sound = self.settings.sound
         self.settings.start()
         self.sound.enter()
             

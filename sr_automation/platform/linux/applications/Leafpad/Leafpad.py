@@ -14,7 +14,8 @@ class Leafpad(object):
         self._process = self._linux.cmd("leafpad")
         time.sleep(9)
         self._app = self._dogtail.tree.root.application("leafpad")
-
+        self._textbox = self._app.child(roleName = 'text')
+        
     def stop(self):
         if self._process.is_running():
             self._process.terminate()
@@ -33,6 +34,17 @@ class Leafpad(object):
         textBox = app.child(roleName = 'text')
         textBox.grabFocus()
         return textBox.text 
+    
+    def copy_text(self):
+        self._textbox.grabFocus()
+        self._dogtail.rawinput.keyCombo('<Ctrl>A')
+        self._dogtail.utils.doDelay(1)
+        self._dogtail.rawinput.keyCombo('<Ctrl>C')
+        self._dogtail.utils.doDelay(1)
+
+        #---------------------------------- self._app.child(name='Edit').click()
+        #---------------------------- self._app.child(name='Select All').click()
+        #---------------------------------- self._app.child(name='Copy').click()
 
     def open(self, file):
         ''' file has to be in /root '''

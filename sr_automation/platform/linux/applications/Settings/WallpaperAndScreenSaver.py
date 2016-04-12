@@ -7,11 +7,12 @@ class WallpaperAndScreenSaver(Settings_submenu):
     WALL_PAPAER_SUBMENU = (650, 200)
     WALLPAPER = "Wallpaper"
     SCREEN_SAVER = "Screen Saver"
-    LOCK_BUTTON = "Auto-Lock"
+    AUTO_LOCK = "Auto-Lock"
     START_AFTER = "Start After:"
     DURATION= {"minute": "1 Minute",
-               "30 minutes": "30 Minutes"}
-    AUTO_LOCK_COMBO_LABEL = "of inactivity"
+               "30 minutes": "30 Minutes",
+               "None":"None"}
+    AUTO_LOCK_COMBO_LABEL = "of inactivity."
     
     
     def __init__(self, settings):
@@ -35,13 +36,14 @@ class WallpaperAndScreenSaver(Settings_submenu):
         combo_box_value = combo_box.child(name=combovalue)
         combo_box_value.click()
         
-    def enter_pass_at_lockscreen(self):
-        self._dogtail.rawinput.keyCombo('<Shift>') #exit screensaver
-        time.sleep(4)
-        self._dogtail.rawinput.keyCombo('<Down>')
-        self._dogtail.rawinput.typeText(slash.g.sunriver.currentPass) 
-        self._dogtail.rawinput.keyCombo('<Down>')
-        self._dogtail.rawinput.keyCombo('<Enter>')
+    def check_if_enabled(self):
+        return self._app.child(name='Preview').sensitive
 
-
+    def enable_disable_screenSaver(self):
+        self._app.child(name='Preview').parent.parent.child(roleName='icon').click()
         
+    def check_if_require_pass_when_waking_up(self):
+        return  self._app.child(name='Preview').parent.parent.parent.parent.child(roleName='check box').isChecked
+    
+    def enable_disable_pass_when_waking_up(self):
+        self._app.child(name='Preview').parent.parent.parent.parent.child(roleName='check box').click()

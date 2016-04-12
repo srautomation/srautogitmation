@@ -10,6 +10,7 @@ class Sound(Settings_submenu):
 
     def __init__(self, settings):
         super(Sound, self).__init__(settings, self.SOUND_SUBMENU)
+        settings.linux.shell._os.environ['PULSE_SERVER'] = "unix:/shared/audio/pasocket"
 
     def change_output_volume_level(self, _value):
         updated_value = _value*1000

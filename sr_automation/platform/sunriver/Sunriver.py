@@ -1,3 +1,4 @@
+from sr_tools import config
 from sr_automation.platform.android.Android import Android
 from sr_automation.platform.linux.Linux import Linux
 from sr_automation.platform.sunriver.applications.DesktopInYourPocket.DesktopInYourPocket import DesktopInYourPocket
@@ -83,7 +84,7 @@ class Sunriver(object):
         self._android = Android(self._device_id)#resets android object now surely using adb over WIFI
         self._desktop = DesktopInYourPocket(self._android)#objects containing automatic android control functions
         log.warn("Starting RPyC")
-        ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%deviceip
+        ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0  rpyc_classic.py  > /tmp/mylogfile 2>&1 &'"%deviceip
         self.start_desktop(self._desktop)#checks if starting desktop is needed
         os.system(ssh_command)#running ssh command that starts RPyC server on DUT side.
         log.info("Connecting RPyC: %r" % deviceip)
@@ -95,8 +96,8 @@ class Sunriver(object):
     def install(cls):
         local_ip = ([(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
         username=getpass.getuser()
-        placeholderFile = open('/home/'+username+'/sr_automation/sr-auto-installation-placeholder','r')
-        installationFile = open('/home/'+username+'/sr_automation/sr-auto-installation','w')
+        placeholderFile = open(config.working_dir +'/sr-auto-installation-placeholder','r')
+        installationFile = open(config.working_dir+ '/sr-auto-installation','w')
         for line in placeholderFile:
             if 'username' in line:
                 newline = line.replace('placeholder',local_ip).replace('username',username)
