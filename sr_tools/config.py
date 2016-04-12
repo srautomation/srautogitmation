@@ -13,9 +13,14 @@ sanity_suites = [
                 ('mail','SanityMailTest.py'),
                 #('pcmanfm','Base.py'),
                 ('seamless_browser','seamless_sanity.py'),
-                ('camera','CameraVLCTest.py')
+                ('camera','CameraVLCTest.py'),
+                ('settings','account.py'),
+                ('settings','keyboard.py'),
+                ('settings','settings_menus.py'),
+                ('settings','sound.py'),
+                ('settings','wallpaperAndScreenSaver.py'),
+                ('settings','user_menu.py')
                 #audio
                 #notification
-                #settings
                 ]
 
