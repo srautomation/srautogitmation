@@ -53,7 +53,12 @@ class AndroidMailGUI(object):
 
     def send_from_drafts(self, contains):
         self.choose_folder('drafts')
-        self.enter_message(contains)
+        self.choose_message(contains)
+        self.d(descriptionContains = 'edit').click()
+        self.d(resourceId = 'com.android.email:id/send').click()
+
+    def send_from_current_folder(self, contains):
+        self.choose_message(contains)
         self.d(descriptionContains = 'edit').click()
         self.d(resourceId = 'com.android.email:id/send').click()
 
@@ -257,16 +262,9 @@ class AndroidMailGUI(object):
     def choose_folder(self, folder):
         self.main_view()
         self.open_drawer()
-
-   ####     if self.d(textContains = folder, resourceId = 'com.android.email:id/name').exists:
-   ####         self.d(textContains = folder, resourceId = 'com.android.email:id/name').click.wait()
-   ####         return True
-   ####     self.d(resourceId = 'android:id/list', className = 'android.widget.ListView').swipe.up()
+        time.sleep(3)
         if self.d(textContains = folder, resourceId = 'com.android.email:id/name').exists:
             self.d(textContains = folder, resourceId = 'com.android.email:id/name').click.wait()
-   ####         return True
-   ####     return False
-   #### return True
 
     def choose_account(self, account):
         self.main_view()
