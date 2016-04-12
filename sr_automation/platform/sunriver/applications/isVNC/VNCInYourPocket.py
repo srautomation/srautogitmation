@@ -9,10 +9,10 @@ class VNCInYourPocket(object):
         return self._linux.shell.is_running_by_short_name('vnc')
 
     def OpenVnc(self):
-        log.warn('Opening VNC')
+        log.info('Opening VNC')
         if not self.isVNCOpen():
             self._linux.ui.dogtail.rawinput.keyCombo('<Ctrl>h')
 
-    def CloseVNC(self):
-        log.warn('CLosing VNC')
+    def CloseVnc(self):
+        log.info('Closing VNC')
         self._linux.ui.dogtail.procedural.run('pkill xsrvnc.bin')

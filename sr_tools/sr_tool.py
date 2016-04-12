@@ -3,6 +3,11 @@ import time
 import os
 import helpers as H
 from subprocess import Popen
+import sr_tools.config as config
+from datetime import datetime
+
+LOG_DIR = config.log_dir
+SANITY_SUITES = config.sanity_suites
 
 @baker.command
 def devices():
@@ -105,8 +110,24 @@ def run_suite(suite, config=None, *args, **kw):
                                                            , " ".join(args)
                                                            , " ".join(["{}={}".format(k,v) for (k,v) in kw.iteritems()])
                                                            )
+    cmd = command + " -l " + LOG_DIR
+    print cmd
     with H.chdir(path):
-        os.system(command)
+        os.system(cmd)
+
+@baker.command
+def run_sanity():
+    """Run all sanity suites"""
+    suites = SANITY_SUITES
+    paths = []
+    for suite in suites:
+        path = os.path.join(_project_root(), "sr_tests", "suites", suite[0], suite[1])
+        paths.append(path)
+    command = "slash run -vvv"
+    for path in paths:
+        command += " " + path
+    command += " -l " + LOG_DIR
+    os.system(command)
 
 def main():
     baker.run()

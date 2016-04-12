@@ -17,24 +17,21 @@ class CameraBaseTest(BaseTest):
         log.info('Opening Camera')
         os.system("adb shell 'am start -a android.media.action.VIDEO_CAMERA'")
 
-    def start_stop_recording(self):
-    	log.info('Start/Stop Playing video')
+    def record_by_duration(self, i_Duration):
+    	log.info('Recording Video')
         os.system("adb shell 'input keyevent 27'")
+        time.sleep(i_Duration)
+        os.system("adb shell 'input keyevent 66'")
+        os.system("adb shell 'input keyevent 66'")
     
-    def check_vnc_open(self):
-        return slash.g.sunriver.linux.shell.is_running_by_short_name('xsrvnc')#checks if vnc is open on sunriver
+    @staticmethod
+    def play_video_in_device(i_VideoName, i_Duration):
+        log.info('Playing Video on Device')
+        os.system("adb shell am start -n  com.android.gallery3d/.app.MovieActivity -d /storage/emulated/0/DCIM/Camera/"+i_VideoName)
+        time.sleep(i_Duration)
 
-    def open_vlc(self):
-        slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --fullscreen "/home/BigScreen/Android/DCIM/Camera/"&')
-        time.sleep(15)
-        for i in range(3):
-            log.info('change volume')
-            os.system("adb shell 'input keyevent 24'")
-            time.sleep(3)
-        for i in range(6):
-            os.system("adb shell 'input keyevent 25'")
-        #slash.g.sunriver.stop()
-        #slash.g.sunriver.start()
-
-    def compare_cycle(self,cycle_number, cycle):
-        slash.should.be(cycle_number, cycle)
+    @staticmethod
+    def play_video_in_vlc(i_VideoName, i_Duration):
+        log.info('Playing Video in VLC')
+        slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --fullscreen "/home/BigScreen/Android/DCIM/Camera/'+i_VideoName)
+        time.sleep(i_Duration)

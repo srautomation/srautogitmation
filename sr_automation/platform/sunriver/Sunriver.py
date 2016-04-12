@@ -83,13 +83,13 @@ class Sunriver(object):
         self._device_id = Android.devices().keys()[0]
         self._android = Android(self._device_id)#resets android object now surely using adb over WIFI
         self._desktop = DesktopInYourPocket(self._android)#objects containing automatic android control functions
-        log.warn("Starting RPyC")
-        ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0  rpyc_classic.py  > /tmp/mylogfile 2>&1 &'"%deviceip
+        log.info("Starting RPyC")
+        ssh_command = "ssh -p 2222 BigScreen@%s 'DISPLAY=:0 rpyc_classic.py > /dev/null > /tmp/mylogfile 2>&1 &'"%deviceip
         self.start_desktop(self._desktop)#checks if starting desktop is needed
         os.system(ssh_command)#running ssh command that starts RPyC server on DUT side.
         log.info("Connecting RPyC: %r" % deviceip)
         rpyc_connection = self.rpyc_connect(deviceip)#stores RPyC connection making it available to use device modules from pc
-        log.warn('Connected!')
+        log.info('Connected!')
         return Linux(modules=rpyc_connection.modules, rpyc=rpyc_connection, modules_user=rpyc_connection.modules, rpyc_user=rpyc_connection)
 
     @classmethod

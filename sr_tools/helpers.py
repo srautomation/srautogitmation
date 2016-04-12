@@ -107,7 +107,7 @@ def adb_over_wifi(deviceip):#Need to inspect option in which no wifi is detected
             log.warn('adb over wifi connected - disconnect usb')
             wait_usb_disconnection()
         else:
-            log.warn('adb over  wifi  already connected')
+            log.info('adb over wifi already connected')
 
 def ssh_connect(ip):
     cmd = "adb push %s/sshd_config %s/etc/ssh/"%(config.working_dir,config.chroot_path)

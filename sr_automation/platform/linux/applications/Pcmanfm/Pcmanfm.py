@@ -15,7 +15,7 @@ class Pcmanfm(_Application):
 
     def start_pcmanfm(self):
         self.start_dogtail_app(self.APPName)
-        time.sleep(3)
+        time.sleep(1)
         self._rawinput = self.dogtail.rawinput
     
     @property
@@ -25,7 +25,7 @@ class Pcmanfm(_Application):
     def goto(self, dir_name):
         #self.toggle_sort()
         self.app.child(name=dir_name).doubleClick()
-        time.sleep(3)
+        time.sleep(1)
 
    # def toggle_sort(self):#need to sort to detail view in order to find folder using atspi
     #    tupxy = self.app.child(roleName='toggle button').click()
@@ -33,10 +33,10 @@ class Pcmanfm(_Application):
       #  self._rawinput.click((int(tupxy[1]) + 42) , tupxy[1]) 
        # time.sleep(3)
 
-    def new_folder(self):
+    def new_folder(self, i_new_folder_name):
         self.app.child(name='New folder').click()
         time.sleep(1)
-        self.app.child(roleName='dialog').child(roleName='text').text = self.NewFolderName
+        self.app.child(roleName='dialog').child(roleName='text').text = i_new_folder_name
         self.app.child(roleName='dialog').child(name='OK').click()
 
     def new_file(self):

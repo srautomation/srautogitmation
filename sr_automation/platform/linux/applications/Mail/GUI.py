@@ -1,4 +1,4 @@
-import IPython
+import slash
 import time
 
 class LinuxMailGUI(object):
@@ -6,12 +6,13 @@ class LinuxMailGUI(object):
         self._linux = linux
         self._dogtail = self._linux.ui.dogtail
 
-    def send(self, to, subject, body, attachments=[]):
-        to_list = ",".join(to)
-        command = "icedove -compose \"to='{}',subject='{}',body='{}'\"".format( to_list
-                                                                                  , subject
-                                                                                  , body
+    def send(self, i_To, i_Subject, i_Body, i_Attachments=[]):
+        command = "icedove -compose \"to='{}',subject='{}',body='{}',attachment='{}'\"".format( i_To
+                                                                                  , i_Subject
+                                                                                  , i_Body
+                                                                                  , i_Attachments
                                                                                   )
+        slash.logger.info('Executing: '+command)
         self._linux.shell.shell(command)
 
 
@@ -20,15 +21,18 @@ class LinuxMailGUI(object):
         self._icedove = self._dogtail.tree.root.application('Icedove')
         try:
             if self._icedove.child(roleName='dialog').child(roleName='check box') is not None:
-                print 'first time dialog'
-                pwrd = self._icedove.child(roleName='dialog').child(roleName='check box').click()
+                slash.logger.info('first time dialog')
+                self._icedove.child(roleName='dialog').child(roleName='check box').click()
                 pwrd = self._icedove.child(roleName='dialog').child(roleName='password text')
                 pwrd.text = '12srusertest'
-                ok_button = self._icedove.child(roleName='dialog').child(name='OK')
-                ok_button.click()
+                self._icedove.child(roleName='dialog').child(name='OK').click()
         except:
-            print 'first dialog already entered'
-
+            slash.logger.info('first dialog already entered')
+    
+    def check_received_message(self, subject):
+        self._icedove.child(name='Unread').click()
+        return self._icedove.isChild(subject)
+        
 if __name__ == "__main__":
     from sr_automation.platform.sunriver.Sunriver import Sunriver
     sunriver = Sunriver()
@@ -37,7 +41,7 @@ if __name__ == "__main__":
     icedove = mail_gui._dogtail.tree.root.application('Icedove')
     mail_gui.send(["dorx.libman@intel.com"], "test", "loremipsumtext")
     time.sleep(3)
-    print 'sending mail'   
+    slash.logger.info('Sending mail')   
     icedove.child(name='Write: test').child(name='Send').click()
     time.sleep(3)
     pwrd = icedove.child(roleName='dialog').child(roleName='section').child('password text')
