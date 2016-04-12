@@ -55,9 +55,11 @@ class AccountBaseTest(SettingsBaseTest):
         pass_entries = [OLD_PASS,self.NEW_PASS, VERIFY_PASS, HINT]
         self.account.change_pass(pass_entries)
         self.checkPassword()
+        slash.g.sunriver.currentPass = self.NEW_PASS
         pass_entries = [self.NEW_PASS,OLD_PASS ,OLD_PASS, OLD_PASS] #cleanup
         self.account.change_pass(pass_entries)
-        
+        slash.g.sunriver.currentPass = OLD_PASS
+
     def test_check_change_password_gui(self):
         self.account.change_password_click()
         ImageTools.snapShot_and_copy_file(self.CHANGE_PASS_SNAPSHOT)
@@ -88,7 +90,6 @@ class AccountBaseTest(SettingsBaseTest):
         output = self.settings.linux.shell.runCommandWithReturnValue(cmd)
         print output
         assert crypt.crypt(self.NEW_PASS,output) == output ,"couldn't change password"
-        slash.g.sunriver.currentPass = self.NEW_PASS
          
     def after(self):
         self.settings.stop()
