@@ -65,5 +65,3 @@ class PhoneAppBaseTest(BaseTest):
 
     def test_phone_calls(self):
         log.warn("Phone call automated test is not implemented yet")
-        DoneManually = raw_input("Enter 1 when you complete it manually: ")
-        slash.should.be(DoneManually,'1')
