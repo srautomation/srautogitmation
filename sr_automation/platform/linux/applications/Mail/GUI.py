@@ -29,6 +29,9 @@ class LinuxMailGUI(object):
         except:
             slash.logger.info('first dialog already entered')
     
+    def stop_icedove(self):
+        self._linux.cmd("killall icedove")
+    
     def check_received_message(self, subject):
         self._icedove.child(name='Unread').click()
         return self._icedove.isChild(subject)
