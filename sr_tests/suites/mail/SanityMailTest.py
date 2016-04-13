@@ -95,4 +95,6 @@ class SanityMailTest(BaseTest):
         log.info("Verifying message arrived at Icedove")
         time.sleep(10)
         mailRecieved = slash.g.mail.linuxGUI.check_received_message(subject)
+        slash.g.calc.stop()
+        slash.g.mail.linuxGUI.stop_icedove()
         slash.should.be(mailRecieved, True)
