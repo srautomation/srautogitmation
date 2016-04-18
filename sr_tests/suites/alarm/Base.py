@@ -31,6 +31,38 @@ class AlarmBaseTest(BaseTest):
         self.sunriver.android.ui(resourceId="android:id/button1").click()
         return TimeUtils.format_time(timeToSet)
     
+    def set_snooze_period(self, i_TimeToSet):
+        SnoozePossibilities = range(1,31)
+        RequestedSnooze = str(i_TimeToSet)
+        if i_TimeToSet not in SnoozePossibilities:
+            log.error("Unable to set snooze for: "+RequestedSnooze)
+            return 0
+        log.info("setting snooze period for: "+RequestedSnooze)
+        self.sunriver.desktop.openSpecificApp('Clock')
+        self.sunriver.android.ui(className="android.widget.ImageView", description="Clock").click()
+        self.sunriver.android.ui(resourceId="com.android.deskclock:id/menu_button").click()
+        self.sunriver.android.ui(text="Settings").click()
+        self.sunriver.android.ui(text="Snooze length").click()
+        if not self.sunriver.android.ui(text=RequestedSnooze).exists:
+            for snooze in SnoozePossibilities:
+                title = str(snooze)
+                if self.sunriver.android.ui(text=title).exists:
+                    LowerNum = snooze
+                    break
+            if LowerNum >= i_TimeToSet:
+                NumToClick = LowerNum
+                modifier = -1
+            else:
+                NumToClick = LowerNum + 2
+                modifier = 1
+            while NumToClick != i_TimeToSet:
+                ClickTitle = str(NumToClick)
+                self.sunriver.android.ui(text=ClickTitle).click()
+                time.sleep(1)
+                NumToClick += modifier
+        self.sunriver.android.ui(text=RequestedSnooze).click()
+        self.sunriver.android.ui(text="OK").click()
+        
     def AlarmRaised(self):
         IconPath = "/home/"+self.m_username+"/sr_automation/automation-screenshots/AlarmActions.png"
         Snapshot = "AlarmSnapshot.png"
@@ -55,10 +87,11 @@ class AlarmBaseTest(BaseTest):
             self.sunriver.linux.ui.dogtail.rawinput.click(ActionsStats.max_location[1]+15, ActionsStats.max_location[0]+15)
         else:
             slash.add_error('Unable to find '+i_Action+' button!')
-
+      
     def test_alarm(self):
         TimeUtils.sync_time()
         self.sunriver.vnc.OpenVnc()
+        self.set_snooze_period(1)
         alarmTime = self.set_alarm_for_next_interval()
         time.sleep(4)
         self.sunriver.android.ui.press.home()
@@ -68,5 +101,6 @@ class AlarmBaseTest(BaseTest):
             time.sleep(1)
         slash.should.be(self.AlarmRaised(), True)
         self.clickAction('Snooze')
+        time.sleep(60)
         slash.should.be(self.AlarmRaised(), True)
         self.clickAction('Dismiss')
