@@ -90,7 +90,10 @@ class SeamlessSanity(SeamlessBrowserTest):
 
     def test_libre(self):
         filename = str(datetime.now()).replace(':','-')
-        self.start_libre_with_screenshot()
+        try:
+            self.start_libre_with_screenshot()
+        except SystemExit:
+            slash.should.be_true(False)
         slash.g.writer.write_text('inserting text')
         slash.g.writer.choose_slide()
         time.sleep(3)
