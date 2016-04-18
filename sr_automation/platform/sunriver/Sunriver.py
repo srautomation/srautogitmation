@@ -96,8 +96,9 @@ class Sunriver(object):
     def install(cls):
         local_ip = ([(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
         username=getpass.getuser()
-        placeholderFile = open(config.working_dir +'/sr-auto-installation-placeholder','r')
-        installationFile = open(config.working_dir+ '/sr-auto-installation','w')
+        import pdb;pdb.set_trace()
+        placeholderFile = open(config.get_working_dir() + '/sr-auto-installation-placeholder','r')
+        installationFile = open(config.get_working_dir()+ '/sr-auto-installation','w')
         for line in placeholderFile:
             if 'username' in line:
                 newline = line.replace('placeholder',local_ip).replace('username',username)
