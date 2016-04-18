@@ -1,7 +1,5 @@
 from sr_tests.base.Base import BaseTest
-from sr_automation.platform.sunriver.Sunriver import Sunriver
 import time
-from bunch import Bunch
 import slash
 import os
 
@@ -12,13 +10,13 @@ class CameraBaseTest(BaseTest):
    
     def before(self):
         super(CameraBaseTest, self).before()
-	
+
     def open_camera(self):
         log.info('Opening Camera')
         os.system("adb shell 'am start -a android.media.action.VIDEO_CAMERA'")
 
     def record_by_duration(self, i_Duration):
-    	log.info('Recording Video')
+        log.info('Recording Video')
         os.system("adb shell 'input keyevent 27'")
         time.sleep(i_Duration)
         os.system("adb shell 'input keyevent 66'")

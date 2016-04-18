@@ -33,8 +33,11 @@ class SeamlessSanity(SeamlessBrowserTest):
         androidUI(resourceId="com.android.chrome:id/url_bar").click()
         androidUI(resourceId="com.android.chrome:id/url_bar").set_text(self.video_url)
         androidUI.press('Enter')
-        time.sleep(6)
-        slash.should.be(androidUI(text='https://m.youtube.com').exists, True)
+        time.sleep(10)
+        if androidUI(text='https://m.youtube.com/watch?v=YQHsXMglC9A').exists:
+            slash.should.be(androidUI(text='https://m.youtube.com/watch?v=YQHsXMglC9A').exists, True)
+        else:
+            slash.should.be(androidUI(text='https://m.youtube.com').exists, True)
 
     def test_chromium(self):
         keycombo = slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo
