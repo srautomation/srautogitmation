@@ -35,5 +35,6 @@ class KeyboardBaseTest(SettingsBaseTest):
         print self.leafpad.read_text()
         assert self.leafpad.read_text() == text_in_arabic , "didn't wrote in arabic"
      
-    def after(self):    
+    def after(self): 
+        super(KeyboardBaseTest, self).after()
         self.leafpad.stop()
