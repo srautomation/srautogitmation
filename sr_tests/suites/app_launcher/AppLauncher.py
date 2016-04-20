@@ -29,7 +29,7 @@ class AppLaunchTest(LauncherBaseTest):
     def test_b_app_from_launcher(self):
         log.info('Contextual tests on app launched by app launcher')
         self.open_app_from_launcher('Galculator')
-	time.sleep(3)
+        time.sleep(3)
         contextualPassed = self.contextual_asserts_on_calc()
         slash.should.be(contextualPassed, True)
 
@@ -41,7 +41,7 @@ class AppLaunchTest(LauncherBaseTest):
 
     def test_d_search(self):
         log.info('Search Chromium and launch')
-	searchedChromium = self.search_chromium()
+        searchedChromium = self.search_chromium()
         time.sleep(3)
         slash.should.be(searchedChromium, True)
 
