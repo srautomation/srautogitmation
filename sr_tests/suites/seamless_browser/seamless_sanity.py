@@ -51,7 +51,7 @@ class SeamlessSanity(SeamlessBrowserTest):
         self.start_chrome()
         chromium = slash.g.chromium
         slash.should.be_in(self.first_url, chromium._driver.current_url)
-        log.info('Chromium opened successfuly')
+        log.info('Chromium opened successfully')
         keycombo('<Ctrl>l')
         keycombo('<Ctrl>a')
         keycombo('<BackSpace>')
@@ -92,10 +92,10 @@ class SeamlessSanity(SeamlessBrowserTest):
         filename = str(datetime.now()).replace(':','-')
         try:
             self.start_libre_with_screenshot()
+            slash.g.writer.write_text('inserting text')
+            slash.g.writer.choose_slide()
+            time.sleep(3)
+            slash.g.writer.save_as(file_name=filename)
+            slash.g.writer.stop()
         except SystemExit:
             slash.should.be_true(False)
-        slash.g.writer.write_text('inserting text')
-        slash.g.writer.choose_slide()
-        time.sleep(3)
-        slash.g.writer.save_as(file_name=filename)
-        slash.g.writer.stop()
