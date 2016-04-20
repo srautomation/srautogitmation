@@ -14,12 +14,15 @@ class LinuxMailGUI(object):
                                                                                   )
         slash.logger.info('Executing: '+command)
         self._linux.shell.shell(command)
-
-
+       
     def start_icedove(self):
         self._dogtail.procedural.run('icedove')
         self._icedove = self._dogtail.tree.root.application('Icedove')
         try:
+            if self._icedove.child(name='Icedove - Choose User Profile', roleName='dialog') is not None:
+                self._icedove.child(name='Android', roleName='list item').click()
+                self._icedove.child(name='Use the selected profile without asking at startup', roleName='check box').click()
+                self._icedove.child(name='Start Icedove', roleName='push button').click()
             if self._icedove.child(roleName='dialog').child(roleName='check box') is not None:
                 slash.logger.info('first time dialog')
                 self._icedove.child(roleName='dialog').child(roleName='check box').click()
