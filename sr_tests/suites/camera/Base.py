@@ -10,6 +10,7 @@ class CameraBaseTest(BaseTest):
    
     def before(self):
         super(CameraBaseTest, self).before()
+        self.androidUI = self.sunriver.android.ui
 
     def open_camera(self):
         log.info('Opening Camera')
@@ -17,10 +18,10 @@ class CameraBaseTest(BaseTest):
 
     def record_by_duration(self, i_Duration):
         log.info('Recording Video')
-        os.system("adb shell 'input keyevent 27'")
+        self.androidUI(resourceId="com.android.camera2:id/shutter_button").click()
         time.sleep(i_Duration)
-        os.system("adb shell 'input keyevent 66'")
-        os.system("adb shell 'input keyevent 66'")
+        if self.androidUI(resourceId="com.android.camera2:id/recording_time").exists:
+            self.androidUI(resourceId="com.android.camera2:id/shutter_button").click()
     
     @staticmethod
     def play_video_in_device(i_VideoName, i_Duration):
