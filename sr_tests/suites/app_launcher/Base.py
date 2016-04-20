@@ -1,13 +1,8 @@
 from sr_tests.base.Base import BaseTest
-from sr_automation.platform.sunriver.Sunriver import Sunriver
-from sr_automation.platform.linux.applications.Settings.Settings import Settings
 from sr_automation.utils.ImageTools import ImageTools
-from sr_automation.utils.ProcessManager import ProcessManager
 import time
 import getpass
-from bunch import Bunch
 import slash
-import signal
 
 from logbook import Logger
 log = Logger("Search, App Launcher and Side Panel")
@@ -18,17 +13,17 @@ class LauncherBaseTest(BaseTest):
    
     def before(self):
         super(LauncherBaseTest, self).before()
-	
+
     def open_launcher(self):
         log.info('Opening Launcher')
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>l')
 
     def open_search(self, i_value=None):
-	log.info('Opening Search')
+        log.info('Opening Search')
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>f')
-	time.sleep(1)
+        time.sleep(1)
         if i_value != None:
-		slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(i_value)
+            slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(i_value)
    
     def open_directory_from_desktop(self):
         log.info('Creating empty file on desktop')
