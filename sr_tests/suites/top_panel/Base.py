@@ -1,9 +1,7 @@
 from sr_tests.base.Base import BaseTest
-from sr_automation.platform.sunriver.Sunriver import Sunriver
 from sr_automation.utils.ImageTools import ImageTools
 import time
 import getpass
-from bunch import Bunch
 import slash
 import datetime
 
@@ -22,7 +20,7 @@ class PanelBaseTest(BaseTest):
         Snapshot = "IconSnapshot.png"
         found = False
         ImageStats = ImageTools.find_sub_image_in_image(Snapshot, IconPath)
-        if ImageStats.max_value > 0.9:
+        if ImageStats.max_value > 0.8:
             found = (ImageStats.max_location[0], ImageStats.max_location[1])
         return found
 
@@ -97,6 +95,7 @@ class PanelBaseTest(BaseTest):
         if slash.g.sunriver.vnc.isVNCOpen():
             slash.g.sunriver.vnc.CloseVnc()
         self.template_verification("Phone_App", "Phone App")
+        slash.g.sunriver.vnc.CloseVnc()
     
     def test_bluetooth(self):
         self.template_verification("Bluetooth", "Bluetooth")
