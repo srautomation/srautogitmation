@@ -32,6 +32,7 @@ class BaseTest(slash.Test):
         self.sunriver = slash.g.sunriver
         self.config   = slash.config
         self.dogtail = slash.g.sunriver.linux.ui.dogtail
+        self.sunriver.vnc.CloseVnc()
 
     def current_test(self):
         return str(slash.ctx.test)
