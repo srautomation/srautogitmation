@@ -42,10 +42,6 @@ class Leafpad(object):
         self._dogtail.rawinput.keyCombo('<Ctrl>C')
         self._dogtail.utils.doDelay(1)
 
-        #---------------------------------- self._app.child(name='Edit').click()
-        #---------------------------- self._app.child(name='Select All').click()
-        #---------------------------------- self._app.child(name='Copy').click()
-
     def open(self, file):
         ''' file has to be in /root '''
         app = self._app

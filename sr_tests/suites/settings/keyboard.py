@@ -15,6 +15,8 @@ class KeyboardBaseTest(SettingsBaseTest):
         self.keyboard = self.settings.language_and_keyboard
         self.settings.start()
         self.keyboard.enter()
+        self.leafpad = Leafpad(slash.g.sunriver.linux)
+
 
     def test_language_and_keyboard(self):
         self.keyboard.add_remove_keyboard_language()
@@ -26,11 +28,12 @@ class KeyboardBaseTest(SettingsBaseTest):
         log.info("test adding another language(arabic) and writing in it ")
         text = "aba"
         text_in_arabic="شﻻش" 
-        leafpad = Leafpad(slash.g.sunriver.linux)
-        leafpad.start()
+        self.leafpad.start()
         self.settings.dogtail.rawinput.keyCombo('<Shift><Alt_L>') 
         self.dogtail.utils.doDelay(2)
-        leafpad.write_text(text,WriteMethod.Raw) #write in arabic 
-        print leafpad.read_text()
-        assert leafpad.read_text() == text_in_arabic , "didn't wrote in arabic"
-        leafpad.stop()
+        self.leafpad.write_text(text,WriteMethod.Raw) #write in arabic 
+        print self.leafpad.read_text()
+        assert self.leafpad.read_text() == text_in_arabic , "didn't wrote in arabic"
+     
+    def after(self):    
+        self.leafpad.stop()
