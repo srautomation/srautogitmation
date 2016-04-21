@@ -18,7 +18,7 @@ class LinuxMailGUI(object):
     def start_icedove(self):
         self._dogtail.procedural.run('icedove')
         self._icedove = self._dogtail.tree.root.application('Icedove')
-        try:
+        try:                
             if self._icedove.child(name='Icedove - Choose User Profile', roleName='dialog') is not None:
                 self._icedove.child(name='Android', roleName='list item').click()
                 self._icedove.child(name='Use the selected profile without asking at startup', roleName='check box').click()
@@ -29,6 +29,8 @@ class LinuxMailGUI(object):
                 pwrd = self._icedove.child(roleName='dialog').child(roleName='password text')
                 pwrd.text = '12srusertest'
                 self._icedove.child(roleName='dialog').child(name='OK').click()
+            if self._icedove.child(name='Skip this and use my existing email') is not None:
+                self._icedove.child(name='Skip this and use my existing email').click()
         except:
             slash.logger.info('first dialog already entered')
     
