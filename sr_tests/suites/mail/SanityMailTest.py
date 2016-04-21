@@ -24,7 +24,7 @@ def start_mail_sync():
 
 class SanityMailTest(BaseTest):
     
-    DIST_PATH = config.automation_files_dir
+    DIST_PATH = "/home/BigScreen/Android/Desktop/"#config.automation_files_dir
     
     def start_android_gui(self):
         slash.g.mail.androidGUI = AndroidMailGUI(slash.g.sunriver.android)
