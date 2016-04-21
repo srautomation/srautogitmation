@@ -125,7 +125,7 @@ class LauncherBaseTest(BaseTest):
         return found
 
     def contextual_asserts_on_calc(self):
-	log.info('Testing contexual menu on Galculator')
+        log.info('Testing contexual menu on Galculator')
         sidebar_icon = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Galculator-sidebar.png"
         snapshot = "Contextual_snapshot.png"
         location = ImageTools.find_sub_image_in_image(snapshot, sidebar_icon)
