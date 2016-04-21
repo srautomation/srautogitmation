@@ -1,5 +1,4 @@
 import slash
-import commands
 from Base import LauncherBaseTest
 import time
 from logbook import Logger
@@ -8,9 +7,8 @@ log = Logger("App Launcher Suite")
 
 class AppLaunchTest(LauncherBaseTest):
 
-    @slash.hooks.session_start.register
-    def start_AppLauncher():
-        log.info('Starting "Search, App Launcher and Side Panel" Suite')
+    def before(self):
+        super(AppLaunchTest, self).before()
 
     def open_app_from_launcher(self, i_appName):
         self.open_from_applauncher_by_icon_name(i_appName)
