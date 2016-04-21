@@ -60,8 +60,8 @@ class LauncherBaseTest(BaseTest):
         close_button = "/home/"+self.m_username+"/sr_automation/automation-screenshots/close.png"
         snapshot = "Search_snapshot.png"
         self.open_search('Chro')
+        time.sleep(2)
         imageStats = ImageTools.find_sub_image_in_image(snapshot, chromium)
-        time.sleep(1)
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Down>')
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Enter>')
         sidebar = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Chromium-sidebar.png"
@@ -82,7 +82,7 @@ class LauncherBaseTest(BaseTest):
         bad_text = "/home/"+self.m_username+"/sr_automation/automation-screenshots/BadSearch.png"
         snapshot = "BadSearch_snap.png"
         self.open_search('NoTextExist')
-        time.sleep(1)
+        time.sleep(2)
         imageStats = ImageTools.find_sub_image_in_image(snapshot, bad_text)
         self.open_search()
         found = False
