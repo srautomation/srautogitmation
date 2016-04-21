@@ -1,4 +1,5 @@
 import slash
+import commands
 from Base import LauncherBaseTest
 import time
 from logbook import Logger
@@ -35,6 +36,7 @@ class AppLaunchTest(LauncherBaseTest):
 
     def test_c_from_desktop(self):
         log.info('Contextual tests on app launched from desktop')
+        ProcessManager.run_app_if_not_runnning("pcmanfm --desktop")
         openedFromDesktop = self.open_directory_from_desktop()
         time.sleep(3)
         slash.should.be(openedFromDesktop, True)
