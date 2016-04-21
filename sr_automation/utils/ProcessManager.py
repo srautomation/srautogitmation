@@ -28,5 +28,5 @@ class ProcessManager(object):
     @staticmethod
     def run_app_if_not_runnning(i_appName):
         if int(slash.g.sunriver.linux.shell.runCommandWithReturnValue("ps -ef |grep '"+i_appName+"' |grep -v grep |wc -l")) == 0:
-            slash.g.sunriver.linux.ui.dogtail.procedural.os.system(i_appName)
+            slash.g.sunriver.linux.shell.runCommandWithReturnValue(i_appName)
 
