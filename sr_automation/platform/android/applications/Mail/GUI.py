@@ -8,8 +8,9 @@ class AndroidMailGUI(object):
         self.y_bottom = self.d.info['displayHeight'] - 10
         self.y_top = 200
 
-       #setting up email acount before automation
+    #setting up email account before automation
     def sync_email(self, email= 'sunriver1993@gmail.com', password='12srusertest', email_name='test-automation'):
+    #def sync_email(self, email= 'bentests1@gmail.com', password='ben123ben', email_name='1'):
         self.d(text="Email address").set_text(email)
         time.sleep(4)
         self.d(text="Next").click()
