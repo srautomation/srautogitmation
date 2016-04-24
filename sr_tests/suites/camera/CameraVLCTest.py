@@ -18,8 +18,8 @@ class CameraVLCTest(CameraBaseTest):
     def test_camera(self):
         self.sunriver.vnc.OpenVnc()
         self.clean_recorded_folder()
-        time.sleep(1)
         self.open_camera()
+        time.sleep(4)
         if not self.androidUI(resourceId="com.android.camera2:id/shutter_button").exists:
             slash.add_error("Unable to open camera")
             slash.skip_test()
