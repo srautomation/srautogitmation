@@ -20,9 +20,9 @@ sanity_suites = [
                 ('settings','settings_menus.py'),
                 ('settings','sound.py'),
                 ('settings','wallpaperAndScreenSaver.py'),
-                ('settings','user_menu.py')
+                ('settings','user_menu.py'),
                 #audio
-                #notification
+                ('alarm','Base.py')
                 ]
 
 def get_working_dir():
