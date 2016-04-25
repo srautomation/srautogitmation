@@ -61,7 +61,7 @@ class PhoneAppBaseTest(BaseTest):
         TestPassed = False
         if SendMessage.max_value > 0.9:
             TestPassed = True
-        slash.g.sunriver.vnc.CloseVnc()
+        slash.g.sunriver.vnc.CloseVncByKey()
         slash.should.be(TestPassed, True)
 
     def test_phone_calls(self):
