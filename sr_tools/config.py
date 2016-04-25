@@ -8,7 +8,7 @@ username = getpass.getuser()
 log_dir = "/tmp/automation-logs/"
 sanity_suites = [
                 ('top_panel','Base.py'),
-                ('phone_app','Base.py'),
+                ('basic_remoting','Base.py'),
                 ('app_launcher','AppLauncher.py'),
                 ('mail','SanityMailTest.py'),
                 #('pcmanfm','Base.py'),
