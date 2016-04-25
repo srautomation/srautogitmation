@@ -1,5 +1,6 @@
 from sr_tests.base.Base import BaseTest
 from sr_automation.utils.ImageTools import ImageTools
+from sr_automation.utils.TimeUtils import TimeUtils
 import time
 import getpass
 import slash
@@ -20,7 +21,7 @@ class PanelBaseTest(BaseTest):
         Snapshot = "IconSnapshot.png"
         found = False
         ImageStats = ImageTools.find_sub_image_in_image(Snapshot, IconPath)
-        if ImageStats.max_value > 0.8:
+        if ImageStats.max_value > 0.9:
             found = (ImageStats.max_location[0], ImageStats.max_location[1])
         return found
 
@@ -40,6 +41,7 @@ class PanelBaseTest(BaseTest):
     
     def test_clock(self):
         log.info("Verifying Clock Icon")
+        TimeUtils.sync_time()
         NotifPath = "/home/"+self.m_username+"/sr_automation/automation-screenshots/TopPanelNotifications.png"
         Snapshot = "ClockSnapshot.png"
         current_time = datetime.datetime.now().time()
@@ -59,6 +61,7 @@ class PanelBaseTest(BaseTest):
         for i in range(2):
             if str(current_time)[i] != displayed_time[i]:
                 CorrectClock = False
+        log.info("Current time is: "+str(current_time)+" While displayed time is: "+displayed_time)
         slash.should.be(CorrectClock, True)
 
     def test_battery(self):
@@ -74,7 +77,11 @@ class PanelBaseTest(BaseTest):
     def test_network_wifi(self):
         log.info("Verifying Network & Wi-Fi Icons")
         FoundIcon = self.find_icon_in_top_panel("NetworkWiFi")
-        slash.should.not_be(FoundIcon, False)
+        assert FoundIcon != False , "Missing or incorrect Network and WiFi Icons"
+        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(FoundIcon[1]+50, FoundIcon[0]+15)
+        SignalStrength = self.find_icon_in_top_panel("SignalStrength")
+        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
+        assert SignalStrength != False , "Signal Strength does not appear or appears incorrect"
 
     def test_search(self):
         self.template_verification("Search", "Search")
