@@ -34,10 +34,11 @@ class PanelBaseTest(BaseTest):
             time.sleep(1)
             OpenedMenu = self.find_icon_in_top_panel(i_IconName+"Menu")
             slash.g.sunriver.linux.ui.dogtail.rawinput.click(0,0)
-            slash.should.not_be(OpenedMenu, False)
+            errorMessage = i_MenuName+" is not opening the correct menu"
+            assert OpenedMenu != False, errorMessage
         else:
-            log.error(i_MenuName+" Icon missing")
-            slash.should.not_be(FoundIcon, False)
+            errorMessage = i_MenuName+" Icon missing"
+            assert FoundIcon != False , errorMessage
     
     def test_clock(self):
         log.info("Verifying Clock Icon")
@@ -58,21 +59,21 @@ class PanelBaseTest(BaseTest):
                     }
         displayed_time = ImageTools.ocr_image(Snapshot, ClockCrop)
         CorrectClock = True
-        for i in range(2):
+        for i in range(5):
             if str(current_time)[i] != displayed_time[i]:
                 CorrectClock = False
         log.info("Current time is: "+str(current_time)+" While displayed time is: "+displayed_time)
-        slash.should.be(CorrectClock, True)
+        assert CorrectClock == True , "Time not displayed or incorrect time"
 
     def test_battery(self):
         log.info("Verifying Battery Icon")
         FoundIcon = self.find_icon_in_top_panel("Battery")
-        slash.should.not_be(FoundIcon, False)
+        assert FoundIcon != False , "Battery Icon missing"
 
     def test_switch_to_phone(self):
         log.info("Verifying Switch to Phone Icon")
         FoundIcon = self.find_icon_in_top_panel("SwitchToPhone")
-        slash.should.not_be(FoundIcon, False)
+        assert FoundIcon != False , "Switch to Phone Icon missing"
 
     def test_network_wifi(self):
         log.info("Verifying Network & Wi-Fi Icons")
