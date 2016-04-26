@@ -17,14 +17,14 @@ class LauncherBaseTest(BaseTest):
 
     def open_launcher(self):
         log.info('Opening Launcher')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>l')
+        self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>l')
 
     def open_search(self, i_value=None):
         log.info('Opening Search')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>f')
+        self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Control><Alt>f')
         time.sleep(1)
         if i_value != None:
-            slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(i_value)
+            self.sunriver.linux.ui.dogtail.rawinput.typeText(i_value)
     
     def give_image_location_if_found(self, i_ImageToFind):
         snapshot = "Snapshot.png"
@@ -40,28 +40,22 @@ class LauncherBaseTest(BaseTest):
         folders = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Folders.png"
         folders_ss = "Folders_snapshot.png"
         folders_pos = ImageTools.find_sub_image_in_image(folders_ss, folders)
-        foundFolders = False
-        if folders_pos.max_value > 0.9:
-            foundFolders = True
-        slash.should.be(foundFolders, True)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(folders_pos.max_location[1]+15,folders_pos.max_location[0]+15, button=3)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
+        assert folders_pos.max_value > 0.9 , "not all 4 folders were opened"
+        self.sunriver.linux.ui.dogtail.rawinput.click(folders_pos.max_location[1]+15,folders_pos.max_location[0]+15, button=3)
+        self.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         time.sleep(3)
         snapshot = "Close_snapshot.png"
         location = ImageTools.find_sub_image_in_image(snapshot, closeall)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(location.max_location[1]+15,location.max_location[0]+15)
+        self.sunriver.linux.ui.dogtail.rawinput.click(location.max_location[1]+15,location.max_location[0]+15)
         folders_pos = ImageTools.find_sub_image_in_image(folders_ss, folders)
-        foundFolders = False
-        if folders_pos.max_value > 0.9:
-            foundFolders = True
-        slash.should.be(foundFolders, False)
+        assert folders_pos.max_value < 0.8 , "folders not closed properly"
         return True
 
     def sidebar_manipulation(self, i_x, i_y, i_button=1):
         snapshot = "sidebar_snapshot.png"
         interface = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Galculator-interface.png"
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(i_x,i_y,i_button)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
+        self.sunriver.linux.ui.dogtail.rawinput.click(i_x,i_y,i_button)
+        self.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         imageStats = ImageTools.find_sub_image_in_image(snapshot, interface)
         found = False
         if imageStats.max_value > 0.9:
@@ -76,28 +70,23 @@ class LauncherBaseTest(BaseTest):
         x = location.max_location[1] + 15
         y = location.max_location[0] + 15
         log.info('Minimize from sidebar')
-        found = self.sidebar_manipulation(x,y)
-        slash.should.be(found, False)
+        assert self.sidebar_manipulation(x,y) == False , "Could not minimize"
         log.info('Restore from sidebar by left click')
-        found = self.sidebar_manipulation(x,y)
-        slash.should.be(found, True)
+        assert self.sidebar_manipulation(x,y) ==  True , "Could not restore"
         log.info('Minimize from sidebar')
-        found = self.sidebar_manipulation(x,y)
-        slash.should.be(found, False)
+        assert self.sidebar_manipulation(x,y) ==  False , "Could not minimize"
         log.info('Restore from sidebar by right click')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(x,y, button=3)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
+        self.sunriver.linux.ui.dogtail.rawinput.click(x,y, button=3)
+        self.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         open_button = "/home/"+self.m_username+"/sr_automation/automation-screenshots/open.png"
         openLocation = ImageTools.find_sub_image_in_image(snapshot, open_button)
-        found = self.sidebar_manipulation(openLocation.max_location[1]+15,openLocation.max_location[0]+15)
-        slash.should.be(found, True)
+        assert self.sidebar_manipulation(openLocation.max_location[1]+15,openLocation.max_location[0]+15) == True , "Could not restore by right click"
         log.info('Close from sidebar by right click')
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(x,y, button=3)
-        slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
+        self.sunriver.linux.ui.dogtail.rawinput.click(x,y, button=3)
+        self.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         close_button = "/home/"+self.m_username+"/sr_automation/automation-screenshots/close.png"
         closeLocation = ImageTools.find_sub_image_in_image(snapshot, close_button)
-        found = self.sidebar_manipulation(closeLocation.max_location[1]+15,closeLocation.max_location[0]+15)
-        slash.should.be(found, False)
+        assert self.sidebar_manipulation(closeLocation.max_location[1]+15,closeLocation.max_location[0]+15) == False , "Could not close by right click"
         return True
 
     def open_from_applauncher_by_icon_name(self, i_folderName):
@@ -109,4 +98,4 @@ class LauncherBaseTest(BaseTest):
         location = ImageTools.find_sub_image_in_image(snapshot, screenshot)
         x = location.max_location[1] + 15
         y = location.max_location[0] + 15
-        slash.g.sunriver.linux.ui.dogtail.rawinput.click(x,y)
+        self.sunriver.linux.ui.dogtail.rawinput.click(x,y)
