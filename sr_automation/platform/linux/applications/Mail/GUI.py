@@ -37,6 +37,14 @@ class LinuxMailGUI(object):
     def stop_icedove(self):
         self._linux.cmd("killall icedove")
     
+    def check_contact_exists(self, name='automation'):
+        self._icedove.child(name='Address Book', roleName='push button').click()
+        time.sleep(2)
+        self._icedove.child(name='Global Address Book', roleName='list item').click()
+        time.sleep(2)
+        self._icedove.child(name='Global Address Book', roleName='list item').click()
+        return self._icedove.isChild(name)
+    
     def check_received_message(self, subject):
         self._icedove.child(name='Inbox', roleName = 'table row').click()
         self._icedove.child(name='Unread').click()
