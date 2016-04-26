@@ -61,6 +61,30 @@ class SanityMailTest(BaseTest):
     def before(self):
         super(SanityMailTest, self).before()
 
+    def test_contacts_sync(self):
+        log.info("Creating contact in SIM")
+        self.sunriver.vnc.OpenVnc()
+        self.sunriver.desktop.openSpecificApp('Contacts')
+        self.sunriver.android.ui(resourceId="com.android.contacts:id/floating_action_button").click()
+        self.sunriver.android.ui(text="Create contact to SIM 1").click()
+        self.sunriver.android.ui(resourceId="com.android.contacts:id/name").click()
+        self.sunriver.android.ui(resourceId="com.android.contacts:id/name").set_text('automation')
+        self.sunriver.android.ui(resourceId="com.android.contacts:id/number").click()
+        self.sunriver.android.ui(resourceId="com.android.contacts:id/number").set_text('0547884440')
+        self.sunriver.android.ui(resourceId="com.android.contacts:id/save_menu_item").click()
+        log.info("Opening Icedove client")
+        self.start_linux_gui()
+        slash.g.mail.linuxGUI.start_icedove()
+        ContactSynced = slash.g.mail.linuxGUI.check_contact_exists()
+        time.sleep(2)
+        self.sunriver.android.ui(text="automation").click()
+        self.sunriver.android.ui(className="android.widget.ImageButton").click()
+        self.sunriver.android.ui(text="Delete", resourceId ="android:id/title").click()
+        self.sunriver.android.ui(text="OK").click()
+        slash.g.mail.linuxGUI.stop_icedove()
+        self.sunriver.vnc.CloseVnc()
+        assert ContactSynced == True , "Contact not found in Icedove"
+
     def test_mail_sync(self):
         log.info("Opening mail for sync purpose")
         self.start_android_gui()
@@ -71,7 +95,7 @@ class SanityMailTest(BaseTest):
         time.sleep(4)
         file_created = self.sunriver.linux.ui.dogtail.procedural.os.path.exists(file_to_send)
         log.info("Verifying file created successfully")
-        slash.should.be(file_created, True)
+        assert file_created == True , "Error in creating file"
         log.info("Opening icedove")
         self.start_linux_gui()
         slash.g.mail.linuxGUI.start_icedove()
@@ -88,13 +112,15 @@ class SanityMailTest(BaseTest):
         time.sleep(1)
         automatedMessage = slash.g.mail.androidGUI.find_message(subject)
         log.info("Verifying mail in phone mail app")
-        slash.should.not_be(automatedMessage, False)
+        assert automatedMessage != False , "Cannot see draft in android"
         log.info("Sending mail")
         slash.g.mail.androidGUI.send_from_current_folder(subject)
         self.sunriver.vnc.CloseVnc()
         log.info("Verifying message arrived at Icedove")
         time.sleep(10)
+        mailSent = slash.g.mail.linuxGUI.check_sent_message(subject)
         mailRecieved = slash.g.mail.linuxGUI.check_received_message(subject)
         slash.g.calc.stop()
         slash.g.mail.linuxGUI.stop_icedove()
-        slash.should.be(mailRecieved, True)
+        assert mailSent == True , "Mail not in sent folder"
+        assert mailRecieved == True , "Mail not received"
