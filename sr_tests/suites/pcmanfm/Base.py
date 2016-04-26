@@ -30,7 +30,7 @@ class PcManFMBaseTest(BaseTest):
                 break
         log.info("Closing File Manager")
         slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Alt><F4>')
-        slash.should.be_true(AllFoldersAccessed)
+        assert AllFoldersAccessed == True , "A folder was missing"
 
     def test_folder_manipulation(self):
         log.info("### Verifying folder manipulation on file manager ###")
