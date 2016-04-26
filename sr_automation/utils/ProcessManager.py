@@ -1,6 +1,6 @@
 import slash
-import commands
 from logbook import Logger
+from __builtin__ import False
 log = Logger("ProcessManager")
 
 class ProcessManager(object):
@@ -26,7 +26,9 @@ class ProcessManager(object):
             return True
         
     @staticmethod
-    def run_app_if_not_runnning(i_appName):
+    def verify_app_runnning(i_appName):
+        running = True
         if int(slash.g.sunriver.linux.shell.runCommandWithReturnValue("ps -ef |grep '"+i_appName+"' |grep -v grep |wc -l")) == 0:
-            slash.g.sunriver.linux.shell.runCommandWithReturnValue(i_appName)
+            running = False
+        return running
 
