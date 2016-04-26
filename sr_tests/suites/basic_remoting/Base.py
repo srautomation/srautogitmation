@@ -62,7 +62,7 @@ class PhoneAppBaseTest(BaseTest):
         if SendMessage.max_value > 0.9:
             TestPassed = True
         slash.g.sunriver.vnc.CloseVncByKey()
-        slash.should.be(TestPassed, True)
+        assert TestPassed == True , "Error with sending/receiving SMS message"
 
     def test_phone_calls(self):
         log.warn("Phone call automated test is not implemented yet")
