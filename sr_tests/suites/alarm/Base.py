@@ -99,8 +99,8 @@ class AlarmBaseTest(BaseTest):
         log.info("Waiting for alarm...")
         while datetime.now().time() < alarmTime:
             time.sleep(1)
-        slash.should.be(self.AlarmRaised(), True)
+        assert self.AlarmRaised() == True , "Notification for alarm is not popping"
         self.clickAction('Snooze')
         time.sleep(60)
-        slash.should.be(self.AlarmRaised(), True)
+        assert self.AlarmRaised() == True , "Notification for alarm is not popping"
         self.clickAction('Dismiss')
