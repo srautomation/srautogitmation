@@ -38,7 +38,12 @@ class LinuxMailGUI(object):
         self._linux.cmd("killall icedove")
     
     def check_received_message(self, subject):
+        self._icedove.child(name='Inbox', roleName = 'table row').click()
         self._icedove.child(name='Unread').click()
+        return self._icedove.isChild(subject)
+    
+    def check_sent_message(self, subject):
+        self._icedove.child(name='Sent', roleName = 'table row').click()
         return self._icedove.isChild(subject)
         
 if __name__ == "__main__":
