@@ -11,7 +11,7 @@ class SwitchBaseTest(BaseTest):
             slash.logger.info('Cycle #%s' % (i+1))
             slash.g.sunriver.switch_to_android.switch()
             time.sleep(4)
-            slash.should.be(self.sunriver.desktop.is_desktop_running(), False)
+            assert self.sunriver.desktop.is_desktop_running() == False , "Could not switch to android"
             slash.g.sunriver.desktop.switch_to_desktop()
             time.sleep(4)
-            slash.should.be(self.sunriver.desktop.is_desktop_running(), True)
+            assert self.sunriver.desktop.is_desktop_running() == True , "Could not switch to desktop"
