@@ -18,5 +18,6 @@ class VNCInYourPocket(object):
         self._linux.ui.dogtail.procedural.run('pkill xsrvnc.bin')
         
     def CloseVncByKey(self):
+        log.info('Closing VNC by Ctrl+H')
         if self.isVNCOpen():
             self._linux.ui.dogtail.rawinput.keyCombo('<Ctrl>h')
