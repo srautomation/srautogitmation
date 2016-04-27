@@ -32,5 +32,5 @@ class CameraBaseTest(BaseTest):
     @staticmethod
     def play_video_in_vlc(i_VideoName, i_Duration):
         log.info('Playing Video in VLC')
-        slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --fullscreen "/home/BigScreen/Android/DCIM/Camera/'+i_VideoName)
+        slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --play-and-exit --fullscreen "/home/BigScreen/Android/DCIM/Camera/'+i_VideoName)
         time.sleep(i_Duration)
