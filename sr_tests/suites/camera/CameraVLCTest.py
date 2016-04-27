@@ -26,11 +26,20 @@ class CameraVLCTest(CameraBaseTest):
         time.sleep(2)
         self.record_by_duration(self.m_VideoDuration)
         video_dir = self.dogtail.procedural.os.listdir(self.m_VideoPath)
-        slash.should.be(len(video_dir), 1)
+        assert len(video_dir) == 1 , "too many recorded videos"
         video_name = video_dir[0]
+        time.sleep(5)
         self.play_video_in_device(video_name, self.m_VideoDuration)
+        assert slash.g.sunriver.android.ui(text="Can't play this video.").exists == False , "Can not play video in device"
         try:
             self.play_video_in_vlc(video_name, self.m_VideoDuration)
         except TypeError:
             slash.add_error("Error in reading recorded file via VLC", 0)
         self.sunriver.vnc.CloseVnc()
+
+    def test_big_buck_bunny(self):
+        log.info("Testing Big Buck Bunny")
+        try:
+            slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --play-and-exit --fullscreen "/home/BigScreen/SDCard/Movies/h264_big_buck_bunny_480p.mov"')
+        except:
+            slash.add_error("Unable to play Big Buck Bunny in VLC")
