@@ -101,6 +101,6 @@ class AppLaunchTest(LauncherBaseTest):
         self.sunriver.linux.ui.dogtail.rawinput.click(0,0)
         search = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Search.png"
         SearchLocation = self.give_image_location_if_found(search)
-        if SearchLocation == False:
+        if SearchLocation != False:
             self.open_search()
-        assert SearchLocation == False , "Search window still open"
+        assert SearchLocation == False , "Search window wasn't closed by click"
