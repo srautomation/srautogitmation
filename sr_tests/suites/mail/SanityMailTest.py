@@ -1,5 +1,4 @@
 from sr_tests.base.Base import BaseTest
-import sr_tools.config as config
 from sr_automation.platform.android.applications.Mail.Mail import AndroidMail
 from sr_automation.platform.linux.applications.Mail.Mail import LinuxMail
 from sr_automation.platform.linux.applications.Mail.GUI import LinuxMailGUI
@@ -119,6 +118,7 @@ class SanityMailTest(BaseTest):
         log.info("Verifying message arrived at Icedove")
         time.sleep(10)
         mailSent = slash.g.mail.linuxGUI.check_sent_message(subject)
+        time.sleep(15)
         mailRecieved = slash.g.mail.linuxGUI.check_received_message(subject)
         slash.g.calc.stop()
         slash.g.mail.linuxGUI.stop_icedove()
