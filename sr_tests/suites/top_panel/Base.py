@@ -59,7 +59,7 @@ class PanelBaseTest(BaseTest):
                     }
         displayed_time = ImageTools.ocr_image(Snapshot, ClockCrop)
         CorrectClock = True
-        for i in range(5):
+        for i in range(4):
             if str(current_time)[i] != displayed_time[i]:
                 CorrectClock = False
         log.info("Current time is: "+str(current_time)+" While displayed time is: "+displayed_time)
