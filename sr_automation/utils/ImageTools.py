@@ -8,6 +8,7 @@ import pytesseract
 from os import system
 from sr_automation.utils.TakeSnapshot import TakeSnapshot
 from logbook import Logger
+from Tkinter import image_names
 log = Logger("ImageTools")
 
 import skimage.measure  
@@ -90,9 +91,7 @@ class ImageTools(object):
         ret =  ImageTools.check_inrange(image, np.array([0,0,0],np.uint8),np.array([0,0,0],np.uint8))
         black = cv2.countNonZero(ret)
         return black == ret.size
-        
     
-
     @staticmethod
     def ocr_image(image_name, crop_dict):
         image = cv2.imread(ImageTools.DIST_PATH + image_name)
@@ -100,6 +99,16 @@ class ImageTools(object):
         cropped_path = ImageTools.DIST_PATH + "cropped_image.png"
         cv2.imwrite(cropped_path, cropped_image)
         return pytesseract.image_to_string(Image.open(cropped_path)) 
+
+    @staticmethod
+    def return_text_on_screen(image_name):
+        ImageTools.snapShot_and_copy_file(image_name)
+        original = cv2.imread(ImageTools.DIST_PATH + image_name)
+        newX,newY= original.shape[1]*2,original.shape[0]*2
+        new_image = cv2.resize(original,(newX,newY))
+        new_path = ImageTools.DIST_PATH + "resized_image.png"
+        cv2.imwrite(new_path, new_image)
+        return pytesseract.image_to_string(Image.open(new_path))
 
 class matchStats(object):
     def __init__(self,max_value,max_location):
