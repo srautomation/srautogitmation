@@ -19,77 +19,43 @@ class SeamlessSanity(SeamlessBrowserTest):
     def before(self):
         super(SeamlessSanity, self).before()
 
-    def start_chrome_android(self):
-        androidUI = slash.g.sunriver.android.ui
-        slash.g.sunriver.vnc.OpenVnc()
-        slash.g.sunriver.desktop.openSpecificApp('Chrome')
-        while not androidUI(resourceId="com.android.chrome:id/url_bar").exists:
-            if androidUI(text="Accept & continue").exists:
-                androidUI(text="Accept & continue").click()
-                androidUI(text="No thanks").wait.exists
-                androidUI(text="No thanks").click()
-            if androidUI(text="Search or type URL").exists:
-                androidUI(text="Search or type URL").click()
-        androidUI(resourceId="com.android.chrome:id/url_bar").click()
-        androidUI(resourceId="com.android.chrome:id/url_bar").set_text(self.video_url)
-        androidUI.press('Enter')
-        time.sleep(10)
-        if androidUI(text='https://m.youtube.com/watch?v=YQHsXMglC9A').exists:
-            slash.should.be(androidUI(text='https://m.youtube.com/watch?v=YQHsXMglC9A').exists, True)
-        else:
-            slash.should.be(androidUI(text='https://m.youtube.com').exists, True)
-
     def test_chromium(self):
         keycombo = slash.g.sunriver.linux.ui.dogtail.rawinput.keyCombo
         log.info("Testing Chrome on VNC")
-        self.start_chrome_android()
+        self.sunriver.vnc.OpenVnc()
+        self.goto_youtube_in_android_chrome("https://m.youtube.com/watch?v=YQHsXMglC9A")
         log.info("Testing Chromium")
         slash.g.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").click()
         time.sleep(5)
         keycombo('<Ctrl>c')
         slash.g.sunriver.vnc.CloseVnc()
-        self.start_chrome()
+        self.start_chromium()
         chromium = slash.g.chromium
-        slash.should.be_in(self.first_url, chromium._driver.current_url)
-        log.info('Chromium opened successfully')
+        log.info('Pasting link from android chrome')
         keycombo('<Ctrl>l')
         keycombo('<Ctrl>a')
         keycombo('<Ctrl>v')
         keycombo('<Enter>')
         time.sleep(5)
-        keycombo('<Escape>')
-        log.info('Verifying pasted successfully')
-        slash.should.be_in(self.site_name, chromium._driver.current_url)
-        chromium.skip_add()
-        log.info('Taking screenshot')
-        slash.g.sunriver.linux.ui.dogtail.utils.screenshot(file=self.screenshot_name, timeStamp=False)
-        log.info('Pausing video')
-        chromium.pause_video()
-        log.info('Playing video again')
-        chromium.play_video()
-        log.info('Going to full screen')
-        chromium.youtube_fullscreen()
-        keycombo('<Escape>')
-        time.sleep(1)
+        log.info('Opening tab with '+self.second_url)
         keycombo('<Ctrl>t')
         keycombo('<Ctrl>l')
         time.sleep(1)
         slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(self.second_url)
         keycombo('<Enter>')
         time.sleep(5)
-        #slash.should.be_in(self.second_url_name, chromium._driver.current_url) selenium doesn't support tabs
-        time.sleep(1)
+        log.info('Opening tab with '+self.third_url)
         keycombo('<Ctrl>t')
         keycombo('<Ctrl>l')
         time.sleep(1)
         slash.g.sunriver.linux.ui.dogtail.rawinput.typeText(self.third_url)
         keycombo('<Enter>')
-        time.sleep(5)
-        #slash.should.be_in(self.third_url_name, chromium._driver.current_url) selenium doesn't support tabs
+        time.sleep(3)
         for i in range(4): time.sleep(2); chromium.switch_tab()
         chromium.stop()
 
     def test_libre(self):
+        slash.g.sunriver.linux.ui.dogtail.utils.screenshot(file=self.screenshot_name, timeStamp=False)
         filename = str(datetime.now()).replace(':','-')
         try:
             self.start_libre_with_screenshot()
