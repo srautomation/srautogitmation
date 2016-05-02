@@ -1,7 +1,9 @@
 import slash
 from Base import LauncherBaseTest
 import time
+import sr_tools.config as config
 from logbook import Logger
+from sr_automation.utils.ImageTools import ImageTools
 from sr_automation.utils.ProcessManager import ProcessManager
 log = Logger("App Launcher Suite")
 
@@ -104,3 +106,31 @@ class AppLaunchTest(LauncherBaseTest):
         if SearchLocation != False:
             self.open_search()
         assert SearchLocation == False , "Search window wasn't closed by click"
+        
+# Applauncher check all applications test
+
+    def test_apps_verification(self):
+        log.info('Verifying all required applications are visible in App Launcher')
+        HeaderApps = ["Files", "Photos", "Videos", "Music"]
+        DynamicAppsList = ["Chromium", "Document Viewer", "Galculator", "Icedove", "Image Viewer", "Leafpad",
+                           "LibreOffice", "LibreOffice Base", "LibreOffice Calc", "LibreOffice Draw",
+                           "LibreOffice Impress", "LibreOffice Math", "Libre Office Writer", "LXTerminal",
+                           "Package Manager", "Printers", "Rythmbox", "Screenshot", "Update Manager",
+                           "VLC media player", "Xarchiver"]
+        self.open_launcher()
+        ScreenshotName = "Applauncher.png"
+        for i in range(3):
+            for j in range(3):
+                self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Down>')
+            text = ImageTools.return_text_on_screen(ScreenshotName)
+            for item in HeaderApps:
+                assert item in text, item + "app was not found in Applauncher \n Screenshot located in" 
+                + config.automation_files_dir + "/" + ScreenshotName
+            for item in DynamicAppsList:
+                if item in text:
+                    DynamicAppsList.remove(item)
+        assert len(DynamicAppsList) ==0 , "The following Apps were not found" + DynamicAppsList
+            
+                    
+        
+    
