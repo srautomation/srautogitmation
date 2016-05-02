@@ -107,8 +107,7 @@ class AppLaunchTest(LauncherBaseTest):
             self.open_search()
         assert SearchLocation == False , "Search window wasn't closed by click"
         
-# Applauncher check all applications test
-
+# App Launcher check all applications test
     def test_apps_verification(self):
         log.info('Verifying all required applications are visible in App Launcher')
         HeaderApps = ["Files", "Photos", "Videos", "Music"]
@@ -123,14 +122,13 @@ class AppLaunchTest(LauncherBaseTest):
             for j in range(3):
                 self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Down>')
             text = ImageTools.return_text_on_screen(ScreenshotName)
+            print text
             for item in HeaderApps:
-                assert item in text, item + "app was not found in Applauncher \n Screenshot located in" 
-                + config.automation_files_dir + "/" + ScreenshotName
+                ErrorString = item + " app was not found in App Launcher \n Screenshot located in " + config.automation_files_dir + "/" + ScreenshotName
+                assert item in text, ErrorString
             for item in DynamicAppsList:
                 if item in text:
                     DynamicAppsList.remove(item)
-        assert len(DynamicAppsList) ==0 , "The following Apps were not found" + DynamicAppsList
-            
-                    
-        
-    
+        self.sunriver.linux.ui.dogtail.rawinput.click(0,0)
+        ErrorString = "The following Apps were not found" + DynamicAppsList
+        assert len(DynamicAppsList) == 0 , ErrorString
