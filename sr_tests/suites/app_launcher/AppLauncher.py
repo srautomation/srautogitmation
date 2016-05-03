@@ -109,7 +109,7 @@ class AppLaunchTest(LauncherBaseTest):
         
     def test_apps_verification(self):
         log.info('Verifying all required applications are visible in App Launcher')
-        #HeaderApps = ["Files", "Photos", "Videos", "Music"]
+        HeaderApps = ["Files", "Photos", "Videos", "Music"]
         DynamicAppsList = ["Chromium", "Document Viewer", "Galculator", "Icedove", "Image Viewer", "Leafpad",
                            "LibreOfﬁce", "LibreOfﬁce Base", "LibreOfﬁce Calc", "LibreOfﬁce Draw",
                            "Impress", "LibreOfﬁce Math", "LibreOfﬁce Writer", "lXTerminal",
@@ -124,9 +124,10 @@ class AppLaunchTest(LauncherBaseTest):
                 log.info('Down press number '+str(j+1))
                 self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Down>')
             text = ImageTools.return_text_on_screen(ScreenshotName)
-            #for item in HeaderApps:
-            #    ErrorString = item + " app was not found in App Launcher\n Screenshot located in " + config.automation_files_dir + "/" + ScreenshotName
-            #    assert item in text, ErrorString
+            print text
+            for item in HeaderApps:
+                ErrorString = item + " app was not found in App Launcher\n Screenshot located in " + config.automation_files_dir + "/" + ScreenshotName
+                assert item in text, ErrorString
             for DynamicApp in DynamicAppsList:
                 log.info('Searching for: '+DynamicApp)
                 if DynamicApp in text:
