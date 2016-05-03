@@ -107,28 +107,35 @@ class AppLaunchTest(LauncherBaseTest):
             self.open_search()
         assert SearchLocation == False , "Search window wasn't closed by click"
         
-# App Launcher check all applications test
     def test_apps_verification(self):
         log.info('Verifying all required applications are visible in App Launcher')
-        HeaderApps = ["Files", "Photos", "Videos", "Music"]
+        #HeaderApps = ["Files", "Photos", "Videos", "Music"]
         DynamicAppsList = ["Chromium", "Document Viewer", "Galculator", "Icedove", "Image Viewer", "Leafpad",
-                           "LibreOffice", "LibreOffice Base", "LibreOffice Calc", "LibreOffice Draw",
-                           "LibreOffice Impress", "LibreOffice Math", "Libre Office Writer", "LXTerminal",
-                           "Package Manager", "Printers", "Rythmbox", "Screenshot", "Update Manager",
+                           "LibreOfﬁce", "LibreOfﬁce Base", "LibreOfﬁce Calc", "LibreOfﬁce Draw",
+                           "Impress", "LibreOfﬁce Math", "LibreOfﬁce Writer", "lXTerminal",
+                           "Package Manager", "Printers", "Rhythmbox", "Screenshot", "Update Manager",
                            "VLC media player", "Xarchiver"]
+        DynamicAppsFound = []
         self.open_launcher()
         ScreenshotName = "Applauncher.png"
         for i in range(3):
+            log.info('App Launcher Screenshot #'+str(i+1))
             for j in range(3):
+                log.info('Down press number '+str(j+1))
                 self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<Down>')
             text = ImageTools.return_text_on_screen(ScreenshotName)
-            print text
-            for item in HeaderApps:
-                ErrorString = item + " app was not found in App Launcher \n Screenshot located in " + config.automation_files_dir + "/" + ScreenshotName
-                assert item in text, ErrorString
-            for item in DynamicAppsList:
-                if item in text:
-                    DynamicAppsList.remove(item)
+            #for item in HeaderApps:
+            #    ErrorString = item + " app was not found in App Launcher\n Screenshot located in " + config.automation_files_dir + "/" + ScreenshotName
+            #    assert item in text, ErrorString
+            for DynamicApp in DynamicAppsList:
+                log.info('Searching for: '+DynamicApp)
+                if DynamicApp in text:
+                    log.info(DynamicApp+' was found!')
+                    DynamicAppsFound.append(DynamicApp)
+            for App in DynamicAppsFound:
+                if App in DynamicAppsList:
+                    DynamicAppsList.remove(App)
+            DynamicAppsFound = []
         self.sunriver.linux.ui.dogtail.rawinput.click(0,0)
-        ErrorString = "The following Apps were not found" + DynamicAppsList
+        ErrorString = "The following Apps were not found: " + str(DynamicAppsList)
         assert len(DynamicAppsList) == 0 , ErrorString
