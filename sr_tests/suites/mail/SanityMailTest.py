@@ -61,8 +61,11 @@ class SanityMailTest(BaseTest):
         super(SanityMailTest, self).before()
 
     def test_contacts_sync(self):
-        log.info("Creating contact in SIM")
+        log.info("Opening mail for sync purpose")
+        self.start_android_gui()
         self.sunriver.vnc.OpenVnc()
+        slash.g.mail.androidGUI.open_email_app()
+        log.info("Creating contact in SIM")
         self.sunriver.desktop.openSpecificApp('Contacts')
         self.sunriver.android.ui(resourceId="com.android.contacts:id/floating_action_button").click()
         self.sunriver.android.ui(text="Create contact to SIM 1").click()
