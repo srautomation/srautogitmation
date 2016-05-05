@@ -33,8 +33,11 @@ class SeamlessBrowserTest(BaseTest):
     def goto_youtube_in_android_chrome(self, i_videoLink):
         self.sunriver.desktop.openSpecificApp('Chrome')
         self.pass_android_chrome_initial_screens()
-        self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").click()
-        self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").set_text(i_videoLink)
+        if self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").exists:
+            self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").click()
+            self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").set_text(i_videoLink)
+        else:
+            assert self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").exists == True , "Unable to pass initial screens in android chrome"
         self.sunriver.android.ui.press('Enter')
         time.sleep(10)
         if not self.sunriver.android.ui(text=i_videoLink).exists:
