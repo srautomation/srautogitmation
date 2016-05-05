@@ -1,6 +1,7 @@
 import baker
 import time
 import os
+import glob
 import helpers as H
 from subprocess import Popen
 import sr_tools.config as config
@@ -110,10 +111,8 @@ def run_suite(suite, config=None, *args, **kw):
                                                            , " ".join(args)
                                                            , " ".join(["{}={}".format(k,v) for (k,v) in kw.iteritems()])
                                                            )
-    cmd = command + " -l " + LOG_DIR
-    print cmd
     with H.chdir(path):
-        os.system(cmd)
+        os.system(command)
 
 @baker.command
 def run_sanity():
@@ -127,7 +126,15 @@ def run_sanity():
     for path in paths:
         command += " " + path
     command += " -l " + LOG_DIR
+    subpath = str(datetime.now()).split('.')[0].replace(':','-')
+    command += ' -o log.session_subpath="' + subpath + '/session.log"'
+    command += ' -o log.subpath="' + subpath + '/{context.test}.log"'
     os.system(command)
+    fullpath = LOG_DIR + subpath + '/'
+    for path in glob.iglob(os.path.join(fullpath, '<Runnable test*')):
+        splitpath = path.split('.')
+        newname = splitpath[6].split(':')[1] + '.' + splitpath[7].split('>')[0] + '.log'
+        os.rename(path, os.path.join(fullpath, newname))
 
 def main():
     baker.run()
