@@ -10,7 +10,6 @@ sanity_suites = [
                 ('top_panel','Base.py'),
                 ('basic_remoting','Base.py'),
                 ('app_launcher','AppLauncher.py'),
-                ('mail','SanityMailTest.py'),
                 #('pcmanfm','Base.py'),
                 ('seamless_browser','seamless_sanity.py'),
                 ('camera','CameraVLCTest.py'),
@@ -20,6 +19,7 @@ sanity_suites = [
                 ('settings','sound.py'),
                 ('settings','wallpaperAndScreenSaver.py'),
                 ('settings','user_menu.py'),
+                ('mail','SanityMailTest.py'),
                 #audio
                 ('alarm','Base.py')
                 ]
