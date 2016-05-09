@@ -11,14 +11,14 @@ sanity_suites = [
                 ('basic_remoting','Base.py'),
                 ('app_launcher','AppLauncher.py'),
                 #('pcmanfm','Base.py'),
-                ('seamless_browser','seamless_sanity.py'),
-                ('camera','CameraVLCTest.py'),
                 ('settings','account.py'),
                 ('settings','keyboard.py'),
                 ('settings','settings_menus.py'),
                 ('settings','sound.py'),
                 ('settings','wallpaperAndScreenSaver.py'),
                 ('settings','user_menu.py'),
+                ('seamless_browser','seamless_sanity.py'),
+                ('camera','CameraVLCTest.py'),
                 ('mail','SanityMailTest.py'),
                 #audio
                 ('alarm','Base.py')
