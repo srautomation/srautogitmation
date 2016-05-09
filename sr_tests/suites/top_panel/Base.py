@@ -85,7 +85,10 @@ class PanelBaseTest(BaseTest):
         assert SignalStrength != False , "Signal Strength does not appear or appears incorrect"
 
     def test_search(self):
-        self.template_verification("Search", "Search")
+        Cycles = 10
+        for Cycle in range(Cycles):
+            log.info("Search cycle #"+str(Cycle+1))
+            self.template_verification("Search", "Search")
 
     def test_app_launcher(self):
         self.template_verification("Applications", "App Launcher")
