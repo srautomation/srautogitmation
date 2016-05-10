@@ -91,6 +91,7 @@ class PanelBaseTest(BaseTest):
             self.template_verification("Search", "Search")
 
     def test_app_launcher(self):
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(0,0)
         self.template_verification("Applications", "App Launcher")
 
     def test_user_menu(self):
