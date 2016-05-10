@@ -23,8 +23,8 @@ class SeamlessBrowserTest(BaseTest):
     
     def pass_android_chrome_initial_screens(self):
         while not self.sunriver.android.ui(resourceId="com.android.chrome:id/url_bar").exists:
-            if self.sunriver.android.ui(text="Accept & continue").exists:
-                self.sunriver.android.ui(text="Accept & continue").click()
+            if self.sunriver.android.ui(resourceId="com.android.chrome:id/terms_accept").exists:
+                self.sunriver.android.ui(resourceId="com.android.chrome:id/terms_accept").click()
                 self.sunriver.android.ui(text="No thanks").wait.exists
                 self.sunriver.android.ui(text="No thanks").click()
             if self.sunriver.android.ui(text="Search or type URL").exists:
