@@ -18,10 +18,10 @@ sanity_suites = [
                 ('settings','wallpaperAndScreenSaver.py'),
                 ('settings','user_menu.py'),
                 ('seamless_browser','seamless_sanity.py'),
-                ('camera','CameraVLCTest.py'),
                 ('mail','SanityMailTest.py'),
                 #audio
-                ('alarm','Base.py')
+                ('alarm','Base.py'),
+                ('camera','CameraVLCTest.py')
                 ]
 
 def get_working_dir():
