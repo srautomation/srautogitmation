@@ -26,11 +26,15 @@ class CameraBaseTest(BaseTest):
     @staticmethod
     def play_video_in_device(i_VideoName, i_Duration):
         log.info('Playing Video on Device')
-        os.system("adb shell am start -n  com.android.gallery3d/.app.MovieActivity -d /storage/emulated/0/DCIM/Camera/"+i_VideoName)
+        toPlay = "/storage/emulated/0/DCIM/Camera/"+i_VideoName
+        log.info('Trying to play: '+toPlay)
+        os.system('adb shell am start -n  com.android.gallery3d/.app.MovieActivity -d "'+toPlay+'"')
         time.sleep(i_Duration)
 
     @staticmethod
     def play_video_in_vlc(i_VideoName, i_Duration):
         log.info('Playing Video in VLC')
-        slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --play-and-exit --fullscreen "/home/BigScreen/Android/DCIM/Camera/'+i_VideoName)
+        toPlay = "/home/BigScreen/Android/DCIM/Camera/"+i_VideoName
+        log.info('Trying to play: '+toPlay)
+        slash.g.sunriver.linux.ui.dogtail.procedural.os.system('vlc --play-and-exit --fullscreen "'+toPlay+'"')
         time.sleep(i_Duration)
