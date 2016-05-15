@@ -62,6 +62,7 @@ class SanityMailTest(BaseTest):
 
     def test_contacts_sync(self):
         log.info("Opening mail for sync purpose")
+        slash.g.mail.linuxGUI.stop_icedove()
         self.start_android_gui()
         self.sunriver.vnc.OpenVnc()
         slash.g.mail.androidGUI.open_email_app()
@@ -77,6 +78,7 @@ class SanityMailTest(BaseTest):
         log.info("Opening Icedove client")
         self.start_linux_gui()
         slash.g.mail.linuxGUI.start_icedove()
+        time.sleep(7)
         ContactSynced = slash.g.mail.linuxGUI.check_contact_exists()
         time.sleep(10)
         self.sunriver.android.ui(text="automation").click()
@@ -89,6 +91,7 @@ class SanityMailTest(BaseTest):
 
     def test_mail_sync(self):
         log.info("Opening mail for sync purpose")
+        slash.g.mail.linuxGUI.stop_icedove()
         self.start_android_gui()
         self.sunriver.vnc.OpenVnc()
         slash.g.mail.androidGUI.open_email_app()
