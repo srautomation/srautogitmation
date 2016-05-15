@@ -1,4 +1,3 @@
-import slash
 from Base import LauncherBaseTest
 import time
 import sr_tools.config as config
@@ -50,7 +49,7 @@ class AppLaunchTest(LauncherBaseTest):
         self.sunriver.linux.ui.dogtail.rawinput.doubleClick(DesktopLocation[1]+15, DesktopLocation[0]+15)
         time.sleep(2)
         SidebarLocation = self.give_image_location_if_found(sidebar)
-        assert SidebarLocation != False , "Unable to see the file in the sidebar"
+        assert SidebarLocation != False , "Unable to see the file in the side panel"
         self.sunriver.linux.ui.dogtail.rawinput.click(SidebarLocation[1]+15, SidebarLocation[0]+15, button=3)
         self.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         CloseLocation = self.give_image_location_if_found(close_button)
@@ -71,7 +70,7 @@ class AppLaunchTest(LauncherBaseTest):
         sidebar = "/home/"+self.m_username+"/sr_automation/automation-screenshots/Chromium-sidebar.png"
         time.sleep(4)
         SidebarLocation = self.give_image_location_if_found(sidebar)
-        assert SidebarLocation != False , "Unable to see Chromium in sidebar"
+        assert SidebarLocation != False , "Unable to see Chromium in side panel"
         self.sunriver.linux.ui.dogtail.rawinput.click(SidebarLocation[1]+15, SidebarLocation[0]+15, button=3)
         self.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         CloseLocation = self.give_image_location_if_found(close_button)
