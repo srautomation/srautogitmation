@@ -49,11 +49,12 @@ function box_out()
   echo " -${s//?/-}------------------------------------------------------------------------------
 | Follow exactly as commanded below
 | $(tput setaf 4)$s$(tput setaf 3)run command:"ssh username@placeholder"
-| ${s//?/ }enter password:enter Yes
-| ${s//?/ }enter password:"1@password"
+| ${s//?/ }enter verification: yes
+| ${s//?/ }enter password: 1@password
 | ${s//?/ }on the tunnel that opens --> RUN:ssh-keygen -f "/home/username/.ssh/known_hosts" -R [${device_wlan}]:2222
 | ${s//?/ }ssh-copy-id -p 2222 BigScreen@${device_wlan}
-| ${s//?/ }enter YES
+| ${s//?/ }enter verification: yes
+| ${s//?/ }enter password: 1@password
  -${s//?/-}------------------------------------------------------------------------------
 "
   tput sgr 0

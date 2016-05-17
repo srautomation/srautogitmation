@@ -1,4 +1,3 @@
-import time
 import os
 from datetime import datetime
 
@@ -10,6 +9,7 @@ class TimeUtils(object):
     
     @staticmethod
     def sync_time():
+        log.info('Syncing clocks')
         os.system('adb shell date -s '+datetime.now().strftime("%Y%m%d.%H%M%S"))
 
     @staticmethod
