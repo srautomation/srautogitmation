@@ -1,10 +1,11 @@
 from sr_tests.base.Base import BaseTest
-from sr_automation.utils.ImageTools import ImageTools
+from sr_automation.utils.ImageTools import ImageTools,CompareTool
 from sr_automation.utils.TimeUtils import TimeUtils
 import time
 import getpass
 import slash
 import datetime
+import sr_tools.config as config
 
 from logbook import Logger
 log = Logger("Top Panel Suite")
@@ -17,7 +18,7 @@ class PanelBaseTest(BaseTest):
         super(PanelBaseTest, self).before()
     
     def find_icon_in_top_panel(self, i_IconName):
-        IconPath = "/home/"+self.m_username+"/sr_automation/automation-screenshots/TopPanel"+i_IconName+".png"
+        IconPath = config.pictures_dir + "TopPanel"+i_IconName+".png"
         Snapshot = "IconSnapshot.png"
         found = False
         ImageStats = ImageTools.find_sub_image_in_image(Snapshot, IconPath)
@@ -64,17 +65,17 @@ class PanelBaseTest(BaseTest):
                 CorrectClock = False
         log.info("Current time is: "+str(current_time)+" While displayed time is: "+displayed_time)
         assert CorrectClock == True , "Time not displayed or incorrect time"
-
+  
     def test_battery(self):
         log.info("Verifying Battery Icon")
         FoundIcon = self.find_icon_in_top_panel("Battery")
         assert FoundIcon != False , "Battery Icon missing"
-
+  
     def test_switch_to_phone(self):
         log.info("Verifying Switch to Phone Icon")
         FoundIcon = self.find_icon_in_top_panel("SwitchToPhone")
         assert FoundIcon != False , "Switch to Phone Icon missing"
-
+  
     def test_network_wifi(self):
         log.info("Verifying Network & Wi-Fi Icons")
         FoundIcon = self.find_icon_in_top_panel("NetworkWiFi")
@@ -83,31 +84,53 @@ class PanelBaseTest(BaseTest):
         SignalStrength = self.find_icon_in_top_panel("SignalStrength")
         slash.g.sunriver.linux.ui.dogtail.rawinput.absoluteMotion(0,0)
         assert SignalStrength != False , "Signal Strength does not appear or appears incorrect"
-
+  
     def test_search(self):
         Cycles = 10
         for Cycle in range(Cycles):
             log.info("Search cycle #"+str(Cycle+1))
             self.template_verification("Search", "Search")
-
+  
     def test_app_launcher(self):
         slash.g.sunriver.linux.ui.dogtail.rawinput.click(0,0)
         self.template_verification("Applications", "App Launcher")
-
+  
     def test_user_menu(self):
         self.template_verification("UserMenu", "User Menu")
-
+  
     def test_language(self):
         self.template_verification("Language", "Language")
-
+  
     def test_notifications(self):
         self.template_verification("Notifications", "Notifications")
-
+  
     def test_phone_app(self):
         if slash.g.sunriver.vnc.isVNCOpen():
             slash.g.sunriver.vnc.CloseVnc()
         self.template_verification("Phone_App", "Phone App")
         slash.g.sunriver.vnc.CloseVnc()
-    
+      
     def test_bluetooth(self):
         self.template_verification("Bluetooth", "Bluetooth")
+        
+    def test_sound(self):
+        stats=ImageTools.find_sub_image_in_image("TopPanelSoundCheck.png", config.pictures_dir +"TopPanelSound.png")
+        if stats.max_value < 0.9:
+            stats=ImageTools.find_sub_image_in_image("TopPanelSoundCheck.png", config.pictures_dir +"TopPanelSoundMute.png",needToSnap=False)
+            assert stats.max_value > 0.9 , "didn't find sound icon in Top Panel"
+        self.sounbar_check("Home", "checkSoundMuted.png", config.pictures_dir +"TopPanelSoundMute.png", "soundbar is 0 but sound icon isn't mute", stats)
+        log.info("looking for mute icon")
+        self.sounbar_check("End", "checkSoundFull.png", config.pictures_dir +"TopPanelSound.png", "soundbar is 100 but sound icon isn't full", stats)
+               
+    def sounbar_check(self,key,image,subimage,error,stats):
+        self.dogtail.rawinput.click(stats.max_location[1]+5,stats.max_location[0]+5)
+        self.dogtail.rawinput.absoluteMotion(0,0)
+        self.sunriver.linux.ui.dogtail.rawinput.keyCombo('<%s>'%key)
+        ImageTools.snap_and_compare(image, subimage,error,compare=CompareTool.find_subimage)
+        self.dogtail.utils.doDelay(2)
+
+        
+            
+            
+
+        

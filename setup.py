@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sr_tools.config as config
-import os 
+import os,stat 
+import getpass
 try:# pip needed to download setuptools(may need update)
     from setuptools import setup, find_packages
 except ImportError:
@@ -12,13 +13,15 @@ def ensure_dir(f):
     d = os.path.dirname(f)
     if not os.path.exists(d):
         os.makedirs(d)
+        os.chmod(d,stat.S_IRWXO | stat.S_IRWXG | stat.S_IRWXU  )
+        
 
 working_dir = os.getcwd()
-open(config.automation_files_dir+'repo_dir.txt','w').write(working_dir)
 readme = open('README.rst').read()
 history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 dut_latest_ip = os.system('ln -s %s/sr_tools/dut_latest_ip.txt /usr/local/bin/dut_latest_ip.txt'%working_dir)
 ensure_dir(config.automation_files_dir)
+open(config.automation_files_dir+'repo_dir.txt','w').write(working_dir)
 icon_path = os.system('ln -s %s/automation-screenshots/ %s/automation-screenshots'%(working_dir,config.automation_files_dir))
 
 

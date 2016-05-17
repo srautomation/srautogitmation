@@ -8,10 +8,13 @@ import pytesseract
 from os import system
 from sr_automation.utils.TakeSnapshot import TakeSnapshot
 from logbook import Logger
-from Tkinter import image_names
 log = Logger("ImageTools")
 
 import skimage.measure  
+
+class CompareTool():
+        compare_images,find_subimage = range(2)
+
 
 class ImageTools(object):
     SNAPSHOT_PATH = "/tmp/"
@@ -27,10 +30,17 @@ class ImageTools(object):
         return err
     
     @staticmethod
-    def snap_and_compare(imageName,comparedImagePath,error,threshold=0.9):
+    def snap_and_compare(imageName,comparedImagePath,error,threshold=0.9,compare=CompareTool.compare_images):
         ImageTools.snapShot_and_copy_file(imageName)
-        result = ImageTools.compare_images(config.automation_files_dir + imageName, comparedImagePath)
+        if compare == CompareTool.compare_images:
+            result = ImageTools.compare_images(config.automation_files_dir + imageName, comparedImagePath)
+        elif compare == CompareTool.find_subimage:
+            stats = ImageTools.find_sub_image_in_image(imageName, comparedImagePath, needToSnap=False)
+            result = stats.max_value
+        else:
+            raise Exception("didn't choose a compare tool")
         assert result > threshold , error
+        
     
     @staticmethod
     def compare_images(imageA_path,imageB_path):
@@ -54,6 +64,14 @@ class ImageTools(object):
         log.info("best match percentage %f location (%f,%f)"% (stats.max_value,stats.max_location[0],stats.max_location[1]))
         log.info("image dimensions (%f,%f,%f)"%(image.shape[0],image.shape[1],image.shape[2]))
         return stats
+   
+    @staticmethod
+    def find_and_click_sub_image(image_name,subImage_path,crop_boundries=None,needToSnap=True):
+        subimage_name = str(subImage_path).rsplit('/',1)[1].rsplit('.',1)[0]
+        stats=ImageTools.find_sub_image_in_image(image_name,subImage_path,crop_boundries,needToSnap)
+        assert stats.max_value > 0.9, "didn't found %s in frame"%subimage_name
+        slash.g.sunriver.linux.ui.dogtail.rawinput.click(stats.max_location[1]+15,stats.max_location[0]+15)
+
         
     @staticmethod #TODO - move it to the right class!
     def copy_file_from_device(source_path,dist_path):
@@ -114,4 +132,7 @@ class matchStats(object):
     def __init__(self,max_value,max_location):
         self.max_value = max_value
         self.max_location = max_location
+        
+
+        
         

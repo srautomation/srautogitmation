@@ -29,15 +29,20 @@ class SoundBaseTest(SettingsBaseTest):
         time.sleep(2)
         self.sound.change_output_volume_level(0)
         self.check_volume_icon(self.SNAPSHOT_MUTE,config.pictures_dir + self.ICON_MUTE)
+        assert self.check_Mute_button() is True , "Mute checkbox isn't checked when volume is 0 "
         time.sleep(2)
         self.sound.change_output_volume_level(100)
         self.check_volume_icon(self.SNAPSHOT_FULL_VOLUME,config.pictures_dir + self.ICON_FULL_VOLUME)
+        assert self.check_Mute_button() is False , "Mute checkbox is checked when volume isn't 0 "
     
     def check_volume_icon(self,image_name,subImage_path):
         boundries = self.find_crop_boundries()
         stats = ImageTools.find_sub_image_in_image(image_name, subImage_path, boundries)
         assert stats.max_value > 0.9 , "icon %s didn't work" % (image_name)  
         
+    def check_Mute_button(self):
+        return  self.settings._app.child(name='Output volume').parent.parent.child(roleName='check box').isChecked
+
     def find_crop_boundries(self):
         cmd="xdpyinfo | grep dimensions | awk '{print $2}' | cut -d 'x' -f1"
         image_width_string=slash.g.sunriver.linux.shell.runCommandWithReturnValue(cmd)

@@ -22,6 +22,7 @@ class UserMenuTest(SettingsBaseTest):
     RESTART_PIC = USER_MENU_PICS + "user_menu_restart.png"
     
     LOCKSCREEN_PIC =USER_MENU_PICS + "lockscreen.png"
+    TOP_PANEL_LOCKSCREEN=USER_MENU_PICS + "LockScreenTopPanel.png"
     
     SNAPSHOT_USER_MENU = "user_menu_snapshot.png"
     SNAPSHOT_AFTER_LOCK = "after_lock.png"
@@ -91,10 +92,16 @@ class UserMenuTest(SettingsBaseTest):
         ImageTools.snapShot_and_copy_file(self.SNAPSHOT_BEFORE_LOCK)
         self.enter_lock_screen()
         ImageTools.snap_and_compare(self.SNAPSHOT_IN_LOCK, self.LOCKSCREEN_PIC, error="didn't enter lockscreen")
+        self.check_top_panel_in_lockscreen()
         self.paste_pass_at_lockscreen()
         self.dogtail.utils.doDelay(1)
         ImageTools.snap_and_compare(self.SNAPSHOT_AFTER_LOCK,config.automation_files_dir+ self.SNAPSHOT_BEFORE_LOCK,error="didn't exit lock screen")
    
+    def check_top_panel_in_lockscreen(self):
+        log.info("check existence of the top panel in lock screen")
+        stats = ImageTools.find_sub_image_in_image(self.SNAPSHOT_IN_LOCK, self.TOP_PANEL_LOCKSCREEN,needToSnap=False)
+        assert stats.max_value > 0.9 , "Lockscreen has no Top Panel"
+        
     def paste_pass_at_lockscreen(self):
         self.dogtail.rawinput.keyCombo('<Shift>') #exit screensaver
         self.dogtail.utils.doDelay(1)
@@ -105,7 +112,7 @@ class UserMenuTest(SettingsBaseTest):
         
     def enter_lock_screen(self):
         self.click_at_submenu(self.LOCK_PIC)
-        self.dogtail.utils.doDelay(4)
+        self.dogtail.utils.doDelay(8)
             
     def copy_current_pass(self):
         leafpad = Leafpad(slash.g.sunriver.linux)

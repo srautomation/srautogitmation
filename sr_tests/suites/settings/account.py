@@ -15,6 +15,7 @@ class AccountBaseTest(SettingsBaseTest):
     
     ACCOUNT_MENU_PICS = config.pictures_dir +"account_menu/"
     SAVE_PIC = ACCOUNT_MENU_PICS + "save.png"
+    UPLOAD_PIC =  ACCOUNT_MENU_PICS + "upload.png"
     CHANGE_PASS_PIC = ACCOUNT_MENU_PICS + "change_password.png"
     USER_PIC = ACCOUNT_MENU_PICS + "pic.png"
     TEXTBOX_PIC = ACCOUNT_MENU_PICS + "text.png"
@@ -61,6 +62,7 @@ class AccountBaseTest(SettingsBaseTest):
         slash.g.sunriver.currentPass = OLD_PASS
 
     def test_check_change_password_gui(self):
+        log.info("test change password gui (pass fields,submit greyed out,cancel)")
         self.account.change_password_click()
         ImageTools.snapShot_and_copy_file(self.CHANGE_PASS_SNAPSHOT)
         self.check_item_exist(self.PASS_FIELDS_PIC,self.CHANGE_PASS_SNAPSHOT)
@@ -68,11 +70,12 @@ class AccountBaseTest(SettingsBaseTest):
         self.check_item_exist(self.SUBMIT_CHANGES_PIC,self.CHANGE_PASS_SNAPSHOT)
     
     def test_check_account_gui(self):
-        log.info("test gui (picture,textbox,changePassword,Save,details) exist")
+        log.info("test gui (picture,textbox,changePassword,Save,details,upload) exist")
         self.account.write_in_textbox("pic_test")
         ImageTools.snapShot_and_copy_file(self.ACCOUNT_SNAPSHOT)
         self.check_item_exist(self.USER_PIC,self.ACCOUNT_SNAPSHOT)
         self.check_item_exist(self.CHANGE_PASS_PIC,self.ACCOUNT_SNAPSHOT)
+        self.check_item_exist(self.UPLOAD_PIC,self.ACCOUNT_SNAPSHOT)
         self.check_item_exist(self.SAVE_PIC,self.ACCOUNT_SNAPSHOT)
         self.check_item_exist(self.TEXTBOX_PIC,self.ACCOUNT_SNAPSHOT)
         self.check_item_exist(self.DETAILS_PIC,self.ACCOUNT_SNAPSHOT)

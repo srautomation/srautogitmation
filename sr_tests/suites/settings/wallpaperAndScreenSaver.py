@@ -36,14 +36,13 @@ class WallpaperAndScreenSaverTest(SettingsBaseTest):
         ImageTools.snapShot_and_copy_file(self.AFTER_SNAPSHOT)
         s = ImageTools.compare_images(config.automation_files_dir +self.AFTER_SNAPSHOT, config.automation_files_dir +self.BEFORE_SNAPSHOT)
         assert s > 0.9 , "didn't exit screensaver"
-        self.wallpaperAndScreenSaver.change_screenSaver_Start_After(self.wallpaperAndScreenSaver.DURATION["30 minutes"])
  
     def wake_up_screen(self):
         self.settings.dogtail.rawinput.keyCombo('<Shift><Shift>')
     
-    def enable_screensaver(self):
-        state = self.wallpaperAndScreenSaver.check_if_enabled()
-        if state is False:
+    def activate_screensaver(self,wanted_state):
+        current_state = self.wallpaperAndScreenSaver.check_if_enabled()
+        if wanted_state is not current_state:
             self.wallpaperAndScreenSaver.enable_disable_screenSaver()
     
     def dont_require_pass_after_screensaver(self):
@@ -55,9 +54,15 @@ class WallpaperAndScreenSaverTest(SettingsBaseTest):
         self.wallpaperAndScreenSaver.enter_panel(self.wallpaperAndScreenSaver.AUTO_LOCK)
         self.wallpaperAndScreenSaver.change_auto_lock_Start_After(self.wallpaperAndScreenSaver.DURATION["None"])
         self.wallpaperAndScreenSaver.enter_panel(self.wallpaperAndScreenSaver.SCREEN_SAVER)
-        self.enable_screensaver()
+        self.activate_screensaver(state.on)
         self.wallpaperAndScreenSaver.change_screenSaver_Start_After(self.wallpaperAndScreenSaver.DURATION["minute"])
         self.dont_require_pass_after_screensaver()
            
     def after(self):
-        self.settings.stop()
+        self.activate_screensaver(state.off)
+        super(WallpaperAndScreenSaverTest, self).after()
+        
+class state():
+    off = False
+    on  = True
+
